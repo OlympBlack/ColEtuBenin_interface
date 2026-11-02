@@ -259,7 +259,7 @@ export const GestionParametres: React.FC<GestionParametresProps> = ({ token, onT
             <Building2 className="w-5 h-5 text-blue-600" />
             <div>
               <h2 className="text-base sm:text-lg font-bold text-slate-900">
-                Identité de la plateforme & Logo
+                Identité de la plateforme et Logo
               </h2>
               <p className="text-xs text-slate-500">Nom de la marque, slogan, localisation et logo officiel.</p>
             </div>
@@ -372,7 +372,7 @@ export const GestionParametres: React.FC<GestionParametresProps> = ({ token, onT
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Description officielle (Footer & Réseaux)
+                  Description officielle (Footer et Réseaux)
                 </label>
                 <textarea
                   rows={3}
@@ -392,7 +392,7 @@ export const GestionParametres: React.FC<GestionParametresProps> = ({ token, onT
             <Phone className="w-5 h-5 text-emerald-600" />
             <div>
               <h2 className="text-base sm:text-lg font-bold text-slate-900">
-                Coordonnées & Canaux de Contact
+                Coordonnées et Canaux de Contact
               </h2>
               <p className="text-xs text-slate-500">
                 Numéros et emails officiels affichés sur la page Contact, le Footer et les boutons rapides.
@@ -476,7 +476,7 @@ export const GestionParametres: React.FC<GestionParametresProps> = ({ token, onT
             <Sparkles className="w-5 h-5 text-indigo-600" />
             <div>
               <h2 className="text-base sm:text-lg font-bold text-slate-900">
-                Crédits Développeur & Pied de page
+                Crédits Développeur et Pied de page
               </h2>
               <p className="text-xs text-slate-500">
                 Informations affichées dans la sous-barre de pied de page (Footer).
@@ -493,7 +493,7 @@ export const GestionParametres: React.FC<GestionParametresProps> = ({ token, onT
                 type="text"
                 value={signatureTexte}
                 onChange={(e) => setSignatureTexte(e.target.value)}
-                placeholder="Conçu & développé par"
+                placeholder="Conçu et développé par"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-slate-50/50 focus:bg-white"
               />
             </div>

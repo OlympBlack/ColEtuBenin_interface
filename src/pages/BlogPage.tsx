@@ -19,7 +19,7 @@ const ARTICLES: BlogPostMeta[] = [
     auteur: 'Rédaction ColEtuBenin',
     date: '12.10.2026',
     commentaires: 8,
-    categorie: 'Logement & Campus',
+    categorie: 'Logement et Campus',
     tempsLecture: '4 min',
     image: '/assets/images/blog/blog_campus_etudiants.jpg',
     extrait:

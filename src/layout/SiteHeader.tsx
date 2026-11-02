@@ -224,7 +224,7 @@ function HeaderUserProfile({
                 onClick={() => handleActionClick()}
               >
                 <i className="fa fa-user-circle-o"></i>
-                <span>Mon profil & paramètres</span>
+                <span>Mon profil et paramètres</span>
               </a>
             </li>
 

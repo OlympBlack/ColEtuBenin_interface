@@ -125,17 +125,26 @@ function tabIdFromHash(allowed: NavTab[]): string {
   const params = qIndex === -1 ? null : new URLSearchParams(raw.slice(qIndex + 1))
   const requested = params?.get('tab')
   if (!requested) return 'overview'
-  // `?tab=profil` is used by App/ProfileCompletionModal → aliases to the profile tab
-  let normalized =
-    requested === 'profil' || requested === 'profile' || requested === 'compte'
-      ? 'preferences'
-      : requested
 
-  // Alias annonces / announcements selon les onglets autorisés
-  if (normalized === 'annonces' && !allowed.some((t) => t.id === 'annonces') && allowed.some((t) => t.id === 'announcements')) {
-    normalized = 'announcements'
-  } else if (normalized === 'announcements' && !allowed.some((t) => t.id === 'announcements') && allowed.some((t) => t.id === 'annonces')) {
-    normalized = 'annonces'
+  const lower = requested.toLowerCase().trim()
+  let normalized = lower
+
+  if (['profil', 'profile', 'compte', 'preferences'].includes(lower)) {
+    normalized = 'preferences'
+  } else if (['annonces', 'announcements', 'logements', 'mes-annonces'].includes(lower)) {
+    normalized = allowed.some((t) => t.id === 'annonces') ? 'annonces' : 'announcements'
+  } else if (['campagnes', 'campagne', 'campaign', 'campaigns'].includes(lower)) {
+    normalized = 'campaigns'
+  } else if (['statistiques', 'stats', 'stat'].includes(lower)) {
+    normalized = 'stats'
+  } else if (['packs', 'pack', 'forfaits', 'forfait'].includes(lower)) {
+    normalized = allowed.some((t) => t.id === 'forfaits') ? 'forfaits' : 'credits'
+  } else if (['messages', 'messagerie', 'chat', 'conversations'].includes(lower)) {
+    normalized = 'messagerie'
+  } else if (['notifs', 'notifications', 'notification'].includes(lower)) {
+    normalized = 'notifications'
+  } else if (['kyc', 'verification', 'certif', 'certification'].includes(lower)) {
+    normalized = allowed.some((t) => t.id === 'kyc') ? 'kyc' : 'verification'
   }
 
   return allowed.some((t) => t.id === normalized) ? normalized : 'overview'
@@ -156,12 +165,12 @@ const NAV_TABS: Record<string, NavTab[]> = {
   admin: [
     { id: 'overview', label: "Vue d'ensemble", icon: 'grid', section: 'menu' },
     { id: 'signalements', label: 'Signalements', icon: 'shield-alert', section: 'menu' },
-    { id: 'contacts', label: 'Support & Contacts', icon: 'message', section: 'menu' },
+    { id: 'contacts', label: 'Support et Contacts', icon: 'message', section: 'menu' },
     { id: 'kyc', label: 'Vérifications KYC', icon: 'shield', section: 'menu' },
     { id: 'users', label: 'Utilisateurs', icon: 'user', section: 'menu' },
     { id: 'annonces', label: 'Modération Annonces', icon: 'bed', section: 'menu' },
     { id: 'collections', label: 'Collections Immobilières', icon: 'grid', section: 'menu' },
-    { id: 'finances', label: 'Finances & Recettes', icon: 'store', section: 'suivi' },
+    { id: 'finances', label: 'Finances et Recettes', icon: 'store', section: 'suivi' },
     { id: 'settings', label: 'Paramètres Plateforme', icon: 'settings', section: 'suivi' },
     { id: 'preferences', label: 'Mon Compte', icon: 'user', section: 'suivi' },
   ],
@@ -182,7 +191,8 @@ const NAV_TABS: Record<string, NavTab[]> = {
     { id: 'overview', label: "Vue d'ensemble", icon: 'grid', section: 'menu' },
     { id: 'notifications', label: 'Notifications', icon: 'bell', section: 'menu' },
     { id: 'campaigns', label: 'Campagnes', icon: 'store', section: 'menu' },
-    { id: 'credits', label: 'Crédits & Packs', icon: 'document', section: 'suivi' },
+    { id: 'credits', label: 'Crédits et Packs', icon: 'document', section: 'suivi' },
+    { id: 'forfaits', label: 'Acheter des packs', icon: 'store', section: 'suivi' },
     { id: 'stats', label: 'Statistiques', icon: 'eye', section: 'suivi' },
     { id: 'preferences', label: 'Mon Profil', icon: 'user', section: 'suivi' },
     { id: 'verification', label: 'Vérification', icon: 'shield', section: 'suivi' },
@@ -258,13 +268,31 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 // ─── Sidebar ─────────────────────────────────────────────────────
-function SidebarNavItem({ tab, active, badge, href }: { tab: NavTab; active: boolean; badge?: number | null; href: string }) {
+function SidebarNavItem({
+  tab,
+  active,
+  badge,
+  href,
+  onSelect,
+}: {
+  tab: NavTab
+  active: boolean
+  badge?: number | null
+  href: string
+  onSelect?: () => void
+}) {
   return (
     <a
       href={href}
+      onClick={(e) => {
+        if (onSelect) {
+          e.preventDefault()
+          onSelect()
+        }
+      }}
       aria-current={active ? 'page' : undefined}
       style={{ color: '#000000', textDecoration: 'none' }}
-      className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] transition-colors !text-black ${
+      className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] transition-colors cursor-pointer !text-black ${
         active
           ? 'bg-white font-bold !text-black shadow-sm'
           : 'font-medium !text-black hover:bg-white/20 hover:!text-black'
@@ -293,6 +321,7 @@ function Sidebar({
   unreadCount,
   profileProgress,
   dashboard,
+  onTabChange,
   onLogout,
   isLoggingOut,
   mobileOpen,
@@ -304,6 +333,7 @@ function Sidebar({
   unreadCount: number
   profileProgress: number
   dashboard: DashboardData | null
+  onTabChange: (tabId: string) => void
   onLogout: () => void
   isLoggingOut: boolean
   mobileOpen: boolean
@@ -313,6 +343,11 @@ function Sidebar({
   const menuTabs = tabs.filter((t) => t.section === 'menu')
   const suiviTabs = tabs.filter((t) => t.section === 'suivi')
   const adminStats = (dashboard?.admin?.statistiques ?? {}) as Record<string, number | undefined>
+
+  const handleSelectTab = (tabId: string) => {
+    onTabChange(tabId)
+    onMobileClose()
+  }
 
   return (
     <>
@@ -381,6 +416,7 @@ function Sidebar({
                   active={activeTab === tab.id}
                   badge={badge}
                   href={`#${rolePath}?tab=${tab.id}`}
+                  onSelect={() => handleSelectTab(tab.id)}
                 />
               )
             })}
@@ -396,6 +432,7 @@ function Sidebar({
                     tab={tab}
                     active={activeTab === tab.id}
                     href={`#${rolePath}?tab=${tab.id}`}
+                    onSelect={() => handleSelectTab(tab.id)}
                   />
                 ))}
               </div>
@@ -1650,6 +1687,7 @@ function DashboardLayout({
         unreadCount={unreadCount}
         profileProgress={profileProgress}
         dashboard={dashboard}
+        onTabChange={onTabChange}
         onLogout={onLogout}
         isLoggingOut={isLoggingOut}
         mobileOpen={mobileSidebarOpen}

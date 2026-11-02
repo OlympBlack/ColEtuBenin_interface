@@ -94,7 +94,7 @@ export function SiteFooter() {
                   <a href="#/publier">Publier une annonce</a>
                 </li>
                 <li>
-                  <a href="#/inscription-pro">Espace Démarcheurs & Boutiques</a>
+                  <a href="#/inscription-pro">Espace Démarcheurs et Boutiques</a>
                 </li>
               </ul>
             </div>

@@ -22,14 +22,14 @@ const CATEGORY_META: Record<
   }
 > = {
   CHAMBRE_VIDE: {
-    titlePrefix: 'Chambres Vérifiées & ',
+    titlePrefix: 'Chambres Vérifiées et ',
     titleHighlight: 'Logements Disponibles',
     subtitle: 'Chambres, studios et appartements proposés par des démarcheurs certifiés et propriétaires autour des campus du Bénin.',
     badge: 'Logements Démarcheurs',
     heroImage: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1600&q=80',
   },
   PLACE_LIBRE_HOTE: {
-    titlePrefix: 'Chambres déjà louées & ',
+    titlePrefix: 'Chambres déjà louées et ',
     titleHighlight: 'Places en Colocation',
     subtitle: 'Rejoignez un étudiant déjà installé dans sa chambre pour partager l’espace, le loyer et le quotidien.',
     badge: 'Places en Colocation',

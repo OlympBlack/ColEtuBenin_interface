@@ -106,7 +106,7 @@ export function ContactModal({ isOpen, onClose, session, onToast }: ContactModal
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <div>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 800, color: '#475569', marginBottom: 6 }}>
-                  Nom & Prénoms <span style={{ color: '#e11d48' }}>*</span>
+                  Nom et Prénoms <span style={{ color: '#e11d48' }}>*</span>
                 </label>
                 <div style={{ position: 'relative' }}>
                   <User size={16} color="#94a3b8" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />

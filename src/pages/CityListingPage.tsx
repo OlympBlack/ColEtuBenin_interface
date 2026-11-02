@@ -114,7 +114,7 @@ export function CityListingPage({ citySlug }: CityListingPageProps) {
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white font-sans mb-3 text-center drop-shadow-md">
-            Logements & Colocations à <span style={{ color: '#a4c639' }}>{city.name}</span>
+            Logements et Colocations à <span style={{ color: '#a4c639' }}>{city.name}</span>
           </h1>
 
           <p className="max-w-2xl text-slate-200 text-sm sm:text-base leading-relaxed text-center drop-shadow-sm">

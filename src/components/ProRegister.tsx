@@ -198,7 +198,7 @@ export function ProRegisterFlow({
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-base font-bold text-slate-900 group-hover:text-green-700 transition-colors">
-                      Boutique / Accessoires & Services
+                      Boutique / Accessoires et Services
                     </p>
                     <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
                       Commerces, fournitures scolaires, électroménager ou services destinés à la communauté étudiante.

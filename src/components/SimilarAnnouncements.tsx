@@ -43,7 +43,7 @@ export function SimilarAnnouncements({ announcements }: SimilarAnnouncementsProp
     <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 mt-10 border-t border-slate-200/90 font-['Poppins',sans-serif]">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Chambres proches & similaires</h2>
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Chambres proches et similaires</h2>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl font-normal">Découvrez d'autres opportunités disponibles dans le même quartier ou avec un budget équivalent.</p>
         </div>
 

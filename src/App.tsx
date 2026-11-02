@@ -131,7 +131,8 @@ export default function App() {
 
   useEffect(() => {
     if (session && route.name === 'dashboard' && route.role !== session.user.role) {
-      window.location.hash = '#' + getDashboardPath(session.user.role)
+      const queryPart = route.query ? `?${route.query}` : ''
+      window.location.hash = '#' + getDashboardPath(session.user.role) + queryPart
     }
   }, [route, session])
 
@@ -415,7 +416,7 @@ export default function App() {
           />
         ) : null}
 
-        {route.name === 'forfaits' && session && session.user.role === 'demarcheur' ? (
+        {route.name === 'forfaits' && session && (session.user.role === 'demarcheur' || session.user.role === 'boutique' || session.user.role === 'admin') ? (
           <ForfaitsPage session={session} onToast={pushToast} />
         ) : null}
 

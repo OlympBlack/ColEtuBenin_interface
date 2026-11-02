@@ -28,7 +28,7 @@ const DEMO_TESTIMONIALS = [
     name: 'Grâce Ahouandjinou',
     role: 'Étudiante en L2 – IFRI',
     quote:
-        "« Grâce à ColEtuBenin, j'ai trouvé une chambre à Zogbadjè, près de l'UAC, en trois jours, sans jamais avancer le moindre franc à un inconnu. Les profils vérifiés, ça change tout. »",
+      "« Grâce à ColEtuBenin, j'ai trouvé une chambre à Zogbadjè, près de l'UAC, en trois jours, sans jamais avancer le moindre franc à un inconnu. Les profils vérifiés, ça change tout. »",
     avatar: '/assets/images/about-1-570x350.jpg',
   },
   {
@@ -57,7 +57,7 @@ const DEMO_TESTIMONIALS = [
 const BLOG_TEASER_POSTS = [
   {
     slug: 'trouver-chambre-etudiante-campus-benin',
-    category: 'Logement & Campus',
+    category: 'Logement et Campus',
     readTime: '4 min',
     image: '/assets/images/blog/blog_campus_etudiants.jpg',
     title: 'Bien choisir sa chambre près de son campus : les points essentiels',
@@ -137,13 +137,13 @@ export function HomePage({ filters, onChangeFilters, onOpenFilters }: HomePagePr
           <div className="item item-1">
             <div className="img-fill">
               <div className="text-content">
-                <h6>ColEtuBenin — la colocation étudiante au Bénin</h6>
+                <h6>ColEtuBenin - la colocation étudiante au Bénin</h6>
                 <h4>
                   Trouvez votre chambre près de <br /> votre campus universitaire
                 </h4>
                 <p>
                   Chambres vérifiées, places en colocation et binômes : ColEtuBenin regroupe toutes les offres de
-                  logement étudiant dans les 5 grandes villes universitaires du Bénin : Abomey-Calavi (UAC), Cotonou (facultés & écoles),
+                  logement étudiant dans les 5 grandes villes universitaires du Bénin : Abomey-Calavi (UAC), Cotonou (facultés et écoles),
                   Parakou (UP), Abomey (UNSTIM) et Porto-Novo (UNA).
                 </p>
                 <a href="#/logements" className="filled-button">

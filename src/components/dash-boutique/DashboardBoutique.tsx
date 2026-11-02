@@ -141,7 +141,7 @@ export const DashboardBoutique: React.FC<DashboardBoutiqueProps> = ({
                                 <div className="mt-3 flex flex-col gap-1.5">
                                     {[
                                         { href: '#/dashboard/boutique?tab=campaigns', icon: 'store' as const, label: 'Mes campagnes' },
-                                        { href: '#/dashboard/boutique?tab=credits', icon: 'document' as const, label: 'Packs & Crédits' },
+                                        { href: '#/dashboard/boutique?tab=credits', icon: 'document' as const, label: 'Packs et Crédits' },
                                         { href: '#/dashboard/boutique?tab=stats', icon: 'eye' as const, label: 'Statistiques' },
                                         { href: '#/dashboard/boutique?tab=preferences', icon: 'user' as const, label: 'Profil de la boutique' },
                                         { href: '#/dashboard/boutique?tab=verification', icon: 'shield' as const, label: 'Vérification' },
@@ -206,7 +206,7 @@ export const DashboardBoutique: React.FC<DashboardBoutiqueProps> = ({
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
                     <DashboardPageHeader
                         eyebrow="Espace boutique"
-                        title="Portefeuille & Crédits de publication"
+                        title="Portefeuille et Crédits de publication"
                         subtitle="Gérez vos crédits, suivez vos campagnes diffusées et consultez l'historique complet de vos achats de packs."
                         actions={
                             <>

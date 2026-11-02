@@ -21,10 +21,10 @@ interface FaqItem {
 
 const FAQ_CATEGORIES = [
   { id: 'all', label: 'Toutes les questions', icon: HelpCircle },
-  { id: 'coloc', label: 'Colocation & Binôme', icon: Users },
+  { id: 'coloc', label: 'Colocation et Binôme', icon: Users },
   { id: 'depot', label: 'Déposer une annonce', icon: PlusCircle },
-  { id: 'securite', label: 'Sécurité & Visites', icon: ShieldCheck },
-  { id: 'quartiers', label: 'Quartiers & Logistique', icon: MapPin },
+  { id: 'securite', label: 'Sécurité et Visites', icon: ShieldCheck },
+  { id: 'quartiers', label: 'Quartiers et Logistique', icon: MapPin },
 ] as const
 
 const FAQ_ITEMS: FaqItem[] = [
@@ -72,7 +72,7 @@ const FAQ_ITEMS: FaqItem[] = [
     category: 'depot',
     question: "Je suis bailleur ou démarcheur : comment publier mes biens ?",
     answer:
-      "Les propriétaires et démarcheurs professionnels peuvent cliquer sur « Déposer une annonce », puis sélectionner l'espace « Démarcheur & Bailleur ». Après validation de votre identité et de vos coordonnées, vous disposerez d'un espace dédié pour gérer votre portefeuille de chambres autour des universités du Bénin.",
+      "Les propriétaires et démarcheurs professionnels peuvent cliquer sur « Déposer une annonce », puis sélectionner l'espace « Démarcheur et Bailleur ». Après validation de votre identité et de vos coordonnées, vous disposerez d'un espace dédié pour gérer votre portefeuille de chambres autour des universités du Bénin.",
   },
   {
     id: 'depot-4',

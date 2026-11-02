@@ -67,7 +67,7 @@ export const HistoriqueAchats: React.FC<HistoriqueAchatsProps> = ({ transactions
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-50/80 border-b border-slate-100">
-                                <th className="px-4 py-2.5 text-[10px] uppercase tracking-wider font-bold text-slate-500">Date & Heure</th>
+                                <th className="px-4 py-2.5 text-[10px] uppercase tracking-wider font-bold text-slate-500">Date et Heure</th>
                                 <th className="px-4 py-2.5 text-[10px] uppercase tracking-wider font-bold text-slate-500">Type</th>
                                 <th className="px-4 py-2.5 text-[10px] uppercase tracking-wider font-bold text-slate-500">Motif de l'opération</th>
                                 <th className="px-4 py-2.5 text-[10px] uppercase tracking-wider font-bold text-slate-500 text-right">Variation</th>

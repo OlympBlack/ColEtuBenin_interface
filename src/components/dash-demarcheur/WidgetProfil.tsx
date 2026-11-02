@@ -89,7 +89,7 @@ export const WidgetProfil: React.FC<WidgetProfilProps> = ({ session, onUpdate })
                             </div>
                         </div>
                         <button className="w-full flex items-center justify-center gap-1.5 p-2.5 rounded-lg border border-dashed border-slate-300 text-slate-600 hover:border-slate-900 hover:text-slate-900 transition-colors font-medium text-xs">
-                            <Lock size={13} /> Sécurité & Mot de passe
+                            <Lock size={13} /> Sécurité et Mot de passe
                         </button>
                     </div>
                 </div>

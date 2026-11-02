@@ -61,7 +61,7 @@ const DEFAULT_FORM: FormState = {
   fallback_count: 20,
   description: 'Chambre autonome tout confort à proximité du campus',
   hero_description: 'Chambre autonome et sécurisée, idéale pour les étudiants.',
-  features: 'Douche & WC internes, Compteur prépayé, Forage / SONEB, Cour clôturée',
+  features: 'Douche et WC internes, Compteur prépayé, Forage / SONEB, Cour clôturée',
   ordre: 1,
   is_active: true,
   image_url_text: '',
@@ -421,9 +421,9 @@ export const GestionCollections: React.FC<GestionCollectionsProps> = ({ session,
               <thead className="bg-slate-50/90 text-slate-600 font-bold uppercase tracking-wider border-b border-slate-200">
                 <tr>
                   <th className="py-3 px-3.5 border-r border-slate-200/80">Collection</th>
-                  <th className="py-3 px-3.5 border-r border-slate-200/80">Type lié & Propriétés</th>
+                  <th className="py-3 px-3.5 border-r border-slate-200/80">Type lié et Propriétés</th>
                   <th className="py-3 px-3.5 border-r border-slate-200/80">Fourchette de prix</th>
-                  <th className="py-3 px-3.5 border-r border-slate-200/80">Ordre & Statut</th>
+                  <th className="py-3 px-3.5 border-r border-slate-200/80">Ordre et Statut</th>
                   <th className="py-3 px-3.5 text-right w-48">Actions</th>
                 </tr>
               </thead>
@@ -619,7 +619,7 @@ export const GestionCollections: React.FC<GestionCollectionsProps> = ({ session,
                     <option value="RESIDENCE">Résidences universitaires</option>
                     <option value="CLIMATISEE">Chambres climatisées</option>
                     <option value="PROCHE_CAMPUS">Chambres proches campus</option>
-                    <option value="CONCESSION">Concessions & Maisons</option>
+                    <option value="CONCESSION">Concessions et Maisons</option>
                   </select>
                 </div>
 

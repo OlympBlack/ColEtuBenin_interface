@@ -22,7 +22,7 @@ export const WidgetCredits: React.FC<WidgetCreditsProps> = ({ portefeuille, onBu
                         <CreditCard size={18} />
                     </div>
                     <div className="min-w-0">
-                        <h3 className="truncate font-bold text-slate-900 text-sm">Portefeuille & Crédits</h3>
+                        <h3 className="truncate font-bold text-slate-900 text-sm">Portefeuille et Crédits</h3>
                         <p className="text-[11px] text-slate-500">Quota de publication disponible</p>
                     </div>
                 </div>

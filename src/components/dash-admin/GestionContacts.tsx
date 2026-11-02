@@ -169,7 +169,7 @@ export const GestionContacts: React.FC<GestionContactsProps> = ({
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
             <Mail className="w-7 h-7 text-blue-600" />
-            <span>Messages & Support Utilisateurs</span>
+            <span>Messages et Support Utilisateurs</span>
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Gérez toutes les demandes d’assistance, questions et partenariats envoyés via le formulaire de contact.
@@ -277,9 +277,9 @@ export const GestionContacts: React.FC<GestionContactsProps> = ({
             <table className="w-full text-left text-xs border-collapse">
               <thead className="bg-slate-50/90 text-slate-600 font-bold uppercase tracking-wider border-b border-slate-200">
                 <tr>
-                  <th className="py-3 px-3.5 border-r border-slate-200/80 w-36">Statut & Date</th>
+                  <th className="py-3 px-3.5 border-r border-slate-200/80 w-36">Statut et Date</th>
                   <th className="py-3 px-3.5 border-r border-slate-200/80 w-52">Expéditeur</th>
-                  <th className="py-3 px-3.5 border-r border-slate-200/80 min-w-[260px]">Sujet & Message</th>
+                  <th className="py-3 px-3.5 border-r border-slate-200/80 min-w-[260px]">Sujet et Message</th>
                   <th className="py-3 px-3.5 text-right w-36">Actions</th>
                 </tr>
               </thead>

@@ -218,7 +218,7 @@ export function AuthorProfileModal({
             <div className="mb-5">
               <h4 className="mb-3 flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-[0.08em] text-slate-400">
                 <UiIcon name={isStudent ? 'document' : isDemarcheur ? 'briefcase' : 'store'} className="h-3.5 w-3.5" />
-                <span>{isStudent ? 'Cursus & établissement' : isDemarcheur ? 'Activité professionnelle' : 'Informations boutique'}</span>
+                <span>{isStudent ? 'Cursus et établissement' : isDemarcheur ? 'Activité professionnelle' : 'Informations boutique'}</span>
               </h4>
 
               <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
@@ -251,7 +251,7 @@ export function AuthorProfileModal({
             <div>
               <h4 className="mb-3 flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-[0.08em] text-slate-400">
                 <UiIcon name="shield-check" className="h-3.5 w-3.5" />
-                <span>Style de vie & préférences</span>
+                <span>Style de vie et préférences</span>
               </h4>
 
               {preferences.length > 0 ? (

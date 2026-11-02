@@ -164,12 +164,20 @@ export const DashboardDemarcheur: React.FC<DashboardDemarcheurProps> = ({
 
             case 'messagerie':
                 return (
-                    <div className="p-8 text-center bg-white rounded-xl border border-slate-200/90 shadow-xs">
-                        <div className="w-10 h-10 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                            <UiIcon name="messages" className="w-5 h-5" />
+                    <div className="p-8 text-center bg-white rounded-xl border border-slate-200/90 shadow-xs max-w-lg mx-auto my-6 animate-in fade-in duration-300">
+                        <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                            <UiIcon name="messages" className="w-6 h-6" />
                         </div>
-                        <h3 className="text-sm font-bold text-slate-900 mb-1">Messagerie</h3>
-                        <p className="text-xs text-slate-500">Utilisez l'icône de messagerie en haut de l'écran pour accéder à vos conversations.</p>
+                        <h3 className="text-base font-bold text-slate-900 mb-1">Messagerie</h3>
+                        <p className="text-xs text-slate-500 mb-4">Échangez en direct avec les étudiants et clients intéressés par vos logements.</p>
+                        <button
+                            type="button"
+                            onClick={() => window.dispatchEvent(new CustomEvent('open-messenger'))}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition cursor-pointer shadow-xs"
+                        >
+                            <UiIcon name="messages" className="w-4 h-4" />
+                            Ouvrir les conversations
+                        </button>
                     </div>
                 );
 
@@ -194,7 +202,7 @@ export const DashboardDemarcheur: React.FC<DashboardDemarcheurProps> = ({
                             status={session.user.statut_verification}
                             documentsCount={session.user.documents_identite?.length ?? 0}
                             adminComment={session.user.commentaire_admin}
-                            onUploadClick={() => { }}
+                            onUploadClick={() => { window.location.hash = '#/dashboard/demarcheur?tab=preferences' }}
                         />
                     </div>
                 );

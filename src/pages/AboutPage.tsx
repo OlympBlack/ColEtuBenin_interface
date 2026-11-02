@@ -2,7 +2,7 @@ const EQUIPE = [
   {
     initiales: 'JG',
     nom: 'Jules Chrestain Gbassi',
-    role: 'Fondateur & coordinateur',
+    role: 'Fondateur et coordinateur',
     bio: "Étudiant à l'UAC, il porte le projet ColEtuBenin et anime la communauté des étudiants et démarcheurs des quatre campus publics du Bénin.",
   },
   {

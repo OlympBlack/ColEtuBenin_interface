@@ -94,7 +94,7 @@ export const PwaInstallPrompt: React.FC = () => {
                   marginTop: '2px',
                 }}
               >
-                Accès direct & messagerie instantanée
+                Accès direct et messagerie instantanée
               </div>
             </div>
           </div>

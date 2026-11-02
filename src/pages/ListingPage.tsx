@@ -68,7 +68,7 @@ export function ListingPage({ filters, onChangeFilters, onOpenFilters }: Listing
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white font-sans mb-3 text-center drop-shadow-md">
-            Logements Étudiants & <span style={{ color: '#a4c639' }}>Colocations</span>
+            Logements Étudiants et <span style={{ color: '#a4c639' }}>Colocations</span>
           </h1>
 
           <p className="max-w-2xl text-slate-200 text-sm sm:text-base leading-relaxed text-center drop-shadow-sm">

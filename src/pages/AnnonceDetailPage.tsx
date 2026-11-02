@@ -924,7 +924,7 @@ export function AnnonceDetailPage({
                   }}
                 >
                   <UiIcon name="user" />
-                  <span style={{ flex: 1 }}>Voir la fiche profil & préférences</span>
+                  <span style={{ flex: 1 }}>Voir la fiche profil et préférences</span>
                   <UiIcon name="chevron-right" />
                 </button>
               )}

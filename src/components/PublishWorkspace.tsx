@@ -931,7 +931,7 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
         {currentStep?.id === 'localisation' && (
           <>
             <div className="publish-form__header">
-              <h2 className="publish-form__section-title">Localisation & commodités</h2>
+              <h2 className="publish-form__section-title">Localisation et commodités</h2>
               <p className="publish-form__intro">
                 Précisez le quartier et les équipements pour aider les étudiants à situer le logement.
               </p>

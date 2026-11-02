@@ -20,7 +20,7 @@ export type AppRoute =
   | { name: 'verify'; path: '/verification-compte' }
   | { name: 'login'; path: '/connexion' }
   | { name: 'publish'; path: '/publier' }
-  | { name: 'dashboard'; path: string; role: UserRole }
+  | { name: 'dashboard'; path: string; role?: UserRole; query?: string }
   | { name: 'profile'; path: string }
   | { name: 'forfaits'; path: '/forfaits-publications' }
   | { name: 'contact'; path: '/contact' }
@@ -39,10 +39,7 @@ function readPath() {
   return hashValue ? (hashValue.startsWith('/') ? hashValue : `/${hashValue}`) : '/'
 }
 
-function resolveRole(value: string | undefined): UserRole {
-  if (isUserRole(value)) return value
-  return 'etudiant'
-}
+
 
 function parseRoute(path: string): AppRoute {
   // Supprime tout '#' résiduel ou espaces
@@ -119,7 +116,9 @@ function parseRoute(path: string): AppRoute {
   }
 
   if (segments[0] === 'dashboard') {
-    return { name: 'dashboard', path: normalized, role: resolveRole(segments[1]) }
+    const rawRole = segments[1] ? segments[1].split('?')[0] : undefined
+    const role = isUserRole(rawRole) ? rawRole : undefined
+    return { name: 'dashboard', path: normalized, role, query: rawQuery }
   }
 
   return { name: 'home', path: '/' }

@@ -341,7 +341,7 @@ export const GestionSignalements: React.FC<GestionSignalementsProps> = ({
             <table className="w-full text-left text-xs border-collapse">
               <thead className="bg-slate-50/90 text-slate-600 font-bold uppercase tracking-wider border-b border-slate-200">
                 <tr>
-                  <th className="py-3 px-3.5 border-r border-slate-200/80 w-40">Motif & Statut</th>
+                  <th className="py-3 px-3.5 border-r border-slate-200/80 w-40">Motif et Statut</th>
                   <th className="py-3 px-3.5 border-r border-slate-200/80 min-w-[240px]">Description</th>
                   <th className="py-3 px-3.5 border-r border-slate-200/80 w-48">Signaleur</th>
                   <th className="py-3 px-3.5 border-r border-slate-200/80 w-56">Annonce concernée</th>

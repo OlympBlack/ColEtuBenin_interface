@@ -282,7 +282,7 @@ export function RegisterFlow({
                     href="#/inscription-pro"
                     className="shrink-0 w-full sm:w-auto px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition-all shadow-xs text-center flex items-center justify-center gap-1.5"
                   >
-                    <span>Espace Pro & Boutiques</span>
+                    <span>Espace Pro et Boutiques</span>
                     <span>→</span>
                   </a>
                 </div>
@@ -727,7 +727,7 @@ export function RegisterFlow({
             </a>
             <span className="hidden sm:inline text-slate-300">·</span>
             <a href="#/inscription-pro" className="text-emerald-700 font-bold hover:underline">
-              Espace Pro & Boutiques
+              Espace Pro et Boutiques
             </a>
           </div>
         </div>

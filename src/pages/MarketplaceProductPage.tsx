@@ -33,7 +33,7 @@ const MOCK_PRODUCTS = [
         description: 'Transformez votre espace de travail avec ce clavier mécanique ergonomique. Frappe silencieuse et retour tactile ultra-satisfaisant. Customisez chaque touche selon vos envies.',
         specs: [
             { label: 'Switches', value: 'Cherry MX Red (Silencieux)' },
-            { label: 'Connexion', value: 'Bluetooth & Filaire USB-C' },
+            { label: 'Connexion', value: 'Bluetooth et Filaire USB-C' },
             { label: 'Rétroéclairage', value: 'RGB 16.8 millions de couleurs' },
             { label: 'Disposition', value: 'AZERTY FR' }
         ]

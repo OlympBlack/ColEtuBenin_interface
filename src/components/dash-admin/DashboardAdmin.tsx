@@ -600,7 +600,7 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
                   <thead className="bg-slate-50/90 text-slate-600 font-bold uppercase tracking-wider border-b border-slate-200">
                     <tr>
                       <th className="py-3 px-3.5 border-r border-slate-200/80">Utilisateur</th>
-                      <th className="py-3 px-3.5 border-r border-slate-200/80">Rôle & Contact</th>
+                      <th className="py-3 px-3.5 border-r border-slate-200/80">Rôle et Contact</th>
                       <th className="py-3 px-3.5 border-r border-slate-200/80">Pièce d'identité</th>
                       <th className="py-3 px-3.5 border-r border-slate-200/80">Statut</th>
                       <th className="py-3 px-3.5 text-right w-64">Actions</th>
@@ -1134,7 +1134,7 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
         <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
             <div>
-              <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Finances & Recettes de la Plateforme</h2>
+              <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Finances et Recettes de la Plateforme</h2>
               <p className="text-xs text-slate-500 mt-1">Suivi des achats de forfaits de publication par les démarcheurs.</p>
             </div>
             <div className="text-right">
