@@ -135,37 +135,15 @@ export function BlogPostPage({ slug }: BlogPostPageProps) {
   if (!article) {
     return (
       <>
-        <div className="page-heading header-text">
-          <div className="container">
-            <div className="row">
-              <div className="col-md-12">
-                <h1>{ARTICLE_INCONNUE.titre}</h1>
-                <span>{ARTICLE_INCONNUE.sousTitre}</span>
-                <nav aria-label="Fil d'Ariane" className="mt-3">
-                  <ol className="flex flex-wrap items-center justify-center gap-2 list-none p-0 m-0 text-sm text-white/80">
-                    <li>
-                      <a href="#/" className="hover:text-white">
-                        Accueil
-                      </a>
-                    </li>
-                    <li aria-hidden="true">
-                      <i className="fa fa-angle-right"></i>
-                    </li>
-                    <li>
-                      <a href="#/blog" className="hover:text-white">
-                        Blog
-                      </a>
-                    </li>
-                    <li aria-hidden="true">
-                      <i className="fa fa-angle-right"></i>
-                    </li>
-                    <li className="font-semibold text-white">Article introuvable</li>
-                  </ol>
-                </nav>
-              </div>
-            </div>
-          </div>
-        </div>
+        <PageHero
+          title={ARTICLE_INCONNUE.titre}
+          subtitle={ARTICLE_INCONNUE.sousTitre}
+          breadcrumbs={[
+            { label: 'Accueil', href: '#/' },
+            { label: 'Blog', href: '#/blog' },
+            { label: 'Article introuvable' },
+          ]}
+        />
 
         <div className="more-info about-info">
           <div className="container">
