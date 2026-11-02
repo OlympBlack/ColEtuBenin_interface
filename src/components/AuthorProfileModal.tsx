@@ -69,7 +69,7 @@ export function AuthorProfileModal({
   const fullName =
     [user.prenoms, user.name].filter(Boolean).join(' ').trim() ||
     (isBoutique && profil?.nom_boutique) ||
-    `${roleLabel} ColEtuBenin`
+    `${roleLabel} ColoCampus`
   const initial = (user.prenoms?.[0] || user.name?.[0] || roleLabel[0] || 'C').toUpperCase()
   const avatarSrc = user.photo_profil || (isBoutique ? profil?.logo_url : null)
 
@@ -79,7 +79,7 @@ export function AuthorProfileModal({
       ? profil?.nom_agence || profil?.zone_activite || 'Professionnel de l’immobilier'
       : isBoutique
         ? profil?.nom_boutique || profil?.categorie || 'Boutique partenaire'
-        : 'Communauté ColEtuBenin'
+        : 'Communauté ColoCampus'
 
   const studentItems: InfoItem[] = [
     {
@@ -204,7 +204,7 @@ export function AuthorProfileModal({
             }`}
           >
             <UiIcon name={isVerified ? 'shield-check' : 'shield'} className="h-3.5 w-3.5" />
-            <span>{isVerified ? `${roleLabel} vérifié(e)` : `${roleLabel} ColEtuBenin`}</span>
+            <span>{isVerified ? `${roleLabel} vérifié(e)` : `${roleLabel} ColoCampus`}</span>
           </div>
 
           <div className="mt-1.5 flex items-center gap-1.5 text-[13px] text-slate-500">

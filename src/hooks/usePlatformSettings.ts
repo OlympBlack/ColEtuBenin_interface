@@ -3,9 +3,9 @@ import { fetchPlatformSettings, type PlatformSettings } from '../services/api'
 
 export const DEFAULT_PLATFORM_SETTINGS: PlatformSettings = {
   id: 1,
-  nom_plateforme: 'ColEtuBenin',
+  nom_plateforme: 'ColoCampus',
   slogan: 'La colocation pour les étudiants du Bénin',
-  description: 'ColEtuBenin met en relation étudiants, bailleurs et démarcheurs autour des grandes universités publiques du Bénin : UAC, UNA, UNSTIM et UP. Trouvez ou proposez facilement une chambre ou une colocation près de votre campus.',
+  description: 'ColoCampus met en relation étudiants, bailleurs et démarcheurs autour des grandes universités publiques du Bénin : UAC, UNA, UNSTIM et UP. Trouvez ou proposez facilement une chambre ou une colocation près de votre campus.',
   logo_url: '/assets/images/logo_colcampus.png',
   campus_localisation: 'Campus UAC, UNA, UNSTIM & UP • Bénin',
   telephone: '+229 01 54 47 00 02',
@@ -15,7 +15,7 @@ export const DEFAULT_PLATFORM_SETTINGS: PlatformSettings = {
   signature_auteur: 'GBASSI Jules-christ',
   signature_url: 'https://juleschrist-portfolio.vercel.app/',
   signature_texte: 'Conçu & développé par',
-  copyright_texte: 'ColEtuBenin. Tous droits réservés.',
+  copyright_texte: 'ColoCampus. Tous droits réservés.',
   kkiapay_public_key: 'aa4b4f9052d511f18d492b2bdfbe5c62',
   kkiapay_sandbox: true,
 }

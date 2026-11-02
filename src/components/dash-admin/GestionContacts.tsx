@@ -69,7 +69,7 @@ export const GestionContacts: React.FC<GestionContactsProps> = ({
         onToastRef.current?.({
           tone: 'info',
           title: '💬 Nouveau message de contact reçu !',
-          message: 'Un utilisateur a envoyé un message au support ColEtuBenin.',
+          message: 'Un utilisateur a envoyé un message au support ColoCampus.',
         })
       }
 

@@ -106,8 +106,8 @@ export function ProRegisterFlow({
             </svg>
             <span>Retour</span>
           </a>
-          <a href="#/" className="inline-flex items-center hover:opacity-90 transition-opacity" aria-label="Accueil ColEtuBenin">
-            <img src="/assets/images/logo_colcampus.png" alt="Logo ColEtuBenin" className="h-10 sm:h-12 lg:h-14 max-w-[240px] sm:max-w-[280px] w-auto object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.3)]" />
+          <a href="#/" className="inline-flex items-center hover:opacity-90 transition-opacity" aria-label="Accueil ColoCampus">
+            <img src="/assets/images/logo_colcampus.png" alt="Logo ColoCampus" className="h-10 sm:h-12 lg:h-14 max-w-[240px] sm:max-w-[280px] w-auto object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.3)]" />
           </a>
         </div>
 
@@ -121,7 +121,7 @@ export function ProRegisterFlow({
         </div>
 
         <div className="relative z-10 text-xs text-green-200/80">
-          <span>© {new Date().getFullYear()} ColEtuBenin Pro</span>
+          <span>© {new Date().getFullYear()} ColoCampus Pro</span>
         </div>
       </div>
 
@@ -135,8 +135,8 @@ export function ProRegisterFlow({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
             </a>
-            <a href="#/" className="inline-flex items-center" aria-label="Accueil ColEtuBenin">
-              <img src="/assets/images/logo_colcampus_dark.png" alt="Logo ColEtuBenin" className="h-8 sm:h-9 max-w-[170px] w-auto object-contain" />
+            <a href="#/" className="inline-flex items-center" aria-label="Accueil ColoCampus">
+              <img src="/assets/images/logo_colcampus_dark.png" alt="Logo ColoCampus" className="h-8 sm:h-9 max-w-[170px] w-auto object-contain" />
             </a>
           </div>
           <a href="#/connexion" className="text-xs font-semibold text-green-700 bg-green-50 px-3 py-1.5 rounded-lg hover:bg-green-100 transition-colors">

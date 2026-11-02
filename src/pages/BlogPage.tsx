@@ -1,4 +1,5 @@
 import type { FormEvent } from 'react'
+import { PageHero } from '../components/PageHero'
 
 interface BlogPostMeta {
   slug: string
@@ -16,7 +17,7 @@ const ARTICLES: BlogPostMeta[] = [
   {
     slug: 'trouver-chambre-etudiante-campus-benin',
     titre: 'Comment trouver une chambre étudiante près de son campus sans se faire avoir ?',
-    auteur: 'Rédaction ColEtuBenin',
+    auteur: 'Rédaction ColoCampus',
     date: '12.10.2026',
     commentaires: 8,
     categorie: 'Logement et Campus',
@@ -28,7 +29,7 @@ const ARTICLES: BlogPostMeta[] = [
   {
     slug: 'vivre-en-colocation-campus-avantages-defis',
     titre: "Vivre en colocation sur son campus : avantages, défis et conseils pratiques",
-    auteur: 'Rédaction ColEtuBenin',
+    auteur: 'Rédaction ColoCampus',
     date: '28.09.2026',
     commentaires: 5,
     categorie: 'Vie en Colocation',
@@ -39,8 +40,8 @@ const ARTICLES: BlogPostMeta[] = [
   },
   {
     slug: 'deposer-annonce-chambre-efficace',
-    titre: "Déposer une annonce de chambre efficace : le guide ColEtuBenin",
-    auteur: 'Rédaction ColEtuBenin',
+    titre: "Déposer une annonce de chambre efficace : le guide ColoCampus",
+    auteur: 'Rédaction ColoCampus',
     date: '05.09.2026',
     commentaires: 12,
     categorie: 'Conseils Binôme',
@@ -59,29 +60,14 @@ export function BlogPage() {
   return (
     <>
       {/* ── Bannière de page ── */}
-      <div className="page-heading header-text">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
-              <h1>Lisez notre blog</h1>
-              <span>Conseils logement et vie étudiante sur les campus du Bénin</span>
-              <nav aria-label="Fil d'Ariane" className="mt-3">
-                <ol className="flex flex-wrap items-center justify-center gap-2 list-none p-0 m-0 text-sm text-white/80">
-                  <li>
-                    <a href="#/" className="hover:text-white">
-                      Accueil
-                    </a>
-                  </li>
-                  <li aria-hidden="true">
-                    <i className="fa fa-angle-right"></i>
-                  </li>
-                  <li className="font-semibold text-white">Blog</li>
-                </ol>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHero
+        title="Lisez notre blog"
+        subtitle="Conseils logement et vie étudiante sur les campus du Bénin"
+        breadcrumbs={[
+          { label: 'Accueil', href: '#/' },
+          { label: 'Blog' },
+        ]}
+      />
 
       {/* ── Articles + sidebar ── */}
       <div className="single-services">

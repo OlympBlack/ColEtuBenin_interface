@@ -404,7 +404,7 @@ export function AvisFormModal({ isOpen, onClose, session, initial, onSaved, onTo
             </span>
             <span>
               Votre nom et votre photo peuvent apparaitre sur l'avis, mais <strong>votre telephone et votre email restent prives</strong>.
-              Les demarcheurs vous contactent uniquement via la messagerie securisee ColEtuBenin.
+              Les demarcheurs vous contactent uniquement via la messagerie securisee ColoCampus.
             </span>
           </div>
 

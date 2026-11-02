@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { PageHero } from '../components/PageHero'
 
 interface BlogPostPageProps {
   slug: string
@@ -20,7 +21,7 @@ const ARTICLES: BlogPost[] = [
   {
     slug: 'trouver-chambre-etudiante-campus-benin',
     titre: 'Comment trouver une chambre étudiante près de son campus sans se faire avoir ?',
-    auteur: 'Rédaction ColEtuBenin',
+    auteur: 'Rédaction ColoCampus',
     date: '12.10.2026',
     image: '/assets/images/blog/blog_campus_etudiants.jpg',
     imageAlt: "Recherche d'une chambre étudiante près d'un campus au Bénin",
@@ -31,7 +32,7 @@ const ARTICLES: BlogPost[] = [
       },
       {
         type: 'p',
-        text: "Après avoir accompagné des centaines d'étudiants dans leurs recherches, voici la méthode que nous recommandons sur ColEtuBenin pour sécuriser votre chambre, étape par étape, quel que soit votre campus.",
+        text: "Après avoir accompagné des centaines d'étudiants dans leurs recherches, voici la méthode que nous recommandons sur ColoCampus pour sécuriser votre chambre, étape par étape, quel que soit votre campus.",
       },
       { type: 'h4', text: 'Étape 1 : définissez votre budget réel, tout compris' },
       {
@@ -41,7 +42,7 @@ const ARTICLES: BlogPost[] = [
       { type: 'h4', text: 'Étape 2 : méfiez-vous des avances d’argent' },
       {
         type: 'p',
-        text: "Règle absolue : ne versez jamais d'argent avant d'avoir vu la chambre, rencontré le propriétaire ou le démarcheur certifié, et signé un simple accord écrit (même un reçu manuscrit avec les parties et le montant). Les annonces qui demandent un « frais de dossier » par téléphone avant toute visite sont presque toujours des arnaques. Sur ColEtuBenin, chaque annonce suspecte peut être signalée en un clic et notre modération la retire en moins de 24 heures.",
+        text: "Règle absolue : ne versez jamais d'argent avant d'avoir vu la chambre, rencontré le propriétaire ou le démarcheur certifié, et signé un simple accord écrit (même un reçu manuscrit avec les parties et le montant). Les annonces qui demandent un « frais de dossier » par téléphone avant toute visite sont presque toujours des arnaques. Sur ColoCampus, chaque annonce suspecte peut être signalée en un clic et notre modération la retire en moins de 24 heures.",
       },
       { type: 'h4', text: 'Étape 3 : vérifiez le démarcheur et les avis' },
       {
@@ -57,7 +58,7 @@ const ARTICLES: BlogPost[] = [
   {
     slug: 'vivre-en-colocation-campus-avantages-defis',
     titre: "Vivre en colocation sur son campus : avantages, défis et conseils pratiques",
-    auteur: 'Rédaction ColEtuBenin',
+    auteur: 'Rédaction ColoCampus',
     date: '28.09.2026',
     image: '/assets/images/blog/blog_colocation_etudiants.jpg',
     imageAlt: 'Étudiants partageant une colocation près du campus',
@@ -79,7 +80,7 @@ const ARTICLES: BlogPost[] = [
       { type: 'h4', text: 'Nos conseils pour une colocation qui dure' },
       {
         type: 'p',
-        text: "Avant de signer, discutez et écrivez un mini-règlement intérieur : montant du loyer par personne, date de paiement mensuel, répartition des charges, règles pour les visiteurs et le ménage. Choisissez vos colocataires par compatibilité de mode de vie, pas seulement par commodité. Et surtout, privilégiez les logements vérifiés sur une plateforme comme ColEtuBenin, où les annonces reflètent la réalité du bien visité.",
+        text: "Avant de signer, discutez et écrivez un mini-règlement intérieur : montant du loyer par personne, date de paiement mensuel, répartition des charges, règles pour les visiteurs et le ménage. Choisissez vos colocataires par compatibilité de mode de vie, pas seulement par commodité. Et surtout, privilégiez les logements vérifiés sur une plateforme comme ColoCampus, où les annonces reflètent la réalité du bien visité.",
       },
       {
         type: 'p',
@@ -89,15 +90,15 @@ const ARTICLES: BlogPost[] = [
   },
   {
     slug: 'deposer-annonce-chambre-efficace',
-    titre: "Déposer une annonce de chambre efficace : le guide ColEtuBenin",
-    auteur: 'Rédaction ColEtuBenin',
+    titre: "Déposer une annonce de chambre efficace : le guide ColoCampus",
+    auteur: 'Rédaction ColoCampus',
     date: '05.09.2026',
     image: '/assets/images/blog/blog_publier_annonce.jpg',
-    imageAlt: 'Annonce de chambre bien présentée sur ColEtuBenin',
+    imageAlt: 'Annonce de chambre bien présentée sur ColoCampus',
     corps: [
       {
         type: 'p',
-        text: "Vous êtes propriétaire ou démarcheur et vous souhaitez louer une chambre autour d'un campus universitaire ? Sur ColEtuBenin, les annonces qui reçoivent le plus de demandes ne sont pas nécessairement les moins chères : ce sont les mieux présentées. Voici comment rédiger une annonce qui inspire confiance et génère des contacts sérieux.",
+        text: "Vous êtes propriétaire ou démarcheur et vous souhaitez louer une chambre autour d'un campus universitaire ? Sur ColoCampus, les annonces qui reçoivent le plus de demandes ne sont pas nécessairement les moins chères : ce sont les mieux présentées. Voici comment rédiger une annonce qui inspire confiance et génère des contacts sérieux.",
       },
       { type: 'h4', text: 'Des photos honnêtes et bien éclairées' },
       {
@@ -116,7 +117,7 @@ const ARTICLES: BlogPost[] = [
       },
       {
         type: 'p',
-        text: "Une fois votre annonce rédigée, publiez-la sur ColEtuBenin : elle sera vérifiée par notre modération avant la mise en ligne, puis mise en avant auprès des étudiants qui recherchent dans votre quartier. Comptez moins de 24 heures pour la validation, et vous pourrez suivre les demandes directement depuis votre espace démarcheur.",
+        text: "Une fois votre annonce rédigée, publiez-la sur ColoCampus : elle sera vérifiée par notre modération avant la mise en ligne, puis mise en avant auprès des étudiants qui recherchent dans votre quartier. Comptez moins de 24 heures pour la validation, et vous pourrez suivre les demandes directement depuis votre espace démarcheur.",
       },
     ],
   },
@@ -124,7 +125,7 @@ const ARTICLES: BlogPost[] = [
 
 const ARTICLE_INCONNUE = {
   titre: 'Article introuvable',
-  sousTitre: "Le blog de ColEtuBenin",
+  sousTitre: "Le blog de ColoCampus",
 }
 
 export function BlogPostPage({ slug }: BlogPostPageProps) {
@@ -188,40 +189,15 @@ export function BlogPostPage({ slug }: BlogPostPageProps) {
   return (
     <>
       {/* ── Bannière de page ── */}
-      <div className="page-heading header-text">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
-              <h1>{article.titre}</h1>
-              <span>
-                <i className="fa fa-user"></i> {article.auteur} &nbsp;|&nbsp; <i className="fa fa-calendar"></i>{' '}
-                {article.date}
-              </span>
-              <nav aria-label="Fil d'Ariane" className="mt-3">
-                <ol className="flex flex-wrap items-center justify-center gap-2 list-none p-0 m-0 text-sm text-white/80">
-                  <li>
-                    <a href="#/" className="hover:text-white">
-                      Accueil
-                    </a>
-                  </li>
-                  <li aria-hidden="true">
-                    <i className="fa fa-angle-right"></i>
-                  </li>
-                  <li>
-                    <a href="#/blog" className="hover:text-white">
-                      Blog
-                    </a>
-                  </li>
-                  <li aria-hidden="true">
-                    <i className="fa fa-angle-right"></i>
-                  </li>
-                  <li className="font-semibold text-white">Article</li>
-                </ol>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHero
+        title={article.titre}
+        subtitle={`${article.auteur} | ${article.date}`}
+        breadcrumbs={[
+          { label: 'Accueil', href: '#/' },
+          { label: 'Blog', href: '#/blog' },
+          { label: 'Article' },
+        ]}
+      />
 
       {/* ── Contenu de l'article ── */}
       <div className="more-info about-info">

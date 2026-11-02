@@ -28,7 +28,7 @@ const DEMO_TESTIMONIALS = [
     name: 'Grâce Ahouandjinou',
     role: 'Étudiante en L2 – IFRI',
     quote:
-      "« Grâce à ColEtuBenin, j'ai trouvé une chambre à Zogbadjè, près de l'UAC, en trois jours, sans jamais avancer le moindre franc à un inconnu. Les profils vérifiés, ça change tout. »",
+      "« Grâce à ColoCampus, j'ai trouvé une chambre à Zogbadjè, près de l'UAC, en trois jours, sans jamais avancer le moindre franc à un inconnu. Les profils vérifiés, ça change tout. »",
     avatar: '/assets/images/about-1-570x350.jpg',
   },
   {
@@ -49,7 +49,7 @@ const DEMO_TESTIMONIALS = [
     name: 'Prince Adjovi',
     role: 'Démarcheur partenaire – Parakou',
     quote:
-      "« Je publie mes chambres disponibles sur ColEtuBenin et je reçois directement des étudiants sérieux. Fini les allers-retours inutiles : les contacts arrivent déjà informés. »",
+      "« Je publie mes chambres disponibles sur ColoCampus et je reçois directement des étudiants sérieux. Fini les allers-retours inutiles : les contacts arrivent déjà informés. »",
     avatar: '/assets/images/blog/blog_publier_annonce.jpg',
   },
 ]
@@ -137,12 +137,12 @@ export function HomePage({ filters, onChangeFilters, onOpenFilters }: HomePagePr
           <div className="item item-1">
             <div className="img-fill">
               <div className="text-content">
-                <h6>ColEtuBenin - la colocation étudiante au Bénin</h6>
+                <h6>ColoCampus - la colocation étudiante au Bénin</h6>
                 <h4>
                   Trouvez votre chambre près de <br /> votre campus universitaire
                 </h4>
                 <p>
-                  Chambres vérifiées, places en colocation et binômes : ColEtuBenin regroupe toutes les offres de
+                  Chambres vérifiées, places en colocation et binômes : ColoCampus regroupe toutes les offres de
                   logement étudiant dans les 5 grandes villes universitaires du Bénin : Abomey-Calavi (UAC), Cotonou (facultés et écoles),
                   Parakou (UP), Abomey (UNSTIM) et Porto-Novo (UNA).
                 </p>
@@ -205,12 +205,12 @@ export function HomePage({ filters, onChangeFilters, onOpenFilters }: HomePagePr
           <div className="row align-items-center">
             <div className="col-lg-9 col-md-8">
               <h4 className="request-form-title">
-                Ce que ColEtuBenin apporte concrètement aux étudiants du Bénin
+                Ce que ColoCampus apporte concrètement aux étudiants du Bénin
               </h4>
               <p className="request-form-desc mb-0">
                 Se loger près de son campus ne doit plus être un parcours du combattant ni un piège financier.
                 À <strong>Abomey-Calavi</strong>, <strong>Cotonou</strong>, <strong>Parakou</strong>, <strong>Abomey</strong> et <strong>Porto-Novo</strong>,
-                ColEtuBenin élimine les faux démarcheurs et les frais de visite abusifs, divise vos dépenses par deux ou trois, et vous met en relation directe avec des propriétaires certifiés et des colocataires de confiance.
+                ColoCampus élimine les faux démarcheurs et les frais de visite abusifs, divise vos dépenses par deux ou trois, et vous met en relation directe avec des propriétaires certifiés et des colocataires de confiance.
               </p>
             </div>
             <div className="col-lg-3 col-md-4 text-md-right mt-3 mt-md-0">
@@ -300,7 +300,7 @@ export function HomePage({ filters, onChangeFilters, onOpenFilters }: HomePagePr
             <div className="col-md-12">
               <div className="section-heading">
                 <h2>
-                  Ils vivent la colocation <em>avec ColEtuBenin</em>
+                  Ils vivent la colocation <em>avec ColoCampus</em>
                 </h2>
                 <span>Ce que disent les étudiants des campus du Bénin</span>
                 <p className="mt-2 mb-0 text-xs italic opacity-70">Témoignages de démonstration</p>
@@ -329,7 +329,7 @@ export function HomePage({ filters, onChangeFilters, onOpenFilters }: HomePagePr
         <div className="container">
           <div className="section-heading" style={{ marginBottom: '40px' }}>
             <h2>
-              Le blog de <em>ColEtuBenin</em>
+              Le blog de <em>ColoCampus</em>
             </h2>
             <span>Conseils et actualités pour réussir votre vie étudiante sur votre campus</span>
           </div>
@@ -354,7 +354,7 @@ export function HomePage({ filters, onChangeFilters, onOpenFilters }: HomePagePr
                   <div className="blog-card-meta">
                     <span className="author">
                       <i className="fa fa-user-circle" />
-                      Équipe ColEtuBenin
+                      Équipe ColoCampus
                     </span>
                     <span>•</span>
                     <span>
@@ -397,7 +397,7 @@ export function HomePage({ filters, onChangeFilters, onOpenFilters }: HomePagePr
                 <h2>
                   Une question ? <em>Contactez-nous</em>
                 </h2>
-                <span>Notre équipe ColEtuBenin vous accompagne dans toutes vos démarches</span>
+                <span>Notre équipe ColoCampus vous accompagne dans toutes vos démarches</span>
               </div>
             </div>
             <div className="col-md-12 text-center">

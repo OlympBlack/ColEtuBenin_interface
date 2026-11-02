@@ -65,7 +65,7 @@ function getProduct(id: number) {
 
 function buildWhatsappContactUrl(phone: string, title: string) {
     const digits = (phone || '').replace(/[^\d]/g, '')
-    const text = encodeURIComponent(`Bonjour, je vous contacte concernant le produit [${title}] vu sur la marketplace ColEtuBenin.`)
+    const text = encodeURIComponent(`Bonjour, je vous contacte concernant le produit [${title}] vu sur la marketplace ColoCampus.`)
     return `https://wa.me/${digits}?text=${text}`
 }
 
@@ -91,7 +91,7 @@ export function MarketplaceProductPage({ productId, session, onToast }: { produc
         }, 800)
     }
 
-    // --- Modal Styles mimicking ColEtuBenin standard ---
+    // --- Modal Styles mimicking ColoCampus standard ---
     const M = {
         overlay: { position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', zIndex: 1000 } as const,
         modal: { width: '100%', maxWidth: 500, background: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, overflow: 'hidden', animation: 'hero-fade-up 0.3s cubic-bezier(0.2,0.8,0.2,1) both' } as const,
@@ -265,7 +265,7 @@ export function MarketplaceProductPage({ productId, session, onToast }: { produc
                                 </span>
                                 <div style={{ flex: 1 }}>
                                     <div style={M.optTitle}>Chat interne App</div>
-                                    <div style={M.optSub}>Discuter sans quitter ColEtuBenin</div>
+                                    <div style={M.optSub}>Discuter sans quitter ColoCampus</div>
                                 </div>
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#94A3B8' }}><polyline points="9 18 15 12 9 6" /></svg>
                             </button>

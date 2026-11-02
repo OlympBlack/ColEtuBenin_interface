@@ -39,7 +39,7 @@ function hasUnlockedVerifiedAccess(session: AuthSession | null) {
 function buildWhatsappContactUrl(phone: string, title: string) {
   const digits = (phone || '').replace(/[^\d]/g, '')
   const text = encodeURIComponent(
-    `Bonjour, je vous contacte sur ColEtuBenin au sujet de votre recherche de binôme : "${title}".`
+    `Bonjour, je vous contacte sur ColoCampus au sujet de votre recherche de binôme : "${title}".`
   )
   return `https://wa.me/${digits}?text=${text}`
 }
@@ -118,7 +118,7 @@ export function BinomeDetailPage({
     }
   }
 
-  const studentDisplayName = user.prenoms || user.name || 'Étudiant ColEtuBenin'
+  const studentDisplayName = user.prenoms || user.name || 'Étudiant ColoCampus'
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-['DM_Sans',sans-serif] pb-20">
@@ -415,7 +415,7 @@ export function BinomeDetailPage({
                   <Shield className="w-5 h-5 text-amber-600" />
                 </div>
                 <div>
-                  <div className="text-[10.5px] font-bold uppercase tracking-wider text-amber-700">Sécurité ColEtuBenin</div>
+                  <div className="text-[10.5px] font-bold uppercase tracking-wider text-amber-700">Sécurité ColoCampus</div>
                   <h3 className="font-bold text-slate-900 text-base">Certification requise</h3>
                 </div>
               </div>
@@ -531,7 +531,7 @@ export function BinomeDetailPage({
                   </div>
                   <div className="text-left">
                     <div className="font-semibold text-sm text-slate-900">
-                      Messagerie ColEtuBenin
+                      Messagerie ColoCampus
                     </div>
                     <div className="text-xs text-slate-500">Discussion interne sur la plateforme</div>
                   </div>

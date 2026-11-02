@@ -49,7 +49,7 @@ function getShopCategory(p: PubliciteBoutique) {
 }
 
 const WHATSAPP_MESSAGE = encodeURIComponent(
-  'Bonjour, je viens depuis la plateforme ColEtuBenin et je suis intéressé(e) par votre offre.'
+  'Bonjour, je viens depuis la plateforme ColoCampus et je suis intéressé(e) par votre offre.'
 )
 
 function buildWhatsAppUrl(lienAction: string): string | null {

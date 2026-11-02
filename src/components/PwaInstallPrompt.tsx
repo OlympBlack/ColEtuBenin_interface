@@ -45,7 +45,7 @@ export const PwaInstallPrompt: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
             <img
               src="/icons/icon-192x192.png"
-              alt="ColEtuBenin"
+              alt="ColoCampus"
               style={{
                 width: '44px',
                 height: '44px',
@@ -68,7 +68,7 @@ export const PwaInstallPrompt: React.FC = () => {
                   gap: '6px',
                 }}
               >
-                <span>Installer ColEtuBenin</span>
+                <span>Installer ColoCampus</span>
                 <span
                   style={{
                     fontSize: '10px',
@@ -204,7 +204,7 @@ export const PwaInstallPrompt: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <img
                   src="/icons/icon-192x192.png"
-                  alt="ColEtuBenin"
+                  alt="ColoCampus"
                   style={{ width: '40px', height: '40px', borderRadius: '10px' }}
                 />
                 <div>

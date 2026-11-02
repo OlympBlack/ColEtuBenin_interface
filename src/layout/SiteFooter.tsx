@@ -41,11 +41,11 @@ export function SiteFooter() {
               <a href="#/" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', marginBottom: '14px', textDecoration: 'none' }}>
                 <img
                   src="/assets/images/logo_colcampus.png"
-                  alt="ColEtuBenin"
+                  alt="ColoCampus"
                   style={{ height: '42px', width: 'auto', objectFit: 'contain' }}
                 />
                 <span style={{ fontSize: '22px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.3px' }}>
-                  Col<span style={{ color: '#a4c639' }}>Etu</span><span>Benin</span>
+                  Colo<span style={{ color: '#a4c639' }}>campus</span>
                 </span>
               </a>
               <h4>{settings.nom_plateforme}</h4>

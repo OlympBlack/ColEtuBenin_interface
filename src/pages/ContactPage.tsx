@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { submitContactMessage, type ContactMessageDraft } from '../services/api'
 import type { AuthSession } from '../types'
 import type { ToastDraft } from '../components/ToastViewport'
+import { PageHero } from '../components/PageHero'
 import { usePlatformSettings } from '../hooks/usePlatformSettings'
 
 interface ContactPageProps {
@@ -77,7 +78,7 @@ export function ContactPage({ session, onToast }: ContactPageProps) {
       onToast({
         tone: 'success',
         title: 'Message transmis avec succès',
-        message: "Notre équipe ColEtuBenin vous répondra dans les plus brefs délais.",
+        message: "Notre équipe ColoCampus vous répondra dans les plus brefs délais.",
       })
       setMessage('')
     } catch (err: any) {
@@ -95,29 +96,14 @@ export function ContactPage({ session, onToast }: ContactPageProps) {
   return (
     <>
       {/* ── Bannière de page ── */}
-      <div className="page-heading header-text">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
-              <h1>Contactez-nous</h1>
-              <span>Nous sommes à votre écoute sur les campus du Bénin</span>
-              <nav aria-label="Fil d'Ariane" className="mt-3">
-                <ol className="flex flex-wrap items-center justify-center gap-2 list-none p-0 m-0 text-sm text-white/80">
-                  <li>
-                    <a href="#/" className="hover:text-white">
-                      Accueil
-                    </a>
-                  </li>
-                  <li aria-hidden="true">
-                    <i className="fa fa-angle-right"></i>
-                  </li>
-                  <li className="font-semibold text-white">Contact</li>
-                </ol>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHero
+        title="Contactez-nous"
+        subtitle="Nous sommes à votre écoute sur les campus du Bénin"
+        breadcrumbs={[
+          { label: 'Accueil', href: '#/' },
+          { label: 'Contact' },
+        ]}
+      />
 
       {/* ── Coordonnées ── */}
       <div className="contact-information">
@@ -184,7 +170,7 @@ export function ContactPage({ session, onToast }: ContactPageProps) {
                     <i className="fa fa-check-circle" style={{ fontSize: 52, color: '#a4c639' }}></i>
                     <h3 className="mt-3">Message envoyé avec succès !</h3>
                     <p className="mt-2">
-                      Merci pour votre message. Notre équipe ColEtuBenin a bien reçu votre demande et vous contactera très
+                      Merci pour votre message. Notre équipe ColoCampus a bien reçu votre demande et vous contactera très
                       rapidement.
                     </p>
                     <button

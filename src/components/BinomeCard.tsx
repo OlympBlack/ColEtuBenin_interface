@@ -23,7 +23,7 @@ export function BinomeCard({ annonce, className = '' }: BinomeCardProps) {
   const school = profil?.etablissement || 'Campus'
   const filiere = profil?.filiere || ''
   const niveau = profil?.niveau || ''
-  const studentMeta = [filiere, school, niveau].filter(Boolean).join(' • ') || 'Étudiant ColEtuBenin'
+  const studentMeta = [filiere, school, niveau].filter(Boolean).join(' • ') || 'Étudiant ColoCampus'
 
   const roomTypeLabel = annonce.type_chambre
     ? formatRoomType(annonce.type_chambre)

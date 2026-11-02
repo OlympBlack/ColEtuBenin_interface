@@ -287,7 +287,7 @@ export function ReportModal({ isOpen, onClose, annonce, session, onToast }: Repo
               Signalement enregistré !
             </h3>
             <p style={{ margin: '8px auto 0', color: '#64748B', fontSize: 13.5, maxWidth: '380px', lineHeight: 1.5 }}>
-              Merci pour votre vigilance. L'équipe ColEtuBenin examine chaque signalement avec attention pour garantir un environnement sain et sécurisé.
+              Merci pour votre vigilance. L'équipe ColoCampus examine chaque signalement avec attention pour garantir un environnement sain et sécurisé.
             </p>
           </div>
         ) : (

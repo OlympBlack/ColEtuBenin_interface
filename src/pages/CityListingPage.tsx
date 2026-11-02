@@ -253,7 +253,7 @@ export function CityListingPage({ citySlug }: CityListingPageProps) {
               Explorer les autres villes universitaires du Bénin
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              ColEtuBenin couvre les 5 pôles universitaires majeurs du Bénin.
+              ColoCampus couvre les 5 pôles universitaires majeurs du Bénin.
             </p>
           </div>
 

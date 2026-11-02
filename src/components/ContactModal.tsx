@@ -82,7 +82,7 @@ export function ContactModal({ isOpen, onClose, session, onToast }: ContactModal
               <Mail size={20} color="#6f8d21" />
             </div>
             <div>
-              <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>Contacter l'équipe ColEtuBenin</h2>
+              <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>Contacter l'équipe ColoCampus</h2>
               <p style={{ margin: 0, fontSize: 12, color: '#64748b', marginTop: 2 }}>Nous sommes à votre écoute 7j/7</p>
             </div>
           </div>

@@ -1,3 +1,5 @@
+import { PageHero } from '../components/PageHero'
+
 const TEMOIGNAGES = [
   {
     initiales: 'KD',
@@ -18,7 +20,7 @@ const TEMOIGNAGES = [
     nom: 'Yacoub Sanni',
     role: 'Démarcheur certifié',
     citation:
-      "Publier mes chambres sur ColEtuBenin m'a permis de gagner un temps énorme. Les étudiants me contactent directement et les forfaits de publication sont très accessibles.",
+      "Publier mes chambres sur ColoCampus m'a permis de gagner un temps énorme. Les étudiants me contactent directement et les forfaits de publication sont très accessibles.",
   },
   {
     initiales: 'RB',
@@ -53,7 +55,7 @@ const TEMOIGNAGES = [
     nom: 'Grâce Nouatin',
     role: 'Étudiante en lettres, UAC',
     citation:
-      "L'interface est simple, tout est en français et les photos correspondent vraiment aux chambres. Je recommande ColEtuBenin à tous mes camarades de promotion.",
+      "L'interface est simple, tout est en français et les photos correspondent vraiment aux chambres. Je recommande ColoCampus à tous mes camarades de promotion.",
   },
 ]
 
@@ -61,29 +63,14 @@ export function TestimonialsPage() {
   return (
     <>
       {/* ── Bannière de page ── */}
-      <div className="page-heading header-text">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
-              <h1>Témoignages</h1>
-              <span>Ce que la communauté étudiante pense de ColEtuBenin</span>
-              <nav aria-label="Fil d'Ariane" className="mt-3">
-                <ol className="flex flex-wrap items-center justify-center gap-2 list-none p-0 m-0 text-sm text-white/80">
-                  <li>
-                    <a href="#/" className="hover:text-white">
-                      Accueil
-                    </a>
-                  </li>
-                  <li aria-hidden="true">
-                    <i className="fa fa-angle-right"></i>
-                  </li>
-                  <li className="font-semibold text-white">Témoignages</li>
-                </ol>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHero
+        title="Témoignages"
+        subtitle="Ce que la communauté étudiante pense de ColoCampus"
+        breadcrumbs={[
+          { label: 'Accueil', href: '#/' },
+          { label: 'Témoignages' },
+        ]}
+      />
 
       {/* ── Témoignages ── */}
       <div className="testimonials" style={{ margin: 0 }}>

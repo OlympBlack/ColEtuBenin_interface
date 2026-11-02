@@ -32,7 +32,7 @@ function hasUnlockedVerifiedAccess(session: AuthSession | null) {
 
 function buildWhatsappContactUrl(phone: string, title: string) {
   const digits = (phone || '').replace(/[^\d]/g, '')
-  const text = encodeURIComponent(`Bonjour, je vous contacte depuis ColEtuBenin au sujet de "${title}".`)
+  const text = encodeURIComponent(`Bonjour, je vous contacte depuis ColoCampus au sujet de "${title}".`)
   return `https://wa.me/${digits}?text=${text}`
 }
 
@@ -152,7 +152,7 @@ export function AnnonceDetailPage({
   const authorFullName =
     [currentAnnouncement.user.prenoms, currentAnnouncement.user.name].filter(Boolean).join(' ').trim() ||
     (isAuthorBoutique ? currentAnnouncement.user.profil?.nom_boutique : null) ||
-    'Annonceur ColEtuBenin'
+    'Annonceur ColoCampus'
   const authorInitial = (
     currentAnnouncement.user.prenoms?.[0] ||
     currentAnnouncement.user.name?.[0] ||
@@ -956,7 +956,7 @@ export function AnnonceDetailPage({
                   )}
                 </span>
                 <div>
-                  <div style={M.optTitle}>Chat interne ColEtuBenin</div>
+                  <div style={M.optTitle}>Chat interne ColoCampus</div>
                   <div style={M.optSub}>Ouvrir dans la messagerie sécurisée</div>
                 </div>
                 <UiIcon name="chevron-right" />
@@ -978,7 +978,7 @@ export function AnnonceDetailPage({
                 </div>
                 <div>
                   <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: '#B45309' }}>
-                    Sécurité des échanges ColEtuBenin
+                    Sécurité des échanges ColoCampus
                   </div>
                   <h3 style={{ margin: '2px 0 0', fontSize: 16.5, fontWeight: 800, color: '#78350F' }}>
                     Certification requise

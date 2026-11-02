@@ -489,11 +489,11 @@ export function SiteHeader({ route, session, onLogout, isLoggingOut }: SiteHeade
                       ? '/assets/images/logo_colcampus_icon_dark.png'
                       : '/assets/images/logo_colcampus_icon.png'
                   }
-                  alt="ColEtuBenin"
+                  alt="ColoCampus"
                   className="header-brand-logo"
                 />
                 <h2>
-                  Col<em>Etu</em><span className="brand-benin">Benin</span>
+                  Colo<span className="brand-benin">campus</span>
                 </h2>
                 <span className="header-brand-badge d-none d-xl-inline-block">
                   5 Villes • Bénin

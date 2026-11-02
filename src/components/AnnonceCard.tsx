@@ -13,7 +13,7 @@ interface AnnonceCardProps {
 }
 
 /**
- * Composant standardisé de carte d'annonce ColEtuBenin
+ * Composant standardisé de carte d'annonce ColoCampus
  * - Pour les quêtes de binôme (RECHERCHE_BINOME) : bascule sur le format de profil étudiant sans fausse image immobilière
  * - Pour les chambres et colocations : format avec image, prix, quartier et bouton
  */

@@ -7,6 +7,7 @@ import { AvisCard } from '../components/AvisCard'
 import { AvisFormModal } from '../components/AvisFormModal'
 import { UiIcon } from '../components/UiIcons'
 import type { ToastDraft } from '../components/ToastViewport'
+import { PageHero } from '../components/PageHero'
 
 interface AvisPageProps {
   session: AuthSession | null
@@ -142,7 +143,7 @@ export function AvisPage({ session, onToast }: AvisPageProps) {
       onToast({
         tone: 'success',
         title: 'Discussion ouverte',
-        message: 'Presentez votre offre a l etudiant dans la messagerie ColEtuBenin.',
+        message: 'Presentez votre offre a l etudiant dans la messagerie ColoCampus.',
       })
     } catch (err: any) {
       onToast({
@@ -201,27 +202,14 @@ export function AvisPage({ session, onToast }: AvisPageProps) {
 
   return (
     <>
-      <div className="page-heading header-text">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
-              <h1>Avis etudiants</h1>
-              <span>Je cherche une chambre : decrivez votre besoin, les demarcheurs vous contactent</span>
-              <nav aria-label="Fil d'Ariane" className="mt-3">
-                <ol className="flex flex-wrap items-center justify-center gap-2 list-none p-0 m-0 text-sm text-white/80">
-                  <li>
-                    <a href="#/" className="hover:text-white">Accueil</a>
-                  </li>
-                  <li aria-hidden="true">
-                    <i className="fa fa-angle-right"></i>
-                  </li>
-                  <li className="font-semibold text-white">Avis</li>
-                </ol>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHero
+        title="Avis etudiants"
+        subtitle="Je cherche une chambre : decrivez votre besoin, les demarcheurs vous contactent"
+        breadcrumbs={[
+          { label: 'Accueil', href: '#/' },
+          { label: 'Avis' },
+        ]}
+      />
 
       <div style={{ background: '#f8fafc', padding: '36px 0 64px' }}>
         <div className="container">
@@ -433,7 +421,7 @@ export function AvisPage({ session, onToast }: AvisPageProps) {
             </span>
             <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6, color: '#64748b' }}>
               <strong style={{ color: '#0f172a' }}>Conseil securite :</strong> ne versez jamais d acompte avant d avoir visite le logement
-              et verifie l identite du demarcheur. Toutes les discussions restent dans la messagerie ColEtuBenin.
+              et verifie l identite du demarcheur. Toutes les discussions restent dans la messagerie ColoCampus.
             </p>
           </div>
         </div>

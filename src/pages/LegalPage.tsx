@@ -1,4 +1,5 @@
 type LegalPageSlug = 'mentions-legales' | 'cgu' | 'politique-privee'
+import { PageHero } from '../components/PageHero'
 
 interface LegalPageProps {
   page: LegalPageSlug
@@ -16,15 +17,15 @@ const LEGAL_PAGES: Record<
   'mentions-legales': {
     eyebrow: 'Informations légales',
     title: 'Mentions légales',
-    intro: "Ces informations donnent un cadre minimum clair à l'exploitation de la plateforme ColEtuBenin.",
+    intro: "Ces informations donnent un cadre minimum clair à l'exploitation de la plateforme ColoCampus.",
     sections: [
       {
         title: 'Éditeur de la plateforme',
-        body: "ColEtuBenin est une plateforme web de mise en relation autour des chambres et colocations étudiantes sur les campus du Bénin : l'Université d'Abomey-Calavi (UAC), l'Université Nationale d'Agriculture (UNA) à Porto-Novo, l'Université Nationale des Sciences, Technologies, Ingénierie et Mathématiques (UNSTIM) à Abomey et l'Université de Parakou (UP). Le projet est en phase de développement et d'amélioration continue au sein de l'écosystème des universités publiques du pays.",
+        body: "ColoCampus est une plateforme web de mise en relation autour des chambres et colocations étudiantes sur les campus du Bénin : l'Université d'Abomey-Calavi (UAC), l'Université Nationale d'Agriculture (UNA) à Porto-Novo, l'Université Nationale des Sciences, Technologies, Ingénierie et Mathématiques (UNSTIM) à Abomey et l'Université de Parakou (UP). Le projet est en phase de développement et d'amélioration continue au sein de l'écosystème des universités publiques du pays.",
       },
       {
         title: 'Responsable de publication',
-        body: "Le responsable de publication est l'équipe porteuse du projet ColEtuBenin. Pour toute question, les utilisateurs peuvent utiliser les canaux de contact communiqués dans la plateforme.",
+        body: "Le responsable de publication est l'équipe porteuse du projet ColoCampus. Pour toute question, les utilisateurs peuvent utiliser les canaux de contact communiqués dans la plateforme.",
       },
       {
         title: 'Hébergement et disponibilité',
@@ -35,11 +36,11 @@ const LEGAL_PAGES: Record<
   cgu: {
     eyebrow: "Cadre d'utilisation",
     title: "Conditions Générales d'Utilisation",
-    intro: 'Les présentes CGU définissent les règles de base liées à l’utilisation de la plateforme ColEtuBenin.',
+    intro: 'Les présentes CGU définissent les règles de base liées à l’utilisation de la plateforme ColoCampus.',
     sections: [
       {
         title: 'Objet du service',
-        body: "ColEtuBenin permet la consultation d'annonces de logement étudiant, la mise en relation entre utilisateurs (étudiants, bailleurs, démarcheurs) et la diffusion de contenus promotionnels ou informatifs.",
+        body: "ColoCampus permet la consultation d'annonces de logement étudiant, la mise en relation entre utilisateurs (étudiants, bailleurs, démarcheurs) et la diffusion de contenus promotionnels ou informatifs.",
       },
       {
         title: 'Engagement des utilisateurs',
@@ -54,11 +55,11 @@ const LEGAL_PAGES: Record<
   'politique-privee': {
     eyebrow: 'Données personnelles',
     title: 'Politique privée',
-    intro: 'Cette politique résume l’usage des données personnelles de base nécessaires au fonctionnement de ColEtuBenin.',
+    intro: 'Cette politique résume l’usage des données personnelles de base nécessaires au fonctionnement de ColoCampus.',
     sections: [
       {
         title: 'Données collectées',
-        body: "Lors de l'inscription ou de l'utilisation du service, ColEtuBenin peut traiter des données telles que le nom, les prénoms, l'email, le téléphone et le rôle de l'utilisateur.",
+        body: "Lors de l'inscription ou de l'utilisation du service, ColoCampus peut traiter des données telles que le nom, les prénoms, l'email, le téléphone et le rôle de l'utilisateur.",
       },
       {
         title: 'Finalités',
@@ -78,29 +79,14 @@ export function LegalPage({ page }: LegalPageProps) {
   return (
     <>
       {/* ── Bannière de page ── */}
-      <div className="page-heading header-text">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12">
-              <h1>{content.title}</h1>
-              <span>{content.eyebrow}</span>
-              <nav aria-label="Fil d'Ariane" className="mt-3">
-                <ol className="flex flex-wrap items-center justify-center gap-2 list-none p-0 m-0 text-sm text-white/80">
-                  <li>
-                    <a href="#/" className="hover:text-white">
-                      Accueil
-                    </a>
-                  </li>
-                  <li aria-hidden="true">
-                    <i className="fa fa-angle-right"></i>
-                  </li>
-                  <li className="font-semibold text-white">{content.title}</li>
-                </ol>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHero
+        title={content.title}
+        subtitle={content.eyebrow}
+        breadcrumbs={[
+          { label: 'Accueil', href: '#/' },
+          { label: content.title },
+        ]}
+      />
 
       {/* ── Contenu légal ── */}
       <div className="more-info about-info">
@@ -108,7 +94,7 @@ export function LegalPage({ page }: LegalPageProps) {
           <div className="more-info-content">
             <div className="right-content">
               <span>{content.eyebrow}</span>
-              <h5>ColEtuBenin — {content.title}</h5>
+              <h5>ColoCampus — {content.title}</h5>
               <br />
               <p>{content.intro}</p>
               <br />

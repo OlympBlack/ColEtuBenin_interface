@@ -161,7 +161,7 @@ export const GestionParametres: React.FC<GestionParametresProps> = ({ token, onT
   }
 
   const handleReset = async () => {
-    if (!window.confirm('Voulez-vous réinitialiser tous les paramètres aux valeurs d’origine de ColEtuBenin ?')) {
+    if (!window.confirm('Voulez-vous réinitialiser tous les paramètres aux valeurs d’origine de ColoCampus ?')) {
       return
     }
 
@@ -338,7 +338,7 @@ export const GestionParametres: React.FC<GestionParametresProps> = ({ token, onT
                     required
                     value={nomPlateforme}
                     onChange={(e) => setNomPlateforme(e.target.value)}
-                    placeholder="Ex : ColEtuBenin"
+                    placeholder="Ex : ColoCampus"
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-slate-50/50 focus:bg-white"
                   />
                 </div>
@@ -532,7 +532,7 @@ export const GestionParametres: React.FC<GestionParametresProps> = ({ token, onT
                 type="text"
                 value={copyrightTexte}
                 onChange={(e) => setCopyrightTexte(e.target.value)}
-                placeholder="ColEtuBenin. Tous droits réservés."
+                placeholder="ColoCampus. Tous droits réservés."
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 bg-slate-50/50 focus:bg-white"
               />
             </div>

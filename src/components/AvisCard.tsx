@@ -26,7 +26,7 @@ function getInitials(avis: Avis) {
 }
 
 function getDisplayName(avis: Avis) {
-  return [avis.etudiant.prenoms, avis.etudiant.name].filter(Boolean).join(' ') || 'Etudiant ColEtuBenin'
+  return [avis.etudiant.prenoms, avis.etudiant.name].filter(Boolean).join(' ') || 'Etudiant ColoCampus'
 }
 
 function timeAgo(dateString: string | null) {
@@ -102,7 +102,7 @@ export function AvisCard({ avis, onContact, isContacting = false, compact = fals
             </span>
             {avis.etudiant.is_verified ? (
               <span
-                title="Profil verifie ColEtuBenin"
+                title="Profil verifie ColoCampus"
                 style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 16, height: 16, borderRadius: '50%', background: '#10B981', color: '#fff', flexShrink: 0 }}
               >
                 <UiIcon name="check" />

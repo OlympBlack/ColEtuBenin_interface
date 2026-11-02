@@ -31,9 +31,9 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     id: 'coloc-1',
     category: 'coloc',
-    question: "Comment fonctionne ColEtuBenin pour trouver une colocation sur mon campus ?",
+    question: "Comment fonctionne ColoCampus pour trouver une colocation sur mon campus ?",
     answer:
-      "ColEtuBenin simplifie la recherche en regroupant les offres en 3 catégories claires : les chambres ou appartements entiers proposés par des démarcheurs/bailleurs vérifiés, les places libres proposées par un étudiant déjà installé (Hôte), et la recherche de binômes pour prospecter ensemble. Il vous suffit de filtrer selon vos critères (quartier, budget, profil) et d'entrer en contact direct par téléphone ou WhatsApp.",
+      "ColoCampus simplifie la recherche en regroupant les offres en 3 catégories claires : les chambres ou appartements entiers proposés par des démarcheurs/bailleurs vérifiés, les places libres proposées par un étudiant déjà installé (Hôte), et la recherche de binômes pour prospecter ensemble. Il vous suffit de filtrer selon vos critères (quartier, budget, profil) et d'entrer en contact direct par téléphone ou WhatsApp.",
     tag: 'Essentiel',
   },
   {
@@ -62,7 +62,7 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     id: 'depot-2',
     category: 'depot',
-    question: "Est-ce que ColEtuBenin est totalement gratuit pour les étudiants ?",
+    question: "Est-ce que ColoCampus est totalement gratuit pour les étudiants ?",
     answer:
       "Oui, l'inscription, la consultation de toutes les annonces, la mise en relation directe avec les annonceurs et la publication des annonces étudiantes sont 100% gratuites, sans aucun frais d'intermédiaire caché.",
     tag: 'Gratuit',
@@ -86,7 +86,7 @@ const FAQ_ITEMS: FaqItem[] = [
     category: 'securite',
     question: "Comment éviter les arnaques de faux démarcheurs autour du campus ?",
     answer:
-      "Règle absolue : ne versez JAMAIS d'argent par Mobile Money (MoMo / Celtiis Cash), ni d'avance de loyer, ni de « frais de visite préliminaire » sans avoir visité la chambre en personne et rencontré le bailleur. Sur ColEtuBenin, privilégiez les annonces accompagnées du badge « Vérifié » et signalez tout comportement douteux.",
+      "Règle absolue : ne versez JAMAIS d'argent par Mobile Money (MoMo / Celtiis Cash), ni d'avance de loyer, ni de « frais de visite préliminaire » sans avoir visité la chambre en personne et rencontré le bailleur. Sur ColoCampus, privilégiez les annonces accompagnées du badge « Vérifié » et signalez tout comportement douteux.",
     tag: 'Sécurité',
   },
   {
@@ -162,7 +162,7 @@ export function FaqSection() {
           id="faq-heading"
           className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 font-sans"
         >
-          Tout ce que vous devez savoir sur <span className="text-rose-600 sm:inline">ColEtuBenin</span>
+          Tout ce que vous devez savoir sur <span className="text-rose-600 sm:inline">ColoCampus</span>
         </h2>
         <p className="mt-2 text-xs sm:text-sm md:text-base text-slate-500 max-w-2xl mx-auto font-normal">
           Trouvez instantanément les réponses à vos questions concernant la colocation, le choix d'un binôme, les démarches avec les propriétaires et la sécurité de vos locations.
@@ -306,7 +306,7 @@ export function FaqSection() {
               Une autre question spécifique ?
             </h3>
             <p className="text-slate-100 text-xs sm:text-sm lg:text-base mt-2 leading-relaxed drop-shadow-sm">
-              L'équipe ColEtuBenin est à votre disposition pour vous orienter dans vos recherches ou résoudre un problème sur votre annonce.
+              L'équipe ColoCampus est à votre disposition pour vous orienter dans vos recherches ou résoudre un problème sur votre annonce.
             </p>
           </div>
 

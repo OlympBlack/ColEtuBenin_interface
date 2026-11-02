@@ -40,7 +40,7 @@ export function MarketplacePage() {
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                             </span>
-                            ColEtuBenin Marketplace B2B
+                            ColoCampus Marketplace B2B
                         </span>
                         <h1 className="text-[2.25rem] font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-[4rem] mb-6 leading-[1.05]">
                             Équipez-vous avec les <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">meilleures offres</span>.

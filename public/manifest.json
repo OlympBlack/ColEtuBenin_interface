@@ -1,6 +1,6 @@
 {
-  "name": "ColEtuBenin - Colocation pour les Étudiants du Bénin",
-  "short_name": "ColEtuBenin",
+  "name": "ColoCampus - Colocation pour les Étudiants du Bénin",
+  "short_name": "ColoCampus",
   "description": "Trouvez votre colocation pour les étudiants du Bénin autour des campus universitaires (UAC, UNA, UNSTIM, UP).",
   "start_url": "/#/",
   "scope": "/",
