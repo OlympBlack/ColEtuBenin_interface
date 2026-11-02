@@ -1810,12 +1810,10 @@ export function DashboardWorkspace({
   }, [session.user.role, refreshData])
 
   useEffect(() => {
-    if (routeTab) {
-      const nextTab = tabIdFromHash(tabsForRole(session.user.role), routeTab)
-      setActiveTab(nextTab)
-      if (nextTab === 'credits' || nextTab === 'overview') {
-        void refreshData()
-      }
+    const nextTab = tabIdFromHash(tabsForRole(session.user.role), routeTab)
+    setActiveTab(nextTab)
+    if (nextTab === 'credits' || nextTab === 'overview') {
+      void refreshData()
     }
   }, [routeTab, session.user.role, refreshData])
 
