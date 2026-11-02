@@ -20,7 +20,7 @@ export type AppRoute =
   | { name: 'verify'; path: '/verification-compte' }
   | { name: 'login'; path: '/connexion' }
   | { name: 'publish'; path: '/publier' }
-  | { name: 'dashboard'; path: string; role?: UserRole; query?: string }
+  | { name: 'dashboard'; path: string; role?: UserRole; query?: string; tab?: string }
   | { name: 'profile'; path: string }
   | { name: 'forfaits'; path: '/forfaits-publications' }
   | { name: 'contact'; path: '/contact' }
@@ -116,9 +116,31 @@ function parseRoute(path: string): AppRoute {
   }
 
   if (segments[0] === 'dashboard') {
-    const rawRole = segments[1] ? segments[1].split('?')[0] : undefined
-    const role = isUserRole(rawRole) ? rawRole : undefined
-    return { name: 'dashboard', path: normalized, role, query: rawQuery }
+    let role: UserRole | undefined = undefined
+    let tab: string | undefined = undefined
+
+    const seg1 = segments[1] ? segments[1].split('?')[0] : undefined
+    const seg2 = segments[2] ? segments[2].split('?')[0] : undefined
+
+    if (isUserRole(seg1)) {
+      role = seg1
+      if (seg2) {
+        tab = seg2
+      }
+    } else if (seg1) {
+      // Ex: /dashboard/users ou /dashboard/annonces ou /dashboard/credits
+      tab = seg1
+    }
+
+    if (rawQuery) {
+      const qParams = new URLSearchParams(rawQuery)
+      const qTab = qParams.get('tab')
+      if (qTab) {
+        tab = qTab
+      }
+    }
+
+    return { name: 'dashboard', path: normalized, role, query: rawQuery, tab }
   }
 
   return { name: 'home', path: '/' }

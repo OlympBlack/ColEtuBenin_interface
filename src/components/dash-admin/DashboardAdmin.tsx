@@ -14,6 +14,7 @@ import {
   Mail,
   UserCheck,
   UserX,
+  Bell,
 } from 'lucide-react'
 import type { AuthSession, DashboardData, AuthUser, Annonce } from '../../types'
 import {
@@ -112,7 +113,7 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
 
   // Charger les utilisateurs quand on change de filtre ou d'onglet
   useEffect(() => {
-    if (activeTab === 'users') {
+    if (activeTab === 'users' || activeTab === 'utilisateurs') {
       void (async () => {
         try {
           const res = await fetchAdminUsers(session.token, {
@@ -129,7 +130,7 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
 
   // Charger les annonces
   useEffect(() => {
-    if (activeTab === 'annonces') {
+    if (activeTab === 'annonces' || activeTab === 'announcements' || activeTab === 'moderation') {
       void (async () => {
         try {
           const res = await fetchAdminAnnonces(session.token, {
@@ -145,7 +146,7 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
 
   // Charger les finances
   useEffect(() => {
-    if (activeTab === 'finances') {
+    if (activeTab === 'finances' || activeTab === 'recettes') {
       void (async () => {
         try {
           const res = await fetchAdminFinances(session.token)
@@ -313,11 +314,12 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
     contacts_nouveaux: 0,
   }) as any
 
-  // ═══════════════════════════════════════════════════════════
-  // ONGLET 1 : VUE D'ENSEMBLE (OVERVIEW)
-  // ═══════════════════════════════════════════════════════════
-  if (activeTab === 'overview') {
-    return (
+  const content = (() => {
+    // ═══════════════════════════════════════════════════════════
+    // ONGLET 1 : VUE D'ENSEMBLE (OVERVIEW)
+    // ═══════════════════════════════════════════════════════════
+    if (activeTab === 'overview') {
+      return (
       <div className="space-y-8 animate-in fade-in duration-300">
         {/* KPI Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-3.5">
@@ -707,7 +709,7 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
   // ═══════════════════════════════════════════════════════════
   // ONGLET 3 : GESTION DES UTILISATEURS
   // ═══════════════════════════════════════════════════════════
-  if (activeTab === 'users') {
+  if (activeTab === 'users' || activeTab === 'utilisateurs') {
     return (
       <div className="space-y-6 animate-in fade-in duration-300">
         <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4">
@@ -972,7 +974,7 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
   // ═══════════════════════════════════════════════════════════
   // ONGLET 4 : MODÉRATION DES ANNONCES
   // ═══════════════════════════════════════════════════════════
-  if (activeTab === 'annonces') {
+  if (activeTab === 'annonces' || activeTab === 'announcements') {
     return (
       <div className="space-y-6 animate-in fade-in duration-300">
         <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4">
@@ -1128,7 +1130,7 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
   // ═══════════════════════════════════════════════════════════
   // ONGLET 5 : FINANCES & RECETTES
   // ═══════════════════════════════════════════════════════════
-  if (activeTab === 'finances') {
+  if (activeTab === 'finances' || activeTab === 'recettes') {
     return (
       <div className="space-y-6 animate-in fade-in duration-300">
         <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs p-4 sm:p-6 space-y-4">
@@ -1217,7 +1219,7 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
   // ═══════════════════════════════════════════════════════════
   // ONGLET 8 : MESSAGES DE CONTACT & SUPPORT
   // ═══════════════════════════════════════════════════════════
-  if (activeTab === 'contacts') {
+  if (activeTab === 'contacts' || activeTab === 'support') {
     return (
       <div className="p-4 sm:p-8">
         <GestionContacts
@@ -1232,7 +1234,7 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
   // ═══════════════════════════════════════════════════════════
   // ONGLET 9 : PARAMÈTRES DYNAMIQUES DE LA PLATEFORME
   // ═══════════════════════════════════════════════════════════
-  if (activeTab === 'settings') {
+  if (activeTab === 'settings' || activeTab === 'parametres') {
     return (
       <div className="p-4 sm:p-8 animate-in fade-in duration-300">
         <GestionParametres
@@ -1243,11 +1245,31 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
     )
   }
 
+  if (activeTab === 'notifications') {
+    return (
+      <div className="p-8 text-center bg-white rounded-xl border border-slate-200/90 shadow-xs max-w-lg mx-auto my-8">
+        <div className="w-10 h-10 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+          <Bell className="w-5 h-5" />
+        </div>
+        <h3 className="text-sm font-bold text-slate-900 mb-1">Notifications Administrateur</h3>
+        <p className="text-xs text-slate-500">Vous pouvez consulter vos notifications en temps réel depuis l'icône de cloche dans la barre supérieure.</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="p-12 text-center text-slate-400 italic">
+      Cette section est en cours de développement.
+    </div>
+  )
+})()
+
   // ═══════════════════════════════════════════════════════════
-  // MODALE D'APERÇU DU DOCUMENT D'IDENTITÉ
+  // MODALE D'APERÇU DU DOCUMENT D'IDENTITÉ ET REJET KYC
   // ═══════════════════════════════════════════════════════════
   return (
     <>
+      {content}
       {selectedDocPreview && (
         <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white rounded-xl p-5 max-w-2xl w-full shadow-2xl relative max-h-[90vh] flex flex-col">

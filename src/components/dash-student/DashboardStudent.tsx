@@ -253,6 +253,7 @@ export const DashboardStudent: React.FC<DashboardStudentProps> = ({
             );
 
         case 'favorites':
+        case 'favoris':
             return (
                 <div className="space-y-4 animate-in fade-in duration-300">
                     <div className="flex items-center justify-between">
@@ -317,6 +318,9 @@ export const DashboardStudent: React.FC<DashboardStudentProps> = ({
                 </div>
             );
 
+        case 'settings':
+        case 'parametres':
+        case 'profil':
         case 'preferences':
             return (
                 <ProfileTab
@@ -326,6 +330,7 @@ export const DashboardStudent: React.FC<DashboardStudentProps> = ({
                 />
             );
 
+        case 'kyc':
         case 'verification':
             return (
                 <div className="max-w-2xl space-y-5 animate-in fade-in duration-300">
@@ -361,6 +366,10 @@ export const DashboardStudent: React.FC<DashboardStudentProps> = ({
             );
 
         default:
-            return null;
+            return (
+                <div className="p-12 text-center text-slate-400 italic">
+                    Cette section est en cours de développement.
+                </div>
+            );
     }
 };

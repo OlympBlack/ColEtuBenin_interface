@@ -131,7 +131,8 @@ export default function App() {
 
   useEffect(() => {
     if (session && route.name === 'dashboard' && route.role !== session.user.role) {
-      const queryPart = route.query ? `?${route.query}` : ''
+      const targetTab = route.tab || (route.query ? new URLSearchParams(route.query).get('tab') : null)
+      const queryPart = targetTab ? `?tab=${encodeURIComponent(targetTab)}` : (route.query ? `?${route.query}` : '')
       window.location.hash = '#' + getDashboardPath(session.user.role) + queryPart
     }
   }, [route, session])
@@ -404,7 +405,15 @@ export default function App() {
         {route.name === 'login' && !session ? <LoginPage onSuccess={handleLoginSuccess} onToast={pushToast} onRequireVerification={handleRequireVerification} /> : null}
 
         {route.name === 'dashboard' && session ? (
-          <DashboardPage session={session} onSessionChange={handleSessionChange} onToast={pushToast} onLogout={handleLogout} isLoggingOut={isLoggingOut} onOpenPublish={() => { window.location.hash = '#/publier' }} />
+          <DashboardPage
+            session={session}
+            onSessionChange={handleSessionChange}
+            onToast={pushToast}
+            onLogout={handleLogout}
+            isLoggingOut={isLoggingOut}
+            onOpenPublish={() => { window.location.hash = '#/publier' }}
+            routeTab={route.tab}
+          />
         ) : null}
 
         {route.name === 'profile' && session ? (

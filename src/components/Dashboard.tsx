@@ -40,6 +40,7 @@ export interface DashboardWorkspaceProps {
   onLogout: () => void
   isLoggingOut: boolean
   onOpenPublish: () => void
+  routeTab?: string
 }
 
 interface NavTab {
@@ -119,32 +120,75 @@ function computeProfileProgress(user: AuthUser): number {
   return user.name && user.prenoms && user.telephone ? 50 : 20
 }
 
-function tabIdFromHash(allowed: NavTab[]): string {
-  const raw = window.location.hash.replace(/^#/, '')
-  const qIndex = raw.indexOf('?')
-  const params = qIndex === -1 ? null : new URLSearchParams(raw.slice(qIndex + 1))
-  const requested = params?.get('tab')
+function tabIdFromHash(allowed: NavTab[], explicitTab?: string): string {
+  let requested = explicitTab?.toLowerCase().trim()
+
+  if (!requested) {
+    const raw = window.location.hash.replace(/^#/, '')
+    const qIndex = raw.indexOf('?')
+    const cleanPath = qIndex === -1 ? raw : raw.slice(0, qIndex)
+    const params = qIndex === -1 ? null : new URLSearchParams(raw.slice(qIndex + 1))
+    requested = params?.get('tab')?.toLowerCase().trim()
+
+    // Si aucun paramètre ?tab=, vérifier dans les segments du chemin (ex: /dashboard/admin/users ou /dashboard/users)
+    if (!requested) {
+      const segments = cleanPath.split('/').filter(Boolean)
+      if (segments[0] === 'dashboard') {
+        const seg1 = segments[1]?.toLowerCase().trim()
+        const seg2 = segments[2]?.toLowerCase().trim()
+        if (seg1 && ['admin', 'demarcheur', 'boutique', 'etudiant', 'student'].includes(seg1)) {
+          requested = seg2
+        } else if (seg1) {
+          requested = seg1
+        }
+      }
+    }
+  }
+
   if (!requested) return 'overview'
 
-  const lower = requested.toLowerCase().trim()
+  const lower = requested
   let normalized = lower
 
-  if (['profil', 'profile', 'compte', 'preferences'].includes(lower)) {
+  if (['profil', 'profile', 'compte', 'preferences', 'mon-compte', 'mon-profil'].includes(lower)) {
     normalized = 'preferences'
-  } else if (['annonces', 'announcements', 'logements', 'mes-annonces'].includes(lower)) {
+  } else if (['annonces', 'announcements', 'logements', 'mes-annonces', 'moderation', 'moderation-annonces', 'chambres'].includes(lower)) {
     normalized = allowed.some((t) => t.id === 'annonces') ? 'annonces' : 'announcements'
-  } else if (['campagnes', 'campagne', 'campaign', 'campaigns'].includes(lower)) {
+  } else if (['favoris', 'favorites', 'mes-favoris', 'mes-favorites', 'favori', 'favorite'].includes(lower)) {
+    normalized = 'favorites'
+  } else if (['avis', 'mes-avis', 'reviews', 'demandes', 'candidatures'].includes(lower)) {
+    normalized = 'avis'
+  } else if (['campagnes', 'campagne', 'campaign', 'campaigns', 'pubs', 'publicites'].includes(lower)) {
     normalized = 'campaigns'
-  } else if (['statistiques', 'stats', 'stat'].includes(lower)) {
+  } else if (['statistiques', 'stats', 'stat', 'statistique', 'rapport', 'rapports'].includes(lower)) {
     normalized = 'stats'
-  } else if (['packs', 'pack', 'forfaits', 'forfait'].includes(lower)) {
+  } else if (['packs', 'pack', 'forfaits', 'forfait', 'acheter-packs', 'acheter-forfaits'].includes(lower)) {
     normalized = allowed.some((t) => t.id === 'forfaits') ? 'forfaits' : 'credits'
-  } else if (['messages', 'messagerie', 'chat', 'conversations'].includes(lower)) {
+  } else if (['credits', 'credit', 'portefeuille', 'solde'].includes(lower)) {
+    normalized = allowed.some((t) => t.id === 'credits') ? 'credits' : 'forfaits'
+  } else if (['messages', 'messagerie', 'chat', 'conversations', 'discussion', 'discussions'].includes(lower)) {
     normalized = 'messagerie'
-  } else if (['notifs', 'notifications', 'notification'].includes(lower)) {
+  } else if (['notifs', 'notifications', 'notification', 'alertes', 'alerte'].includes(lower)) {
     normalized = 'notifications'
-  } else if (['kyc', 'verification', 'certif', 'certification'].includes(lower)) {
+  } else if (['kyc', 'verification', 'certif', 'certification', 'pieces-identite', 'identite'].includes(lower)) {
     normalized = allowed.some((t) => t.id === 'kyc') ? 'kyc' : 'verification'
+  } else if (['utilisateurs', 'utilisateur', 'users', 'user', 'membres', 'comptes'].includes(lower)) {
+    normalized = 'users'
+  } else if (['signalements', 'signalement', 'reports', 'report', 'reclamations', 'plaintes'].includes(lower)) {
+    normalized = 'signalements'
+  } else if (['contacts', 'contact', 'support', 'messages-support', 'reclamations-contact'].includes(lower)) {
+    normalized = 'contacts'
+  } else if (['collections', 'collection', 'collections-immobilieres', 'groupes'].includes(lower)) {
+    normalized = 'collections'
+  } else if (['finances', 'finance', 'recettes', 'recette', 'revenus', 'transactions', 'comptabilite'].includes(lower)) {
+    normalized = 'finances'
+  } else if (['settings', 'parametres', 'parametre', 'configuration', 'config'].includes(lower)) {
+    normalized = 'settings'
+  }
+
+  // Onglets universels disponibles pour tous les rôles
+  if (normalized === 'notifications' || normalized === 'preferences') {
+    return normalized
   }
 
   return allowed.some((t) => t.id === normalized) ? normalized : 'overview'
@@ -164,6 +208,7 @@ const studentTabs: NavTab[] = [
 const NAV_TABS: Record<string, NavTab[]> = {
   admin: [
     { id: 'overview', label: "Vue d'ensemble", icon: 'grid', section: 'menu' },
+    { id: 'notifications', label: 'Notifications', icon: 'bell', section: 'menu' },
     { id: 'signalements', label: 'Signalements', icon: 'shield-alert', section: 'menu' },
     { id: 'contacts', label: 'Support et Contacts', icon: 'message', section: 'menu' },
     { id: 'kyc', label: 'Vérifications KYC', icon: 'shield', section: 'menu' },
@@ -1721,12 +1766,13 @@ export function DashboardWorkspace({
   onLogout,
   isLoggingOut,
   onOpenPublish,
+  routeTab,
 }: DashboardWorkspaceProps) {
   const { dashboard, setDashboard, isLoading, error } = useDashboard(session.token)
   const { data: notificationCenter, markAsRead, refresh: refreshNotifications } = useNotifications(session)
 
   const tabs = tabsForRole(session.user.role)
-  const [activeTab, setActiveTab] = useState(() => tabIdFromHash(tabs))
+  const [activeTab, setActiveTab] = useState(() => tabIdFromHash(tabs, routeTab))
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
   // Verrouiller le défilement global de la page sur le dashboard pour permettre le défilement indépendant
@@ -1750,7 +1796,7 @@ export function DashboardWorkspace({
     }
   }, [session.token, setDashboard, onToast, refreshNotifications])
 
-  // Synchronisation avec l'URL (#/dashboard/<role>?tab=…)
+  // Synchronisation avec l'URL (#/dashboard/<role>?tab=… ou routeTab)
   useEffect(() => {
     const onHashChange = () => {
       const nextTab = tabIdFromHash(tabsForRole(session.user.role))
@@ -1762,6 +1808,16 @@ export function DashboardWorkspace({
     window.addEventListener('hashchange', onHashChange)
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [session.user.role, refreshData])
+
+  useEffect(() => {
+    if (routeTab) {
+      const nextTab = tabIdFromHash(tabsForRole(session.user.role), routeTab)
+      setActiveTab(nextTab)
+      if (nextTab === 'credits' || nextTab === 'overview') {
+        void refreshData()
+      }
+    }
+  }, [routeTab, session.user.role, refreshData])
 
   // Écoute des événements d'actualisation immédiate des crédits et du dashboard
   useEffect(() => {

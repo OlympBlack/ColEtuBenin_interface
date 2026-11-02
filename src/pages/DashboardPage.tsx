@@ -9,6 +9,7 @@ interface DashboardPageProps {
   onLogout: () => void
   isLoggingOut: boolean
   onOpenPublish: () => void
+  routeTab?: string
 }
 
 export function DashboardPage(props: DashboardPageProps) {

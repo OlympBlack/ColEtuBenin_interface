@@ -160,6 +160,7 @@ export const DashboardDemarcheur: React.FC<DashboardDemarcheurProps> = ({
 
 
             case 'forfaits':
+            case 'packs':
                 return <ForfaitsPage session={session} onToast={onToast} onRefresh={onRefreshData} />;
 
             case 'messagerie':
@@ -192,9 +193,11 @@ export const DashboardDemarcheur: React.FC<DashboardDemarcheurProps> = ({
                     </div>
                 );
 
+            case 'profil':
             case 'preferences':
                 return <ProfileDemarcheur session={session} onSessionChange={onSessionChange} onToast={onToast} />;
 
+            case 'kyc':
             case 'verification':
                 return (
                     <div className="py-4 animate-in fade-in duration-300">
@@ -208,6 +211,7 @@ export const DashboardDemarcheur: React.FC<DashboardDemarcheurProps> = ({
                 );
 
             case 'settings':
+            case 'parametres':
                 return (
                     <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs p-6 max-w-2xl animate-in fade-in duration-300">
                         <h2 className="text-lg font-bold text-slate-900 mb-6">Paramètres du compte</h2>

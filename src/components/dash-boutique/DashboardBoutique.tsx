@@ -166,6 +166,7 @@ export const DashboardBoutique: React.FC<DashboardBoutiqueProps> = ({
             );
         }
 
+        case 'campagnes':
         case 'campaigns':
             return (
                 <div className="space-y-4 animate-in fade-in duration-300">
@@ -201,6 +202,7 @@ export const DashboardBoutique: React.FC<DashboardBoutiqueProps> = ({
                 </div>
             );
             
+        case 'portefeuille':
         case 'credits':
             return (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -242,9 +244,11 @@ export const DashboardBoutique: React.FC<DashboardBoutiqueProps> = ({
                 </div>
             );
 
+        case 'packs':
         case 'forfaits':
             return <PageForfaits session={session} onToast={onToast} onRefresh={onRefreshData} />;
 
+        case 'statistiques':
         case 'stats':
             return (
                 <div className="space-y-4 animate-in fade-in duration-300">
@@ -267,6 +271,9 @@ export const DashboardBoutique: React.FC<DashboardBoutiqueProps> = ({
                 </div>
             );
 
+        case 'settings':
+        case 'parametres':
+        case 'profil':
         case 'preferences':
             return (
                 <ProfileTab
@@ -276,6 +283,7 @@ export const DashboardBoutique: React.FC<DashboardBoutiqueProps> = ({
                 />
             );
 
+        case 'kyc':
         case 'verification':
             return (
                 <div className="max-w-2xl animate-in fade-in duration-300">
@@ -284,6 +292,14 @@ export const DashboardBoutique: React.FC<DashboardBoutiqueProps> = ({
             );
 
         default:
-            return null;
+            return (
+                <div className="p-12 text-center bg-white rounded-xl border border-slate-200/90 shadow-xs">
+                    <p className="text-sm font-semibold text-slate-700">Section non disponible ou en cours de chargement</p>
+                    <p className="text-xs text-slate-400 mt-1">Onglet demandé : <code className="bg-slate-100 px-1 py-0.5 rounded">{activeTab}</code></p>
+                    <a href="#/dashboard/boutique?tab=overview" className="mt-4 inline-block text-xs font-semibold text-blue-600 hover:underline">
+                        Retour au tableau de bord
+                    </a>
+                </div>
+            );
     }
 };
