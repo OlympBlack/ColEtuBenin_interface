@@ -145,7 +145,7 @@ export function MessengerPopover({ session, isOpen, onClose, onUnreadChange }: M
       await showWebPushNotification({
         title: 'ColoCampus Messagerie',
         body: '🎉 Notifications activées : vous serez alerté même dans une autre application.',
-        icon: '/assets/images/logo_colcampus_icon.png',
+        icon: '/assets/images/colocampus_icon_dark.png?v=20261102b',
         force: true,
       })
     }

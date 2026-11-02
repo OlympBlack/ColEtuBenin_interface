@@ -40,7 +40,7 @@ export function SiteFooter() {
             <div className="col-md-3 footer-item">
               <a href="#/" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', marginBottom: '14px', textDecoration: 'none' }}>
                 <img
-                  src="/assets/images/logo_colcampus_icon.png"
+                  src="/assets/images/colocampus_icon_light.png?v=20261102b"
                   alt="ColoCampus"
                   style={{ height: '42px', width: 'auto', objectFit: 'contain' }}
                 />

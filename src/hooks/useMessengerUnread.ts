@@ -89,7 +89,7 @@ export function useMessengerUnread(session: AuthSession | null) {
       showWebPushNotification({
         title: `${partnerName} sur ColoCampus`,
         body: preview,
-        icon: partner?.photo_profil || '/assets/images/logo_colcampus_icon.png',
+        icon: partner?.photo_profil || '/assets/images/colocampus_icon_dark.png?v=20261102b',
         tag: `colcampus-msg-${conv.id || 'chat'}`,
         data: { conversationId: conv.id },
         onClick: () => {

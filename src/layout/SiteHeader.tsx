@@ -486,8 +486,8 @@ export function SiteHeader({ route, session, onLogout, isLoggingOut }: SiteHeade
                 <img
                   src={
                     hasBackground || (!isDarkHeroPage && !isMenuOpen)
-                      ? '/assets/images/logo_colcampus_icon_dark.png'
-                      : '/assets/images/logo_colcampus_icon.png'
+                      ? '/assets/images/colocampus_icon_dark.png?v=20261102b'
+                      : '/assets/images/colocampus_icon_light.png?v=20261102b'
                   }
                   alt="ColoCampus"
                   className="header-brand-logo"
@@ -495,9 +495,6 @@ export function SiteHeader({ route, session, onLogout, isLoggingOut }: SiteHeade
                 <h2>
                   Colo<span className="brand-benin">campus</span>
                 </h2>
-                <span className="header-brand-badge d-none d-xl-inline-block">
-                  5 Villes • Bénin
-                </span>
               </div>
             </a>
 

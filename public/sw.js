@@ -1,15 +1,15 @@
 // ColoCampus Service Worker : PWA + Notifications Push système
-const CACHE_NAME = 'colocampus-pwa-v2'
-const DEFAULT_ICON = '/icons/icon-192x192.png'
+const CACHE_NAME = 'colocampus-pwa-v4'
+const DEFAULT_ICON = '/icons/colocampus-icon-192x192.png'
 
 // Ressources clés mises en cache dès l'installation
 const PRECACHE_URLS = [
   '/',
-  '/manifest.json',
-  '/favicon.svg',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
-  '/apple-touch-icon.png'
+  '/manifest.json?v=4',
+  '/favicon-colocampus.svg?v=4',
+  '/icons/colocampus-icon-192x192.png?v=4',
+  '/icons/colocampus-icon-512x512.png?v=4',
+  '/apple-touch-icon-colocampus.png?v=4'
 ]
 
 self.addEventListener('install', (event) => {
@@ -26,10 +26,13 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     Promise.all([
-      // Nettoyage des anciens caches
+      // Nettoyage impératif de tous les anciens caches
       caches.keys().then((keys) => {
         return Promise.all(
-          keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+          keys.filter((key) => key !== CACHE_NAME).map((key) => {
+            console.log('Purging old PWA cache:', key)
+            return caches.delete(key)
+          })
         )
       }),
       self.clients.claim()

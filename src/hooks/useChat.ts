@@ -128,7 +128,7 @@ export function useChat(session: AuthSession, initialDiscussions: { conversation
                                 showWebPushNotification({
                                     title: `${partnerName} sur ColoCampus`,
                                     body: preview,
-                                    icon: partner?.photo_profil || '/assets/images/logo_colcampus_icon.png',
+                                    icon: partner?.photo_profil || '/assets/images/colocampus_icon_dark.png?v=20261102b',
                                     tag: `colcampus-conv-${activeConversation.id}`,
                                     onClick: () => {
                                         window.dispatchEvent(new CustomEvent('open-messenger'))

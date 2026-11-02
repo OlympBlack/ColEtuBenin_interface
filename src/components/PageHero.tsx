@@ -17,7 +17,7 @@ interface PageHeroProps {
 const HERO_STYLE: React.CSSProperties = {
   textAlign: 'center',
   backgroundImage:
-    "linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62)), url('/assets/images/Benin-Cotonou-Place_de_amazone.jpg')",
+    "linear-gradient(rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.62)), url('/assets/images/Benin-Cotonou-Place_de_amazone.jpg?v=20261102')",
   backgroundColor: '#1b2a1e',
   backgroundPosition: 'center center',
   backgroundRepeat: 'no-repeat',

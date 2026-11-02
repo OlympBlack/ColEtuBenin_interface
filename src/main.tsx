@@ -5,9 +5,14 @@ import App from './App'
 
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch((err) => {
-      console.warn('SW registration error:', err)
-    })
+    navigator.serviceWorker
+      .register('/sw.js', { updateViaCache: 'none' })
+      .then((reg) => {
+        void reg.update()
+      })
+      .catch((err) => {
+        console.warn('SW registration error:', err)
+      })
   })
 }
 

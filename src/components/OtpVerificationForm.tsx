@@ -165,7 +165,7 @@ export function OtpVerificationForm({
             <span>Retour</span>
           </a>
           <a href="#/" className="inline-flex items-center hover:opacity-90 transition-opacity" aria-label="Accueil ColoCampus">
-            <img src="/assets/images/logo_colcampus.png" alt="Logo ColoCampus" className="h-10 sm:h-12 lg:h-14 max-w-[240px] sm:max-w-[280px] w-auto object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.3)]" />
+            <img src="/assets/images/colocampus_logo_white.png?v=20261102b" alt="Logo ColoCampus" className="h-10 sm:h-12 lg:h-14 max-w-[240px] sm:max-w-[280px] w-auto object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.3)]" />
           </a>
         </div>
 
@@ -192,7 +192,7 @@ export function OtpVerificationForm({
               </svg>
             </a>
             <a href="#/" className="inline-flex items-center" aria-label="Accueil ColoCampus">
-              <img src="/assets/images/logo_colcampus_dark.png" alt="Logo ColoCampus" className="h-8 sm:h-9 max-w-[170px] w-auto object-contain" />
+              <img src="/assets/images/colocampus_logo_dark.png?v=20261102b" alt="Logo ColoCampus" className="h-8 sm:h-9 max-w-[170px] w-auto object-contain" />
             </a>
           </div>
         </div>

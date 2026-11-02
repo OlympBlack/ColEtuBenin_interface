@@ -14,7 +14,7 @@ import {
   savePushSubscription,
 } from '../services/api'
 
-const DEFAULT_ICON = '/assets/images/logo_colcampus_icon.png'
+const DEFAULT_ICON = '/assets/images/colocampus_icon_dark.png?v=20261102b'
 const ENV_VAPID_PUBLIC_KEY = ((import.meta as any).env.VITE_VAPID_PUBLIC_KEY as string | undefined)?.trim() || ''
 
 let swRegistration: ServiceWorkerRegistration | null = null
