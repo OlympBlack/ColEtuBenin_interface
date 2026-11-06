@@ -14,10 +14,11 @@ import {
 import { BinomeDetailPage } from '../components/BinomeDetailPage'
 import { SimilarAnnouncements } from '../components/SimilarAnnouncements'
 import { LoadingState } from '../components/States'
-import type { ToastDraft } from '../components/ToastViewport'
+import { ToastDraft } from '../components/ToastViewport'
 import { UiIcon } from '../components/UiIcons'
 import { ReportModal } from '../components/ReportModal'
 import { AuthorProfileModal } from '../components/AuthorProfileModal'
+import { PanoramaViewer } from '../components/PanoramaViewer'
 
 /* ─────────────────────────────────────────────
    Helpers
@@ -99,6 +100,14 @@ export function AnnonceDetailPage({
   const [isSavingFavorite, setIsSavingFavorite] = useState(false)
   const [isFavorited, setIsFavorited] = useState<boolean>(Boolean(announcement?.est_favori))
   const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false)
+  const [panoramaUrl, setPanoramaUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    const panoramaMedia = currentAnnouncement.medias.find((m) => m.est_panoramique_3d)
+    if (panoramaMedia) {
+      setPanoramaUrl(panoramaMedia.url_fichier)
+    }
+  }, [currentAnnouncement])
 
   useEffect(() => {
     if (announcement) {
@@ -418,6 +427,40 @@ export function AnnonceDetailPage({
                     <img src={media.url_fichier} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </button>
                 ))}
+              </div>
+            )}
+
+            {/* Panorama 360° section */}
+            {currentAnnouncement.medias.some((m) => m.est_panoramique_3d) && (
+              <div style={{ marginTop: 24, borderTop: '1px solid #F1F5F9', paddingTop: 16 }}>
+                <h3 style={{ margin: '0 0 12px', fontSize: 14, color: '#64748B' }}>Visite virtuelle 360°</h3>
+                <p style={{ margin: '0 0 12px', fontSize: 13, color: '#475569' }}>
+                  Explorez le logement virtuellement avant de contacter l'annonceur
+                </p>
+                <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
+                  <button
+                    className="colcampus-opt-btn"
+                    onClick={() => setPanoramaUrl(currentAnnouncement.medias.find((m) => m.est_panoramique_3d)?.url_fichier || undefined)}
+                  >
+                    <UiIcon name="eye" /> Visiter en 360°
+                  </button>
+                  <button
+                    className="colcampus-opt-btn"
+                    style={{
+                      ...S.optBtnGhost,
+                      borderColor: '#94A3B8',
+                      color: '#64748B',
+                    }}
+                  >
+                    <UiIcon name="refresh-cw" /> Réinitialiser
+                  </button>
+                </div>
+                <PanoramaViewer
+                  url={panoramaUrl ?? (currentAnnouncement.medias.find((m) => m.est_panoramique_3d)?.url_fichier || '')}
+                  alt="Visite virtuelle 360°"
+                  width={Math.min(800, window.innerWidth - 32)}
+                  height={Math.min(400, window.innerHeight * 0.5)}
+                />
               </div>
             )}
 

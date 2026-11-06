@@ -162,6 +162,7 @@ function buildInitialAnnouncementForm(role: AuthSession['user']['role'], univers
     nombre_places: 1,
     statut_disponibilite: 'available',
     medias: [],
+    panoramicMedias: [],
   }
 }
 
@@ -217,6 +218,20 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
       urls.forEach((item) => URL.revokeObjectURL(item.url))
     }
   }, [announcementForm.medias])
+
+  /* Aperçus médias panoramiques 360° */
+  const [panoramicMedias, setPanoramicMedias] = useState<File[]>([])
+  const panoramicInputId = useId()
+
+  useEffect(() => {
+    const urls = panoramicMedias.map((file) => ({ file, url: URL.createObjectURL(file) }))
+    setPanoramicPreviews(urls)
+    return () => {
+      urls.forEach((item) => URL.revokeObjectURL(item.url))
+    }
+  }, [panoramicMedias])
+
+  const [panoramicPreviews, setPanoramicPreviews] = useState<{ file: File; url: string }[]>([])
 
   /* Aperçu bannière boutique */
   useEffect(() => {
@@ -873,6 +888,93 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
                 </div>
               )}
             </div>
+          </>
+        )}
+
+        {currentStep?.id === 'medias' && !isBoutique && (
+          <>
+            <div className="publish-form__header">
+              <h2 className="publish-form__section-title">Photos panoramiques 360°</h2>
+              <p className="publish-form__intro">
+                Ajoutez des photographies panoramiques équirectangulaires (format 2:1) pour une visite virtuelle immersive. Les étudiants pourront explorer le logement à 360°.
+              </p>
+            </div>
+
+            <div className="publish-form__section">
+              <label className="field">
+                <span>Ajouter des photos panoramiques</span>
+                <label
+                  htmlFor={panoramicInputId}
+                  className="d-flex flex-column align-items-center justify-content-center gap-2 text-center"
+                  style={{
+                    border: '2px dashed var(--border)',
+                    borderRadius: 18,
+                    padding: '28px 18px',
+                    cursor: 'pointer',
+                    color: 'var(--muted)',
+                  }}
+                >
+                  <Eye size={28} style={{ color: '#1D4ED8' }} />
+                  <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text)' }}>
+                    Cliquez pour sélectionner des photos panoramiques
+                  </span>
+                  <span style={{ fontSize: '0.78rem' }}>JPG, PNG — Format équirectangulaire 2:1 recommandé</span>
+                  <input
+                    id={panoramicInputId}
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    multiple
+                    style={{ display: 'none' }}
+                    onChange={async (event) => {
+                      const files = event.target.files
+                      if (!files?.length) return
+                      const compressed = await compressImages(Array.from(files))
+                      setPanoramicMedias((prev) => [...prev, ...compressed])
+                    }}
+                  />
+                </label>
+              </label>
+            </div>
+
+            {panoramicPreviews.length > 0 && (
+              <div className="row g-3 mt-1">
+                {panoramicPreviews.map((preview, index) => (
+                  <div key={preview.url} className="col-6 col-md-4 col-lg-3">
+                    <div className="position-relative" style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid var(--border)' }}>
+                      <img
+                        src={preview.url}
+                        alt={`Aperçu panoramique ${index + 1}`}
+                        style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }}
+                      />
+                      <button
+                        type="button"
+                        className="position-absolute d-inline-grid"
+                        onClick={() => setPanoramicMedias((prev) => prev.filter((_, i) => i !== index))}
+                        aria-label={`Supprimer l'aperçu panoramique ${index + 1}`}
+                        style={{
+                          top: 6,
+                          right: 6,
+                          width: 26,
+                          height: 26,
+                          borderRadius: '50%',
+                          border: 'none',
+                          background: 'rgba(15,23,42,0.7)',
+                          color: '#fff',
+                          placeItems: 'center',
+                        }}
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                      {index === 0 && (
+                        <span className="app-badge app-badge--success position-absolute" style={{ bottom: 6, left: 6 }}>
+                          Panoramique
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </>
         )}
 

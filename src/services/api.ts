@@ -265,6 +265,10 @@ function buildAnnouncementFormData(payload: AnnouncementDraft) {
     formData.append('medias[]', media)
   })
 
+  payload.panoramicMedias?.forEach((media) => {
+    formData.append('panoramicMedias[]', media)
+  })
+
   return formData
 }
 
