@@ -14,7 +14,7 @@ import {
 import { BinomeDetailPage } from '../components/BinomeDetailPage'
 import { SimilarAnnouncements } from '../components/SimilarAnnouncements'
 import { LoadingState } from '../components/States'
-import { ToastDraft } from '../components/ToastViewport'
+import type { ToastDraft } from '../components/ToastViewport'
 import { UiIcon } from '../components/UiIcons'
 import { ReportModal } from '../components/ReportModal'
 import { AuthorProfileModal } from '../components/AuthorProfileModal'
@@ -103,11 +103,12 @@ export function AnnonceDetailPage({
   const [panoramaUrl, setPanoramaUrl] = useState<string | null>(null)
 
   useEffect(() => {
-    const panoramaMedia = currentAnnouncement.medias.find((m) => m.est_panoramique_3d)
+    if (!announcement) return
+    const panoramaMedia = announcement.medias.find((m) => m.est_panoramique_3d)
     if (panoramaMedia) {
       setPanoramaUrl(panoramaMedia.url_fichier)
     }
-  }, [currentAnnouncement])
+  }, [announcement])
 
   useEffect(() => {
     if (announcement) {
@@ -440,7 +441,7 @@ export function AnnonceDetailPage({
                 <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
                   <button
                     className="colcampus-opt-btn"
-                    onClick={() => setPanoramaUrl(currentAnnouncement.medias.find((m) => m.est_panoramique_3d)?.url_fichier || undefined)}
+                    onClick={() => setPanoramaUrl(currentAnnouncement.medias.find((m) => m.est_panoramique_3d)?.url_fichier ?? null)}
                   >
                     <UiIcon name="eye" /> Visiter en 360°
                   </button>
@@ -452,12 +453,11 @@ export function AnnonceDetailPage({
                       color: '#64748B',
                     }}
                   >
-                    <UiIcon name="refresh-cw" /> Réinitialiser
+                    <UiIcon name="refresh" /> Réinitialiser
                   </button>
                 </div>
                 <PanoramaViewer
                   url={panoramaUrl ?? (currentAnnouncement.medias.find((m) => m.est_panoramique_3d)?.url_fichier || '')}
-                  alt="Visite virtuelle 360°"
                   width={Math.min(800, window.innerWidth - 32)}
                   height={Math.min(400, window.innerHeight * 0.5)}
                 />
