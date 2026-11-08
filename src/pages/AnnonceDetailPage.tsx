@@ -184,12 +184,14 @@ export function AnnonceDetailPage({
     )
   }
 
+  const photoMedias = currentAnnouncement.medias.filter((m) => !m.url_fichier?.toLowerCase().endsWith('.mp4'))
   const medias =
-    currentAnnouncement.medias.length > 0
-      ? currentAnnouncement.medias
+    photoMedias.length > 0
+      ? photoMedias
       : [{ id: 0, url_fichier: getPrimaryImage(currentAnnouncement) }]
 
   const activeMedia = medias[activeIndex] ?? medias[0]
+  const videoMedia = currentAnnouncement.medias.find((m) => m.url_fichier?.toLowerCase().endsWith('.mp4'))
 
   async function handleToggleFavorite() {
     if (!session) {
@@ -423,7 +425,7 @@ export function AnnonceDetailPage({
             )}
 
             {/* Vidéo de la chambre */}
-            {currentAnnouncement.medias.some((m) => m.url_fichier?.endsWith(".mp4")) && (
+            {videoMedia && (
               <div style={{ marginTop: 24, borderTop: "1px solid #F1F5F9", paddingTop: 16 }}>
                 <h3 style={{ margin: "0 0 12px", fontSize: 14, color: "#64748B" }}>Vidéo de la chambre</h3>
                 <p style={{ margin: "0 0 12px", fontSize: 13, color: "#475569" }}>
@@ -434,7 +436,7 @@ export function AnnonceDetailPage({
                   style={{ width: "100%", maxWidth: 800, borderRadius: 8 }}
                 >
                   <source
-                    src={currentAnnouncement.medias.find((m) => m.url_fichier?.endsWith(".mp4"))?.url_fichier}
+                    src={videoMedia.url_fichier}
                     type="video/mp4"
                   />
                   Votre navigateur ne prend pas en charge la lecture vidéo.
