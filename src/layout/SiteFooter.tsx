@@ -200,7 +200,7 @@ export function SiteFooter() {
           <div className="row">
             <div className="col-md-12">
               <p>
-                Copyright © {new Date().getFullYear()} {settings.nom_plateforme} — {settings.copyright_texte}{' '}
+                Copyright © {new Date().getFullYear()} {settings.nom_plateforme} — {settings.copyright_texte?.startsWith(settings.nom_plateforme) ? settings.copyright_texte.slice(settings.nom_plateforme.length).replace(/^[\s.—]+/, '') : settings.copyright_texte}{' '}
                 {settings.signature_texte}{' '}
                 <a href={settings.signature_url} target="_blank" rel="noreferrer">
                   {settings.signature_auteur}
