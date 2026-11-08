@@ -294,7 +294,10 @@ function buildPubliciteFormData(payload: PubliciteDraft) {
   const formData = new FormData()
 
   appendValue(formData, 'titre_promo', payload.titre_promo)
-  appendValue(formData, 'lien_action', payload.lien_action)
+  if (payload.prix !== undefined && payload.prix !== '') appendValue(formData, 'prix', String(payload.prix))
+  if (payload.description) appendValue(formData, 'description', payload.description)
+  if (payload.categorie) appendValue(formData, 'categorie', payload.categorie)
+  appendValue(formData, 'lien_action', payload.lien_action || '#/boutiques')
   appendValue(formData, 'quartier_cible', payload.quartier_cible)
   appendValue(formData, 'banniere', payload.banniere)
 
@@ -371,9 +374,40 @@ export async function contactAvis(token: string, id: number) {
   })
 }
 
-export async function fetchPublicitesBoutiques(quartier?: string) {
-  const query = quartier ? `?quartier=${encodeURIComponent(quartier)}` : ''
+export interface PublicitesFilterParams {
+  quartier?: string
+  categorie?: string
+  search?: string
+  boutique_id?: number
+  sort?: 'recent' | 'price_asc' | 'price_desc' | 'popular'
+}
+
+export async function fetchPublicitesBoutiques(params?: string | PublicitesFilterParams) {
+  let query = ''
+  if (typeof params === 'string') {
+    query = params ? `?quartier=${encodeURIComponent(params)}` : ''
+  } else if (params) {
+    const sp = new URLSearchParams()
+    if (params.quartier) sp.set('quartier', params.quartier)
+    if (params.categorie && params.categorie !== 'Tous' && params.categorie !== 'Tous les produits') sp.set('categorie', params.categorie)
+    if (params.search) sp.set('search', params.search)
+    if (params.boutique_id) sp.set('boutique_id', String(params.boutique_id))
+    if (params.sort) sp.set('sort', params.sort)
+    const qs = sp.toString()
+    if (qs) query = `?${qs}`
+  }
   return requestJson<{ data: PubliciteBoutique[] }>(`/publicites-boutiques${query}`)
+}
+
+export async function fetchPubliciteBoutique(id: number) {
+  return requestJson<{ data: PubliciteBoutique }>(`/publicites-boutiques/${id}`)
+}
+
+export async function contactPubliciteBoutique(token: string, publiciteId: number) {
+  return requestJson<{ message: string; data: { conversation: ConversationThreadInfo } }>(`/publicites-boutiques/${publiciteId}/contact`, {
+    method: 'POST',
+    headers: withAuthHeaders(token),
+  })
 }
 
 export async function fetchUniversities() {

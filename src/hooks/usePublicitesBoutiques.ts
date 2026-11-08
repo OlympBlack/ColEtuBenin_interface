@@ -1,18 +1,20 @@
-import { useEffect, useState } from 'react'
-import { fetchPublicitesBoutiques } from '../services/api'
+import { useEffect, useState, useCallback } from 'react'
+import { fetchPublicitesBoutiques, type PublicitesFilterParams } from '../services/api'
 import type { PubliciteBoutique } from '../types'
 
-export function usePublicitesBoutiques(quartier?: string) {
+export function usePublicitesBoutiques(params?: string | PublicitesFilterParams) {
   const [publicites, setPublicites] = useState<PubliciteBoutique[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
+  const serialized = typeof params === 'string' ? params : JSON.stringify(params || {})
+
+  const loadData = useCallback(() => {
     let cancelled = false
     setIsLoading(true)
     setError(null)
 
-    fetchPublicitesBoutiques(quartier)
+    fetchPublicitesBoutiques(params)
       .then((response) => {
         if (!cancelled) {
           setPublicites(response.data)
@@ -30,7 +32,11 @@ export function usePublicitesBoutiques(quartier?: string) {
     return () => {
       cancelled = true
     }
-  }, [quartier])
+  }, [serialized])
 
-  return { publicites, isLoading, error }
+  useEffect(() => {
+    return loadData()
+  }, [loadData])
+
+  return { publicites, isLoading, error, refetch: loadData }
 }

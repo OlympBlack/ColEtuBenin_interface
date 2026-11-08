@@ -352,8 +352,11 @@ export interface NotificationCenterData {
 }
 export interface PubliciteDraft {
   titre_promo: string
-  lien_action: string
-  quartier_cible: string
+  prix?: number | string
+  description?: string
+  categorie?: string
+  lien_action?: string
+  quartier_cible?: string
   banniere: File
 }
 
@@ -383,15 +386,24 @@ export interface AuthSession {
 export interface PubliciteBoutique {
   id: number
   titre_promo: string
+  nom_produit?: string
+  prix?: number | null
+  description?: string | null
+  categorie?: string | null
   url_image_banniere: string
   lien_action: string
   quartier_cible: string | null
   vues_count: number
   clics_count: number
+  created_at?: string
   boutique: {
+    user_id?: number
     nom_boutique: string | null
     categorie: string | null
     logo_url: string | null
+    telephone?: string | null
+    adresse_physique?: string | null
+    is_verified?: boolean
   }
 }
 

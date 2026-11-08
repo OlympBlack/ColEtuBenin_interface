@@ -169,7 +169,15 @@ function buildInitialAnnouncementForm(role: AuthSession['user']['role'], univers
 }
 
 function buildInitialPubliciteForm(): PubliciteFormState {
-  return { titre_promo: '', lien_action: '', quartier_cible: '', banniere: null }
+  return {
+    titre_promo: '',
+    prix: '',
+    description: '',
+    categorie: 'Informatique',
+    lien_action: '',
+    quartier_cible: '',
+    banniere: null,
+  }
 }
 
 export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspaceProps) {
@@ -827,29 +835,82 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
         {currentStep?.id === 'infos' && isBoutique && (
           <>
             <div className="publish-form__header">
-              <h2 className="publish-form__section-title">Contenu de la campagne</h2>
+              <h2 className="publish-form__section-title">Fiche article & informations</h2>
               <p className="publish-form__intro">
-                Rédigez un message court et percutant pour votre publicité ciblée.
+                Renseignez les détails de votre produit ou offre pour les étudiants et riverains des campus.
               </p>
             </div>
 
             <div className="publish-form__section">
               <div className="publish-form__grid">
                 <label className="field field--full">
-                  <span>Titre promotionnel</span>
+                  <span>Nom de l'article / Titre de l'offre *</span>
                   <input
                     value={publiciteForm.titre_promo}
-                    placeholder="Ex : -20% sur tous nos meubles pour la rentrée"
+                    placeholder="Ex : MacBook Pro M3 Max 36GB - Config Pro"
+                    required
                     onChange={(event) => setP({ titre_promo: event.target.value })}
                   />
                 </label>
 
-                <label className="field field--full">
-                  <span>Lien d'action</span>
+                <label className="field">
+                  <span>Catégorie du produit *</span>
+                  <select
+                    value={publiciteForm.categorie || 'Informatique'}
+                    onChange={(event) => setP({ categorie: event.target.value })}
+                  >
+                    <option value="Informatique">Informatique</option>
+                    <option value="Meubles & Literie">Meubles & Literie</option>
+                    <option value="Électronique & Réseau">Électronique & Réseau</option>
+                    <option value="Bureautique">Bureautique</option>
+                    <option value="Électroménager">Électroménager</option>
+                    <option value="Accessoires">Accessoires</option>
+                    <option value="Services & Autres">Services & Autres</option>
+                  </select>
+                </label>
+
+                <label className="field">
+                  <span>Prix indicatif (FCFA)</span>
                   <input
-                    value={publiciteForm.lien_action}
-                    placeholder="Ex : https://maboutique.bj/rentrée"
+                    type="number"
+                    min="0"
+                    value={publiciteForm.prix ?? ''}
+                    placeholder="Ex : 45000"
+                    onChange={(event) => setP({ prix: event.target.value })}
+                  />
+                </label>
+
+                <label className="field">
+                  <span>Zone ciblée / Quartier de disponibilité</span>
+                  <select
+                    value={publiciteForm.quartier_cible || ''}
+                    onChange={(event) => setP({ quartier_cible: event.target.value })}
+                  >
+                    <option value="">Tous les campus (National)</option>
+                    {quartiers.map((q) => (
+                      <option key={q.id} value={q.nom}>
+                        {q.nom}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="field">
+                  <span>Lien externe ou site web (optionnel)</span>
+                  <input
+                    value={publiciteForm.lien_action || ''}
+                    placeholder="Ex : https://maboutique.bj/produit"
                     onChange={(event) => setP({ lien_action: event.target.value })}
+                  />
+                </label>
+
+                <label className="field field--full">
+                  <span>Description du produit & caractéristiques</span>
+                  <textarea
+                    rows={4}
+                    value={publiciteForm.description || ''}
+                    placeholder="Décrivez l'état, les caractéristiques techniques, les garanties et les modalités de livraison..."
+                    onChange={(event) => setP({ description: event.target.value })}
                   />
                 </label>
               </div>
@@ -1424,19 +1485,39 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
         {currentStep?.id === 'recap' && isBoutique && (
           <>
             <div className="publish-form__header">
-              <h2 className="publish-form__section-title">Récapitulatif de la campagne</h2>
-              <p className="publish-form__intro">Vérifiez votre campagne avant de lancer sa diffusion.</p>
+              <h2 className="publish-form__section-title">Récapitulatif de votre article</h2>
+              <p className="publish-form__intro">Vérifiez la présentation de votre offre avant de la publier sur l'e-shop.</p>
             </div>
 
             <div className="publish-form__section">
-              <div className="app-panel app-panel--muted">
-                <strong className="d-block mb-2">{publiciteForm.titre_promo || '—'}</strong>
-                <span style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>
-                  Lien : {publiciteForm.lien_action || '—'}
-                </span>
+              <div className="app-panel app-panel--muted p-4">
+                <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                  <span className="badge bg-primary text-white text-xs px-2.5 py-1 rounded-pill">
+                    {publiciteForm.categorie || 'Informatique'}
+                  </span>
+                  {publiciteForm.prix && (
+                    <span className="fw-bold text-success fs-5">
+                      {Number(publiciteForm.prix).toLocaleString('fr-FR')} FCFA
+                    </span>
+                  )}
+                </div>
+                <strong className="d-block fs-5 mb-2 text-dark">{publiciteForm.titre_promo || '—'}</strong>
+                {publiciteForm.description && (
+                  <p className="text-secondary small mb-3" style={{ whiteSpace: 'pre-line' }}>
+                    {publiciteForm.description}
+                  </p>
+                )}
+                <div className="d-flex flex-wrap gap-3 text-muted small pt-2 border-top">
+                  {publiciteForm.quartier_cible && (
+                    <span>📍 Zone : <strong>{publiciteForm.quartier_cible}</strong></span>
+                  )}
+                  {publiciteForm.lien_action && (
+                    <span>🔗 Lien : <a href={publiciteForm.lien_action} target="_blank" rel="noreferrer">{publiciteForm.lien_action}</a></span>
+                  )}
+                </div>
                 {bannerPreview && (
-                  <div className="mt-3" style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)' }}>
-                    <img src={bannerPreview} alt="Bannière retenue" style={{ width: '100%', maxHeight: 200, objectFit: 'cover', display: 'block' }} />
+                  <div className="mt-3" style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid var(--border)' }}>
+                    <img src={bannerPreview} alt="Bannière retenue" style={{ width: '100%', maxHeight: 260, objectFit: 'cover', display: 'block' }} />
                   </div>
                 )}
               </div>
