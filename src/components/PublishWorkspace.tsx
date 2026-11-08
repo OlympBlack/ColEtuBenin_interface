@@ -422,6 +422,7 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
       const finalType = isDemarcheur ? 'CHAMBRE_VIDE' : announcementForm.type_annonce
       await createAnnouncement(session.token, {
         ...announcementForm,
+        panoramicMedias,
         type_annonce: finalType,
         caution: finalType === 'RECHERCHE_BINOME' ? '0' : announcementForm.caution,
         nombre_places:
