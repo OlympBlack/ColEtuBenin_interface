@@ -460,28 +460,37 @@ export function BinomeDetailPage({
         </div>
       )}
 
-      {/* ── Modal de Contact (WhatsApp & Chat) ── */}
+      {/* ── Modal de Contact (WhatsApp & Chat - Bottom sheet sur mobile) ── */}
       {isContactModalOpen && canContact && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/40 backdrop-blur-xs"
+          onClick={() => setIsContactModalOpen(false)}
+        >
           <div
-            className="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-200 overflow-hidden text-left"
+            className="bg-white w-full max-w-md rounded-t-[24px] sm:rounded-2xl shadow-2xl border border-slate-200 overflow-hidden text-left pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-0"
             role="dialog"
             aria-modal="true"
+            onClick={(e) => e.stopPropagation()}
+            style={{ animation: 'hero-fade-up 0.3s cubic-bezier(0.2,0.8,0.2,1) both' }}
           >
-            <div className="p-6 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+            {/* Poignée tactile mobile style LinkedIn */}
+            <div className="w-10 h-1 bg-slate-300 rounded-full mx-auto mt-2.5 mb-1 sm:hidden" />
+
+            <div className="p-5 sm:p-6 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center font-bold text-base">
+                <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center font-bold text-base shadow-xs">
                   {studentDisplayName.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-sm">{studentDisplayName}</h3>
-                  <div className="text-xs text-slate-500">{school} • {filiere}</div>
+                  <h3 className="font-bold text-slate-900 text-sm leading-tight">{studentDisplayName}</h3>
+                  <div className="text-xs text-slate-500 mt-0.5">{school} • {filiere}</div>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setIsContactModalOpen(false)}
-                className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-full bg-slate-100 sm:bg-transparent text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors"
+                aria-label="Fermer"
               >
                 <X className="w-4 h-4" />
               </button>

@@ -212,8 +212,8 @@ export function MarketplaceProductPage({ productId, session, onToast }: { produc
 
             {/* Contact Modal Mimicking Real Estate DetailPage */}
             {isContactModalOpen && (
-                <div style={M.overlay}>
-                    <div style={M.modal} role="dialog" aria-modal="true">
+                <div style={M.overlay} onClick={() => setIsContactModalOpen(false)}>
+                    <div style={M.modal} role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
                         {/* Header */}
                         <div style={M.header}>
                             <div style={M.avatar}>

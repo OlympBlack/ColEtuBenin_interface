@@ -367,6 +367,70 @@ export function AnnonceDetailPage({
           .colcampus-title { font-size: 18px !important; }
           .colcampus-info-row { font-size: 13px; }
         }
+
+        /* ── Contact Modal (Bottom Sheet sur mobile comme LinkedIn / Boutique) ── */
+        .colcampus-contact-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(15, 23, 42, 0.45);
+          backdrop-filter: blur(4px);
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
+          z-index: 1000;
+          padding: 0;
+        }
+
+        .colcampus-contact-modal {
+          width: 100%;
+          max-width: 500px;
+          background: #ffffff;
+          border-top-left-radius: 28px;
+          border-top-right-radius: 28px;
+          border-bottom-left-radius: 0;
+          border-bottom-right-radius: 0;
+          overflow: hidden;
+          box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.18);
+          animation: colcampusBottomSheet 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+          padding-bottom: max(1rem, env(safe-area-inset-bottom));
+          font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .colcampus-drag-handle {
+          width: 40px;
+          height: 4px;
+          background: #CBD5E1;
+          border-radius: 999px;
+          margin: 10px auto 2px;
+          display: block;
+        }
+
+        @keyframes colcampusBottomSheet {
+          from {
+            transform: translateY(100%);
+            opacity: 0.5;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+
+        @media (min-width: 640px) {
+          .colcampus-contact-overlay {
+            align-items: center;
+            padding: 16px;
+          }
+          .colcampus-contact-modal {
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+            padding-bottom: 0;
+            animation: modalSlideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+          }
+          .colcampus-drag-handle {
+            display: none;
+          }
+        }
       `}</style>
 
       <div className="colcampus-detail colcampus-detail-page">
@@ -979,10 +1043,22 @@ export function AnnonceDetailPage({
         </div>
       </div>
 
-      {/* ── Contact modal ── */}
+      {/* ── Contact modal (Bottom Sheet sur mobile comme LinkedIn / Boutique) ── */}
       {isContactModalOpen && canContact && (
-        <div style={M.overlay}>
-          <div style={M.modal} role="dialog" aria-modal="true" aria-label="Contacter l'annonceur">
+        <div
+          className="colcampus-contact-overlay"
+          onClick={() => setIsContactModalOpen(false)}
+        >
+          <div
+            className="colcampus-contact-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Contacter l'annonceur"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Poignée tactile mobile style LinkedIn */}
+            <div className="colcampus-drag-handle" />
+
             {/* Header */}
             <div style={M.header}>
               <div style={M.avatar}>
@@ -993,17 +1069,21 @@ export function AnnonceDetailPage({
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 ) : (
-                  <span style={{ fontWeight: 800 }}>{authorInitial}</span>
+                  <span>{authorInitial}</span>
                 )}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={M.name}>
-                  {authorFullName} ({formatRoleLabel(currentAnnouncement.user.role)})
+                  {authorFullName}
                 </div>
-                <div style={M.status}><span style={M.onlineDot} />En ligne</div>
+                <div style={M.status}><span style={M.onlineDot} />Disponible</div>
               </div>
-              <button style={M.closeBtn} onClick={() => setIsContactModalOpen(false)} aria-label="Fermer">
-                <UiIcon name="x" />
+              <button
+                style={M.closeBtn}
+                onClick={() => setIsContactModalOpen(false)}
+                aria-label="Fermer"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
               </button>
             </div>
 
@@ -1021,11 +1101,11 @@ export function AnnonceDetailPage({
                     alignItems: 'center',
                     gap: 8,
                     width: '100%',
-                    padding: '8px 12px',
-                    marginBottom: 14,
+                    padding: '9px 14px',
+                    marginBottom: 16,
                     background: 'rgba(164, 198, 57, 0.08)',
                     border: '1px solid rgba(164, 198, 57, 0.28)',
-                    borderRadius: 10,
+                    borderRadius: 12,
                     color: '#476300',
                     fontSize: 12.5,
                     fontWeight: 600,
@@ -1034,11 +1114,11 @@ export function AnnonceDetailPage({
                   }}
                 >
                   <UiIcon name="user" />
-                  <span style={{ flex: 1 }}>Voir la fiche profil et préférences</span>
+                  <span style={{ flex: 1 }}>Voir la fiche profil ({formatRoleLabel(currentAnnouncement.user.role)})</span>
                   <UiIcon name="chevron-right" />
                 </button>
               )}
-              <p style={M.choiceLabel}>Choisissez un canal de contact</p>
+              <p style={M.choiceLabel}>Canal de contact</p>
 
               <a
                 className="colcampus-opt-btn"
@@ -1046,30 +1126,57 @@ export function AnnonceDetailPage({
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => setIsContactModalOpen(false)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 16,
+                  padding: '16px',
+                  borderRadius: 16,
+                  background: '#F8FAFC',
+                  marginBottom: 12,
+                  textDecoration: 'none',
+                  border: '1px solid #F1F5F9',
+                }}
               >
                 <span style={{ ...M.optIcon, background: '#DCFCE7', color: '#15803D' }}>
-                  <UiIcon name="phone" />
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
                 </span>
-                <div>
+                <div style={{ flex: 1 }}>
                   <div style={M.optTitle}>WhatsApp</div>
-                  <div style={M.optSub}>Message pré-rempli · réponse rapide</div>
+                  <div style={M.optSub}>Message prérempli · réponse rapide</div>
                 </div>
-                <UiIcon name="chevron-right" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#94A3B8' }}><polyline points="9 18 15 12 9 6" /></svg>
               </a>
 
-              <button className="colcampus-opt-btn" onClick={handleOpenChat} disabled={isOpeningChat}>
+              <button
+                className="colcampus-opt-btn"
+                onClick={handleOpenChat}
+                disabled={isOpeningChat}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 16,
+                  padding: '16px',
+                  borderRadius: 16,
+                  background: '#F8FAFC',
+                  width: '100%',
+                  textAlign: 'left',
+                  border: '1px solid #F1F5F9',
+                  cursor: 'pointer',
+                }}
+              >
                 <span style={{ ...M.optIcon, background: '#DBEAFE', color: '#1D4ED8' }}>
                   {isOpeningChat ? (
                     <span style={{ width: 14, height: 14, border: '2px solid rgba(29, 78, 216, 0.3)', borderTopColor: '#1D4ED8', borderRadius: '50%', display: 'inline-block', animation: 'spin 1s linear infinite' }} />
                   ) : (
-                    <UiIcon name="message" />
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
                   )}
                 </span>
-                <div>
-                  <div style={M.optTitle}>Chat interne ColoCampus</div>
-                  <div style={M.optSub}>Ouvrir dans la messagerie sécurisée</div>
+                <div style={{ flex: 1 }}>
+                  <div style={M.optTitle}>Chat interne App</div>
+                  <div style={M.optSub}>Discuter sans quitter ColoCampus</div>
                 </div>
-                <UiIcon name="chevron-right" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#94A3B8' }}><polyline points="9 18 15 12 9 6" /></svg>
               </button>
             </div>
           </div>
@@ -1320,48 +1427,60 @@ const S: Record<string, CSSProperties> = {
 
 /* ── Modal styles ── */
 const M: Record<string, CSSProperties> = {
-  overlay: {
-    position: 'fixed', inset: 0,
-    background: 'rgba(15,23,42,.55)',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    padding: 16, zIndex: 999,
-    backdropFilter: 'blur(4px)',
-  },
-  modal: {
-    background: '#fff', borderRadius: 20,
-    width: '100%', maxWidth: 400,
-    boxShadow: '0 32px 64px rgba(0,0,0,.15)',
-    overflow: 'hidden',
-    fontFamily: "'DM Sans', sans-serif",
-  },
   header: {
-    display: 'flex', alignItems: 'center', gap: 12,
-    padding: '16px 20px', borderBottom: '1px solid #F1F5F9',
+    padding: '20px 24px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 16,
+    borderBottom: '1px solid #F1F5F9',
   },
   avatar: {
-    width: 42, height: 42, borderRadius: '50%',
-    background: '#DBEAFE', color: '#1D4ED8',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    fontWeight: 700, fontSize: 16, flexShrink: 0, overflow: 'hidden',
+    width: 52,
+    height: 52,
+    borderRadius: '50%',
+    background: '#F1F5F9',
+    border: '2px solid #fff',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    color: '#94A3B8',
+    flexShrink: 0,
+    fontWeight: 800,
+    fontSize: 18,
   },
-  name: { fontSize: 15, fontWeight: 600, color: '#0F172A' },
-  status: { fontSize: 12, color: '#64748B', display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 },
-  onlineDot: { width: 7, height: 7, borderRadius: '50%', background: '#22C55E', display: 'inline-block' },
+  name: { fontSize: 17, fontWeight: 800, color: '#0F172A', lineHeight: 1.2 },
+  status: { fontSize: 13, color: '#64748B', display: 'flex', alignItems: 'center', gap: 6, marginTop: 4, fontWeight: 500 },
+  onlineDot: { width: 8, height: 8, borderRadius: '50%', background: '#22C55E' },
   closeBtn: {
-    marginLeft: 'auto', width: 30, height: 30, borderRadius: '50%',
-    border: '1px solid #E2E8F0', background: 'transparent',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    cursor: 'pointer', fontSize: 14, color: '#94A3B8',
+    marginLeft: 'auto',
+    width: 38,
+    height: 38,
+    borderRadius: '50%',
+    border: '1px solid #E2E8F0',
+    background: '#F8FAFC',
+    color: '#64748B',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    flexShrink: 0,
+    transition: 'all 0.15s ease',
   },
-  body: { padding: '16px 20px 20px' },
-  choiceLabel: { fontSize: 12.5, color: '#94A3B8', fontWeight: 600, letterSpacing: '.04em', textTransform: 'uppercase', marginBottom: 12 },
+  body: { padding: '20px 24px 24px' },
+  choiceLabel: { fontSize: 12, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14 },
   optIcon: {
-    width: 38, height: 38, borderRadius: 10,
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    flexShrink: 0, fontSize: 18,
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
   },
-  optTitle: { fontSize: 14, fontWeight: 600, color: '#0F172A' },
-  optSub: { fontSize: 12, color: '#94A3B8', marginTop: 2 },
+  optTitle: { fontSize: 15, fontWeight: 700, color: '#0F172A' },
+  optSub: { fontSize: 13, color: '#64748B', marginTop: 2 },
   backBtn: {
     background: 'none', border: 'none', cursor: 'pointer',
     fontSize: 12.5, color: '#64748B', fontWeight: 500,
