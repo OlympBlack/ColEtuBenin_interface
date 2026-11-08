@@ -18,7 +18,6 @@ import type { ToastDraft } from '../components/ToastViewport'
 import { UiIcon } from '../components/UiIcons'
 import { ReportModal } from '../components/ReportModal'
 import { AuthorProfileModal } from '../components/AuthorProfileModal'
-import { PanoramaViewer } from '../components/PanoramaViewer'
 
 
 /* ─────────────────────────────────────────────
@@ -101,15 +100,6 @@ export function AnnonceDetailPage({
   const [isSavingFavorite, setIsSavingFavorite] = useState(false)
   const [isFavorited, setIsFavorited] = useState<boolean>(Boolean(announcement?.est_favori))
   const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false)
-  const [panoramaUrl, setPanoramaUrl] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!announcement) return
-    const panoramaMedia = announcement.medias.find((m) => Boolean(m.est_panoramique_3d))
-    if (panoramaMedia) {
-      setPanoramaUrl(panoramaMedia.url_fichier)
-    }
-  }, [announcement])
 
   useEffect(() => {
     if (announcement) {
@@ -197,7 +187,7 @@ export function AnnonceDetailPage({
   const medias =
     currentAnnouncement.medias.length > 0
       ? currentAnnouncement.medias
-      : [{ id: 0, url_fichier: getPrimaryImage(currentAnnouncement), est_panoramique_3d: false }]
+      : [{ id: 0, url_fichier: getPrimaryImage(currentAnnouncement) }]
 
   const activeMedia = medias[activeIndex] ?? medias[0]
 
@@ -405,11 +395,6 @@ export function AnnonceDetailPage({
               <div style={S.imgPills}>
                 <StatusPill variant="blue">{formatAnnouncementType(announcement.type_annonce)}</StatusPill>
                 <StatusPill variant="green">{formatStatus(announcement.statut_disponibilite)}</StatusPill>
-                {Boolean(activeMedia.est_panoramique_3d) && (
-                  <span style={{ ...pill, background: '#FEF3C7', color: '#B45309', border: '1px solid #FDE68A' }}>
-                    <UiIcon name="eye" /> Photo 360°
-                  </span>
-                )}
               </div>
               {/* image counter */}
               {medias.length > 1 && (
@@ -429,76 +414,11 @@ export function AnnonceDetailPage({
                     style={{
                       ...S.thumb,
                       ...(index === activeIndex ? S.thumbActive : {}),
-                      position: 'relative',
                     }}
                   >
                     <img src={media.url_fichier} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    {Boolean(media.est_panoramique_3d) && (
-                      <span
-                        style={{
-                          position: 'absolute',
-                          bottom: 2,
-                          right: 2,
-                          background: 'rgba(217, 119, 6, 0.9)',
-                          color: '#fff',
-                          fontSize: 9,
-                          fontWeight: 700,
-                          padding: '1px 4px',
-                          borderRadius: 4,
-                          lineHeight: 1,
-                        }}
-                      >
-                        360°
-                      </span>
-                    )}
                   </button>
                 ))}
-              </div>
-            )}
-
-            {/* Visite virtuelle 360° */}
-            {currentAnnouncement.medias.some((m) => Boolean(m.est_panoramique_3d)) && (
-              <div style={{ marginTop: 24, borderTop: '1px solid #F1F5F9', paddingTop: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                  <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#0F172A', display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <UiIcon name="eye" /> Visite virtuelle 360°
-                  </h3>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: '#1D4ED8', background: '#EFF6FF', padding: '3px 8px', borderRadius: 6 }}>
-                    Vue 360° interactive
-                  </span>
-                </div>
-                <p style={{ margin: '0 0 12px', fontSize: 13, color: '#64748B' }}>
-                  Explorez le logement de façon interactive : faites glisser la vue avec votre souris ou votre doigt.
-                </p>
-                <div style={{ display: 'flex', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
-                  {currentAnnouncement.medias
-                    .filter((m) => Boolean(m.est_panoramique_3d))
-                    .map((m, idx) => (
-                      <button
-                        key={m.id || idx}
-                        type="button"
-                        className="colcampus-opt-btn"
-                        onClick={() => setPanoramaUrl(m.url_fichier)}
-                        style={{
-                          width: 'auto',
-                          padding: '7px 14px',
-                          marginBottom: 0,
-                          fontSize: 13,
-                          background: (panoramaUrl === m.url_fichier) ? '#EFF6FF' : '#F8FAFC',
-                          borderColor: (panoramaUrl === m.url_fichier) ? '#BFDBFE' : '#E2E8F0',
-                          color: (panoramaUrl === m.url_fichier) ? '#1D4ED8' : '#334155',
-                          fontWeight: (panoramaUrl === m.url_fichier) ? 600 : 500,
-                        }}
-                      >
-                        <UiIcon name="eye" /> Vue 360° n°{idx + 1}
-                      </button>
-                    ))}
-                </div>
-                <PanoramaViewer
-                  url={panoramaUrl ?? (currentAnnouncement.medias.find((m) => Boolean(m.est_panoramique_3d))?.url_fichier || '')}
-                  width={Math.min(800, typeof window !== 'undefined' ? window.innerWidth - 32 : 800)}
-                  height={400}
-                />
               </div>
             )}
 

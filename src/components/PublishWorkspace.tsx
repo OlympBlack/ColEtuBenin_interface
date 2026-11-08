@@ -14,6 +14,7 @@ import {
   Trash2,
   UploadCloud,
   Users,
+  Video,
 } from 'lucide-react'
 import { QUARTIER_OPTIONS, ROOM_TYPE_OPTIONS } from '../constants'
 import { useDashboard } from '../hooks/useDashboard'
@@ -162,7 +163,6 @@ function buildInitialAnnouncementForm(role: AuthSession['user']['role'], univers
     nombre_places: 1,
     statut_disponibilite: 'available',
     medias: [],
-    panoramicMedias: [],
   }
 }
 
@@ -173,6 +173,7 @@ function buildInitialPubliciteForm(): PubliciteFormState {
 export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspaceProps) {
   const mediaInputId = useId()
   const bannerInputId = useId()
+  const videoInputId = useId()
 
   const { dashboard, isLoading, error } = useDashboard(session.token)
   const defaultUniversiteId = session.user.profil?.universite_id ?? undefined
@@ -219,19 +220,38 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
     }
   }, [announcementForm.medias])
 
-  /* Aperçus médias panoramiques 360° */
-  const [panoramicMedias, setPanoramicMedias] = useState<File[]>([])
-  const panoramicInputId = useId()
+  /* Aperçu vidéo de la chambre */
+  const [videoFile, setVideoFile] = useState<File | null>(null)
+  const [videoPreview, setVideoPreview] = useState<string | null>(null)
 
   useEffect(() => {
-    const urls = panoramicMedias.map((file) => ({ file, url: URL.createObjectURL(file) }))
-    setPanoramicPreviews(urls)
-    return () => {
-      urls.forEach((item) => URL.revokeObjectURL(item.url))
+    if (!videoFile) {
+      setVideoPreview(null)
+      return
     }
-  }, [panoramicMedias])
+    const url = URL.createObjectURL(videoFile)
+    setVideoPreview(url)
+    return () => URL.revokeObjectURL(url)
+  }, [videoFile])
 
-  const [panoramicPreviews, setPanoramicPreviews] = useState<{ file: File; url: string }[]>([])
+  function handleVideoSelected(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.includes('mp4') && !file.name.toLowerCase().endsWith('.mp4')) {
+      onToast({ tone: 'error', title: 'Format non supporté', message: 'Veuillez sélectionner un fichier vidéo au format MP4.' })
+      return
+    }
+    if (file.size > 50 * 1024 * 1024) {
+      onToast({ tone: 'error', title: 'Fichier trop lourd', message: 'La vidéo ne doit pas dépasser 50 Mo.' })
+      return
+    }
+    setVideoFile(file)
+  }
+
+  function removeVideo() {
+    setVideoFile(null)
+  }
+
 
   /* Aperçu bannière boutique */
   useEffect(() => {
@@ -420,9 +440,14 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
     setIsSubmitting(true)
     try {
       const finalType = isDemarcheur ? 'CHAMBRE_VIDE' : announcementForm.type_annonce
+      const submissionMedias = [...(announcementForm.medias ?? [])]
+      if (videoFile && !isBinomeSearch) {
+        submissionMedias.push(videoFile)
+      }
+
       await createAnnouncement(session.token, {
         ...announcementForm,
-        panoramicMedias,
+        medias: submissionMedias,
         type_annonce: finalType,
         caution: finalType === 'RECHERCHE_BINOME' ? '0' : announcementForm.caution,
         nombre_places:
@@ -889,91 +914,66 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
                 </div>
               )}
             </div>
-          </>
-        )}
 
-        {currentStep?.id === 'medias' && !isBoutique && (
-          <>
-            <div className="publish-form__header">
-              <h2 className="publish-form__section-title">Photos panoramiques 360°</h2>
-              <p className="publish-form__intro">
-                Ajoutez des photographies panoramiques équirectangulaires (format 2:1) pour une visite virtuelle immersive. Les étudiants pourront explorer le logement à 360°.
-              </p>
-            </div>
-
-            <div className="publish-form__section">
-              <label className="field">
-                <span>Ajouter des photos panoramiques</span>
-                <label
-                  htmlFor={panoramicInputId}
-                  className="d-flex flex-column align-items-center justify-content-center gap-2 text-center"
-                  style={{
-                    border: '2px dashed var(--border)',
-                    borderRadius: 18,
-                    padding: '28px 18px',
-                    cursor: 'pointer',
-                    color: 'var(--muted)',
-                  }}
-                >
-                  <Eye size={28} style={{ color: '#1D4ED8' }} />
-                  <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text)' }}>
-                    Cliquez pour sélectionner des photos panoramiques
-                  </span>
-                  <span style={{ fontSize: '0.78rem' }}>JPG, PNG — Format équirectangulaire 2:1 recommandé</span>
-                  <input
-                    id={panoramicInputId}
-                    type="file"
-                    accept="image/jpeg,image/png"
-                    multiple
-                    style={{ display: 'none' }}
-                    onChange={async (event) => {
-                      const files = event.target.files
-                      if (!files?.length) return
-                      const compressed = await compressImages(Array.from(files))
-                      setPanoramicMedias((prev) => [...prev, ...compressed])
+            {/* Vidéo de la chambre (Démarcheur et Étudiant avec chambre uniquement) */}
+            {!isBinomeSearch && (
+              <div className="publish-form__section mt-4">
+                <label className="field">
+                  <span>Vidéo de la chambre (optionnel)</span>
+                  <label
+                    htmlFor={videoInputId}
+                    className="d-flex flex-column align-items-center justify-content-center gap-2 text-center"
+                    style={{
+                      border: '2px dashed var(--border)',
+                      borderRadius: 18,
+                      padding: '24px 18px',
+                      cursor: 'pointer',
+                      color: 'var(--muted)',
                     }}
-                  />
+                  >
+                    <Video size={28} style={{ color: 'var(--primary)' }} />
+                    <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text)' }}>
+                      {videoFile ? videoFile.name : 'Cliquez pour sélectionner une vidéo de visite'}
+                    </span>
+                    <span style={{ fontSize: '0.78rem' }}>Format MP4 — 1 vidéo max (50 Mo maximum)</span>
+                    <input
+                      id={videoInputId}
+                      type="file"
+                      accept="video/mp4"
+                      style={{ display: 'none' }}
+                      onChange={handleVideoSelected}
+                    />
+                  </label>
                 </label>
-              </label>
-            </div>
 
-            {panoramicPreviews.length > 0 && (
-              <div className="row g-3 mt-1">
-                {panoramicPreviews.map((preview, index) => (
-                  <div key={preview.url} className="col-6 col-md-4 col-lg-3">
-                    <div className="position-relative" style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid var(--border)' }}>
-                      <img
-                        src={preview.url}
-                        alt={`Aperçu panoramique ${index + 1}`}
-                        style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }}
-                      />
-                      <button
-                        type="button"
-                        className="position-absolute d-inline-grid"
-                        onClick={() => setPanoramicMedias((prev) => prev.filter((_, i) => i !== index))}
-                        aria-label={`Supprimer l'aperçu panoramique ${index + 1}`}
-                        style={{
-                          top: 6,
-                          right: 6,
-                          width: 26,
-                          height: 26,
-                          borderRadius: '50%',
-                          border: 'none',
-                          background: 'rgba(15,23,42,0.7)',
-                          color: '#fff',
-                          placeItems: 'center',
-                        }}
-                      >
-                        <Trash2 size={13} />
-                      </button>
-                      {index === 0 && (
-                        <span className="app-badge app-badge--success position-absolute" style={{ bottom: 6, left: 6 }}>
-                          Panoramique
-                        </span>
-                      )}
-                    </div>
+                {videoPreview && (
+                  <div className="position-relative mt-3" style={{ maxWidth: 420, borderRadius: 14, overflow: 'hidden', border: '1px solid var(--border)' }}>
+                    <video controls style={{ width: '100%', height: 'auto', display: 'block' }}>
+                      <source src={videoPreview} type="video/mp4" />
+                      Votre navigateur ne prend pas en charge la lecture vidéo.
+                    </video>
+                    <button
+                      type="button"
+                      className="position-absolute d-inline-grid"
+                      onClick={removeVideo}
+                      aria-label="Supprimer la vidéo"
+                      style={{
+                        top: 8,
+                        right: 8,
+                        width: 28,
+                        height: 28,
+                        borderRadius: '50%',
+                        border: 'none',
+                        background: 'rgba(15,23,42,0.75)',
+                        color: '#fff',
+                        placeItems: 'center',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
-                ))}
+                )}
               </div>
             )}
           </>

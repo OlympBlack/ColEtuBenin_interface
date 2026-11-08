@@ -178,7 +178,6 @@ export interface AnnouncementDraft {
   nombre_places?: number | string
   statut_disponibilite?: 'available' | 'taken' | 'pending'
   medias?: File[]
-  panoramicMedias?: File[]
 }
 
 export type AvisStatut = 'ouverte' | 'pourvue' | 'archivee'
