@@ -114,7 +114,9 @@ export function useChat(session: AuthSession, initialDiscussions: { conversation
             try {
                 const res = await fetchConversationById(session.token, activeConversation.id)
                 setMessages(prev => {
-                    if (res.data.messages.length > prev.length) {
+                    const pendingMessages = prev.filter(m => m.status === 'sending' || m.status === 'error')
+
+                    if (res.data.messages.length > prev.length - pendingMessages.length) {
                         const newMsg = res.data.messages[res.data.messages.length - 1]
                         if (newMsg && newMsg.user_id !== session.user.id) {
                             playMagicChime()
@@ -137,12 +139,13 @@ export function useChat(session: AuthSession, initialDiscussions: { conversation
                                 })
                             }
                         }
-                        return res.data.messages
+                        return [...res.data.messages, ...pendingMessages]
                     }
                     const lastIncoming = res.data.messages[res.data.messages.length - 1]
-                    const lastCurrent = prev[prev.length - 1]
+                    const nonPending = prev.filter(m => !m.status || m.status === 'sent')
+                    const lastCurrent = nonPending[nonPending.length - 1]
                     if (lastIncoming && lastCurrent && (lastIncoming.id !== lastCurrent.id || lastIncoming.is_read !== lastCurrent.is_read)) {
-                        return res.data.messages
+                        return [...res.data.messages, ...pendingMessages]
                     }
                     return prev
                 })
@@ -154,19 +157,78 @@ export function useChat(session: AuthSession, initialDiscussions: { conversation
         return () => clearInterval(interval)
     }, [activeConversation, session.token, session.user.id])
 
+    const pendingPayloadsRef = useRef<Record<string, string | { message?: string; audio?: Blob; duration?: number }>>({})
+
     const sendMessage = async (payload: string | { message?: string; audio?: Blob; duration?: number }) => {
-        if (!activeConversation || sending) return
+        if (!activeConversation) return
         if (typeof payload === 'string' && !payload.trim()) return
         if (typeof payload !== 'string' && !payload.message?.trim() && !payload.audio) return
+
+        const isAudio = typeof payload !== 'string' && Boolean(payload.audio)
+        const tempId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`
+        let localBlobUrl: string | null = null
+
+        if (isAudio && typeof payload !== 'string' && payload.audio) {
+            localBlobUrl = URL.createObjectURL(payload.audio)
+        }
+
+        pendingPayloadsRef.current[tempId] = payload
+
+        const optimisticMessage: ConversationMessage = {
+            id: -Date.now(),
+            tempId,
+            status: 'sending',
+            conversation_id: activeConversation.id,
+            user_id: session.user.id,
+            type: isAudio ? 'audio' : 'text',
+            content: typeof payload === 'string' ? payload : (payload.message || ''),
+            media_url: localBlobUrl,
+            duration: typeof payload !== 'string' ? payload.duration : null,
+            is_read: false,
+            created_at: new Date().toISOString(),
+            user: {
+                id: session.user.id,
+                name: session.user.name,
+                prenoms: session.user.prenoms,
+                email: session.user.email,
+                telephone: session.user.telephone,
+                role: session.user.role,
+                photo_profil: session.user.photo_profil ?? null,
+            },
+        }
+
+        // 1. Ajout optimiste immédiat dans le fil de discussion (visible et écoutable instantanément)
+        setMessages(prev => [...prev, optimisticMessage])
+
+        // 2. Mise à jour immédiate de la liste des conversations
+        setDiscussions(prev => {
+            const otherDiscussions = prev.filter(d => d.conversation.id !== activeConversation.id)
+            const updatedDiscussion = {
+                conversation: activeConversation,
+                last_message: optimisticMessage
+            }
+            return [updatedDiscussion, ...otherDiscussions]
+        })
 
         setSending(true)
         try {
             const res = await sendConversationMessage(session.token, activeConversation.id, payload)
+            delete pendingPayloadsRef.current[tempId]
 
-            // Update messages locally
-            setMessages(res.data.messages)
+            // Remplacement avec confirmation du serveur
+            setMessages(prev => {
+                const filtered = prev.filter(m => m.tempId !== tempId)
+                if (res.data.messages && Array.isArray(res.data.messages)) {
+                    const otherPending = filtered.filter(m => m.status === 'sending' || m.status === 'error')
+                    return [...res.data.messages, ...otherPending]
+                }
+                if (res.data.message) {
+                    return [...filtered, res.data.message]
+                }
+                return filtered
+            })
 
-            // Update discussion list locally
+            // Mettre à jour la discussion avec le message officiel
             setDiscussions(prev => {
                 const otherDiscussions = prev.filter(d => d.conversation.id !== activeConversation.id)
                 const updatedDiscussion = {
@@ -176,13 +238,56 @@ export function useChat(session: AuthSession, initialDiscussions: { conversation
                 return [updatedDiscussion, ...otherDiscussions]
             })
 
+            return res.data.message
         } catch (err) {
             console.error('Failed to send message:', err)
+            // Marquer le message comme échoué pour afficher le bouton réessayer
+            setMessages(prev => prev.map(m => m.tempId === tempId ? { ...m, status: 'error' } : m))
             throw err
         } finally {
             setSending(false)
+            if (localBlobUrl) {
+                setTimeout(() => {
+                    try {
+                        URL.revokeObjectURL(localBlobUrl!)
+                    } catch {}
+                }, 15000)
+            }
         }
     }
+
+    const retryMessage = useCallback(async (tempId: string) => {
+        const payload = pendingPayloadsRef.current[tempId]
+        if (!payload || !activeConversation) return
+
+        // Remettre en état 'sending'
+        setMessages(prev => prev.map(m => m.tempId === tempId ? { ...m, status: 'sending' } : m))
+
+        try {
+            const res = await sendConversationMessage(session.token, activeConversation.id, payload)
+            delete pendingPayloadsRef.current[tempId]
+
+            setMessages(prev => {
+                const filtered = prev.filter(m => m.tempId !== tempId)
+                if (res.data.messages && Array.isArray(res.data.messages)) {
+                    const otherPending = filtered.filter(m => m.status === 'sending' || m.status === 'error')
+                    return [...res.data.messages, ...otherPending]
+                }
+                if (res.data.message) {
+                    return [...filtered, res.data.message]
+                }
+                return filtered
+            })
+
+            setDiscussions(prev => {
+                const otherDiscussions = prev.filter(d => d.conversation.id !== activeConversation.id)
+                return [{ conversation: activeConversation, last_message: res.data.message ?? null }, ...otherDiscussions]
+            })
+        } catch (err) {
+            console.error('Retry failed:', err)
+            setMessages(prev => prev.map(m => m.tempId === tempId ? { ...m, status: 'error' } : m))
+        }
+    }, [activeConversation, session.token])
 
     const [onlineUsers, setOnlineUsers] = useState<number[]>([])
 
@@ -291,5 +396,6 @@ export function useChat(session: AuthSession, initialDiscussions: { conversation
         loading,
         sending,
         sendMessage,
+        retryMessage,
     }
 }

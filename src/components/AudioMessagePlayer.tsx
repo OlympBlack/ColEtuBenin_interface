@@ -6,6 +6,8 @@ interface AudioMessagePlayerProps {
   src: string
   duration?: number | null
   isMine: boolean
+  status?: 'sending' | 'sent' | 'error'
+  onRetry?: () => void
 }
 
 export function resolveMediaUrl(url: string | null | undefined): string {
@@ -45,7 +47,7 @@ const WAVE_BARS = [
   85, 95, 60, 45, 70, 50, 35, 60, 40,
 ]
 
-export function AudioMessagePlayer({ src, duration, isMine }: AudioMessagePlayerProps) {
+export function AudioMessagePlayer({ src, duration, isMine, status, onRetry }: AudioMessagePlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const waveformRef = useRef<HTMLDivElement | null>(null)
   const playerIdRef = useRef<string>(Math.random().toString(36).substring(2, 9))
@@ -318,7 +320,7 @@ export function AudioMessagePlayer({ src, duration, isMine }: AudioMessagePlayer
           />
         </div>
 
-        {/* Temps restant ou écoulé + Bouton vitesse */}
+        {/* Temps restant ou écoulé + Badge d'envoi WhatsApp + Bouton vitesse */}
         <div
           style={{
             display: 'flex',
@@ -331,11 +333,75 @@ export function AudioMessagePlayer({ src, duration, isMine }: AudioMessagePlayer
             marginTop: '1px',
           }}
         >
-          <span>
-            {isPlaying
-              ? formatTime(currentTime)
-              : formatTime(effectiveDuration || currentTime)}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span>
+              {isPlaying
+                ? formatTime(currentTime)
+                : formatTime(effectiveDuration || currentTime)}
+            </span>
+
+            {/* Badge signalant l'envoi en cours (façon WhatsApp) */}
+            {status === 'sending' && (
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                  fontSize: '9.5px',
+                  fontWeight: 700,
+                  color: isMine ? '#ffffff' : '#334155',
+                  backgroundColor: isMine ? 'rgba(0, 0, 0, 0.22)' : 'rgba(0, 0, 0, 0.08)',
+                  padding: '1px 6px',
+                  borderRadius: '8px',
+                  lineHeight: 1.2,
+                  letterSpacing: '0.2px',
+                }}
+                title="Message vocal en cours d'envoi vers le serveur"
+              >
+                <span
+                  style={{
+                    width: 7,
+                    height: 7,
+                    border: isMine ? '1.5px solid rgba(255,255,255,0.4)' : '1.5px solid #64748b',
+                    borderTopColor: isMine ? '#ffffff' : '#0f172a',
+                    borderRadius: '50%',
+                    display: 'inline-block',
+                    animation: 'spin 0.8s linear infinite',
+                  }}
+                />
+                Envoi...
+              </span>
+            )}
+
+            {/* Badge d'erreur de transmission avec bouton Réessayer */}
+            {status === 'error' && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onRetry?.()
+                }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                  fontSize: '9.5px',
+                  fontWeight: 700,
+                  color: '#ffffff',
+                  backgroundColor: '#dc2626',
+                  padding: '1px 6px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  lineHeight: 1.2,
+                }}
+                title="Échec de connexion lors de l'envoi. Cliquez pour réessayer."
+              >
+                ↻ Réessayer
+              </button>
+            )}
+          </div>
+
           <button
             type="button"
             onClick={cycleSpeed}

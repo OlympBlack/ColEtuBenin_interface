@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { createPortal } from 'react-dom'
+import { Clock } from 'lucide-react'
 import type { AuthSession, ConversationThreadInfo, ConversationMessage } from '../types'
 import { UiIcon } from './UiIcons'
 import { useChat } from '../hooks/useChat'
@@ -39,12 +40,32 @@ function MessageStatus({
   isMine,
   isRead,
   isPartnerOnline,
+  status,
 }: {
   isMine: boolean
   isRead: boolean
   isPartnerOnline: boolean
+  status?: 'sending' | 'sent' | 'error'
 }) {
   if (!isMine) return null
+
+  // Envoi en cours : icône horloge WhatsApp
+  if (status === 'sending') {
+    return (
+      <span className="msg-status sending" title="Envoi en cours..." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8' }}>
+        <Clock size={11} style={{ opacity: 0.9 }} />
+      </span>
+    )
+  }
+
+  // Échec d'envoi
+  if (status === 'error') {
+    return (
+      <span className="msg-status error" title="Échec de l'envoi" style={{ display: 'inline-flex', alignItems: 'center', color: '#ef4444' }}>
+        <UiIcon name="alert" />
+      </span>
+    )
+  }
 
   if (isRead) {
     return (
@@ -100,6 +121,7 @@ export function MessengerPopover({ session, isOpen, onClose, onUnreadChange }: M
     loading: loadingMessages,
     sending,
     sendMessage,
+    retryMessage,
   } = useChat(session, initialData, onUnreadChange ? () => onUnreadChange() : undefined)
 
   const [messageDraft, setMessageDraft] = useState('')
@@ -374,6 +396,7 @@ export function MessengerPopover({ session, isOpen, onClose, onUnreadChange }: M
   const handleSendAudio = async (audioBlob: Blob, duration: number) => {
     setIsRecordingAudio(false)
     setSendError(null)
+    setTimeout(() => scrollToBottom('smooth'), 40)
     try {
       await sendMessage({ audio: audioBlob, duration })
       setTimeout(() => scrollToBottom('smooth'), 50)
@@ -939,7 +962,7 @@ export function MessengerPopover({ session, isOpen, onClose, onUnreadChange }: M
                   messages.map(m => {
                     const isMine = m.user_id === session.user.id
                     return (
-                      <div key={m.id} style={{ ...styles.messageRow, flexDirection: 'column', alignItems: isMine ? 'flex-end' : 'flex-start', gap: '4px' }}>
+                      <div key={m.tempId || m.id} style={{ ...styles.messageRow, flexDirection: 'column', alignItems: isMine ? 'flex-end' : 'flex-start', gap: '4px' }}>
                         <div
                           style={{
                             ...styles.messageBubble,
@@ -949,17 +972,30 @@ export function MessengerPopover({ session, isOpen, onClose, onUnreadChange }: M
                             borderRadius: isMine ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
                             boxShadow: isMine ? '0 3px 10px rgba(138,173,42,0.22)' : '0 1px 3px rgba(0,0,0,0.04)',
                             minWidth: m.type === 'audio' || m.media_url ? '220px' : undefined,
+                            opacity: m.status === 'sending' ? 0.92 : 1,
+                            transition: 'opacity 0.2s ease',
                           }}
                         >
                           {m.type === 'audio' || m.media_url ? (
-                            <AudioMessagePlayer src={m.media_url!} duration={m.duration} isMine={isMine} />
+                            <AudioMessagePlayer
+                              src={m.media_url!}
+                              duration={m.duration}
+                              isMine={isMine}
+                              status={m.status}
+                              onRetry={m.tempId ? () => retryMessage(m.tempId!) : undefined}
+                            />
                           ) : (
                             m.content
                           )}
                         </div>
                         <div className="bubble-time-under" style={{ padding: isMine ? '0 4px 0 0' : '0 0 0 4px' }}>
                           <span>{formatRelativeTime(m.created_at)}</span>
-                          <MessageStatus isMine={isMine} isRead={m.is_read} isPartnerOnline={onlineUsers.includes(activeConversation.sender_id === session.user.id ? activeConversation.receiver_id : activeConversation.sender_id)} />
+                          <MessageStatus
+                            isMine={isMine}
+                            isRead={m.is_read}
+                            status={m.status}
+                            isPartnerOnline={onlineUsers.includes(activeConversation.sender_id === session.user.id ? activeConversation.receiver_id : activeConversation.sender_id)}
+                          />
                         </div>
                       </div>
                     )

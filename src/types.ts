@@ -305,6 +305,8 @@ export interface ConversationMessage {
   is_read: boolean
   created_at: string | null
   user: ConversationParticipant | null
+  status?: 'sending' | 'sent' | 'error'
+  tempId?: string
 }
 
 export interface ConversationThreadData {
