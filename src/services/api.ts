@@ -728,6 +728,17 @@ export async function deleteAdminUser(token: string, userId: number) {
   })
 }
 
+export async function giveAdminUserCredits(token: string, userId: number, credits: number, motif?: string) {
+  return requestJson<{ message: string; data: { user_id: number; credits_ajoutes: number; nouveau_solde: number; portefeuille: any } }>(
+    `/admin/users/${userId}/credits`,
+    {
+      method: 'POST',
+      headers: withAuthHeaders(token, { 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ credits, motif }),
+    }
+  )
+}
+
 export async function fetchAdminAnnonces(token: string, params?: { statut?: string; q?: string }) {
   const q = new URLSearchParams()
   if (params?.statut) q.set('statut', params.statut)

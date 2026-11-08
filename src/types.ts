@@ -370,6 +370,7 @@ export interface AuthUser {
   is_valide?: boolean
   is_verified: boolean
   profile_completed: boolean
+  credits_restants?: number
   statut_verification: VerificationStatus
   commentaire_admin: string | null
   photo_profil?: string | null

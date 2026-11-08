@@ -15,6 +15,7 @@ import {
   UserCheck,
   UserX,
   Bell,
+  Coins,
 } from 'lucide-react'
 import type { AuthSession, DashboardData, AuthUser, Annonce } from '../../types'
 import {
@@ -23,6 +24,7 @@ import {
   fetchAdminUsers,
   toggleAdminUserValidation,
   deleteAdminUser,
+  giveAdminUserCredits,
   fetchAdminAnnonces,
   deleteAdminAnnonce,
   toggleAdminAnnonceStatus,
@@ -66,6 +68,13 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
   const [togglingUserId, setTogglingUserId] = useState<number | null>(null)
   const [deletingUserId, setDeletingUserId] = useState<number | null>(null)
   const [userToDelete, setUserToDelete] = useState<AuthUser | null>(null)
+
+  // Attribution de crédits admin
+  const [isCreditModalOpen, setIsCreditModalOpen] = useState(false)
+  const [selectedUserForCredits, setSelectedUserForCredits] = useState<AuthUser | null>(null)
+  const [creditsAmount, setCreditsAmount] = useState<number>(5)
+  const [creditsMotif, setCreditsMotif] = useState<string>('')
+  const [isGivingCredits, setIsGivingCredits] = useState<boolean>(false)
 
   // Gestion des annonces
   const [annonceList, setAnnonceList] = useState<Annonce[]>(adminData?.annonces_recentes ?? [])
@@ -298,6 +307,41 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
       })
     } finally {
       setDeletingUserId(null)
+    }
+  }
+
+  // Attribuer manuellement des crédits à un utilisateur
+  async function handleGiveCredits() {
+    if (!selectedUserForCredits || creditsAmount < 1) return
+    setIsGivingCredits(true)
+    try {
+      const res = await giveAdminUserCredits(
+        session.token,
+        selectedUserForCredits.id,
+        creditsAmount,
+        creditsMotif.trim() || undefined
+      )
+      const nouveauSolde = res.data.nouveau_solde
+      setUserList((prev) =>
+        prev.map((u) => (u.id === selectedUserForCredits.id ? { ...u, credits_restants: nouveauSolde } : u))
+      )
+      onToast({
+        tone: 'success',
+        title: 'Crédits accordés',
+        message: res.message || `${creditsAmount} crédits ont été attribués à ${selectedUserForCredits.name}. L'utilisateur a été notifié.`,
+      })
+      setIsCreditModalOpen(false)
+      setSelectedUserForCredits(null)
+      setCreditsMotif('')
+      setCreditsAmount(5)
+    } catch (e) {
+      onToast({
+        tone: 'error',
+        title: 'Erreur',
+        message: e instanceof Error ? e.message : "Impossible d'attribuer les crédits.",
+      })
+    } finally {
+      setIsGivingCredits(false)
     }
   }
 
@@ -719,6 +763,19 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
               <p className="text-xs text-slate-500 mt-1">Consultez et administrez les comptes étudiants, démarcheurs et boutiques.</p>
             </div>
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedUserForCredits(userList[0] || null)
+                  setCreditsAmount(5)
+                  setCreditsMotif('')
+                  setIsCreditModalOpen(true)
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs bg-amber-500 hover:bg-amber-600 text-white shadow-xs transition active:scale-95 cursor-pointer"
+              >
+                <Coins className="w-4 h-4" />
+                <span>Attribuer des crédits</span>
+              </button>
               <span className="px-3.5 py-1.5 rounded-xl font-extrabold text-xs bg-slate-100 text-slate-700">
                 {userList.length} affichés
               </span>
@@ -764,7 +821,8 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
                   <th className="py-3 px-3.5 border-r border-slate-200/80">Contact</th>
                   <th className="py-3 px-3.5 border-r border-slate-200/80">Statut KYC</th>
                   <th className="py-3 px-3.5 border-r border-slate-200/80 text-center">Validé</th>
-                  <th className="py-3 px-3.5 text-right w-44">Actions</th>
+                  <th className="py-3 px-3.5 border-r border-slate-200/80 text-center">Crédits</th>
+                  <th className="py-3 px-3.5 text-right w-52">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -835,8 +893,37 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
                         )}
                       </button>
                     </td>
+                    <td className="py-2.5 px-3.5 border-r border-slate-200/80 text-center">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-50 text-amber-800 border border-amber-200 text-[11px] font-bold">
+                        <Coins className="w-3.5 h-3.5 text-amber-600" />
+                        <span>{user.credits_restants ?? 0}</span>
+                      </span>
+                    </td>
                     <td className="py-2.5 px-3.5 text-right">
                       <div className="flex items-center justify-end gap-1.5">
+                        {/* Option : Donner des crédits avec Infobulle */}
+                        <div className="relative group/btn">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedUserForCredits(user)
+                              setCreditsAmount(5)
+                              setCreditsMotif('')
+                              setIsCreditModalOpen(true)
+                            }}
+                            className="p-1.5 rounded-lg border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 hover:border-amber-300 transition cursor-pointer"
+                            aria-label="Attribuer des crédits"
+                          >
+                            <Coins className="w-3.5 h-3.5" />
+                          </button>
+                          <div className="absolute bottom-full mb-1.5 right-0 pointer-events-none opacity-0 group-hover/btn:opacity-100 transition-all duration-150 transform translate-y-1 group-hover/btn:translate-y-0 z-30">
+                            <div className="bg-slate-900 text-white text-[10px] font-medium py-1 px-2.5 rounded-md shadow-xl whitespace-nowrap">
+                              Attribuer des crédits
+                              <div className="w-2 h-2 bg-slate-900 rotate-45 absolute -bottom-1 right-2.5" />
+                            </div>
+                          </div>
+                        </div>
+
                         {/* Option 1 : Activer / Désactiver avec Infobulle */}
                         <div className="relative group/btn">
                           <button
@@ -963,6 +1050,200 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
                     )}
                   </button>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Modal Attribution de Crédits par l'Admin ── */}
+          {isCreditModalOpen && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-200"
+              onClick={() => {
+                if (!isGivingCredits) {
+                  setIsCreditModalOpen(false)
+                  setSelectedUserForCredits(null)
+                }
+              }}
+            >
+              <div
+                className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden text-left"
+                onClick={(e) => e.stopPropagation()}
+                role="dialog"
+                aria-modal="true"
+              >
+                {/* Header */}
+                <div className="p-6 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-100 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
+                      <Coins className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-slate-900 text-base">Attribuer des crédits</h3>
+                      <p className="text-xs text-slate-600">Recharge manuelle de quota de publication</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!isGivingCredits) {
+                        setIsCreditModalOpen(false)
+                        setSelectedUserForCredits(null)
+                      }
+                    }}
+                    className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 flex items-center justify-center transition"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {/* Form */}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    handleGiveCredits()
+                  }}
+                  className="p-6 space-y-4"
+                >
+                  {/* Sélection utilisateur */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Utilisateur bénéficiaire
+                    </label>
+                    {selectedUserForCredits ? (
+                      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-slate-900 truncate">
+                            {selectedUserForCredits.name} {selectedUserForCredits.prenoms}
+                          </p>
+                          <p className="text-xs text-slate-500 truncate">{selectedUserForCredits.email}</p>
+                          <span className="inline-block mt-1 text-[10px] uppercase font-bold text-slate-600 bg-slate-200/80 px-2 py-0.5 rounded">
+                            {selectedUserForCredits.role}
+                          </span>
+                        </div>
+                        <div className="text-right shrink-0 pl-2">
+                          <span className="text-[10px] text-slate-400 font-bold block uppercase">Solde actuel</span>
+                          <span className="text-sm font-black text-amber-700">
+                            {selectedUserForCredits.credits_restants ?? 0} cr.
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <select
+                        required
+                        className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                        onChange={(e) => {
+                          const u = userList.find((item) => item.id === Number(e.target.value))
+                          setSelectedUserForCredits(u || null)
+                        }}
+                      >
+                        <option value="">Sélectionnez un utilisateur...</option>
+                        {userList.map((u) => (
+                          <option key={u.id} value={u.id}>
+                            {u.name} {u.prenoms} ({u.email}) — {u.role} [{u.credits_restants ?? 0} cr]
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+
+                  {/* Nombre de crédits */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Nombre de crédits à accorder *
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        min="1"
+                        max="1000"
+                        required
+                        value={creditsAmount}
+                        onChange={(e) => setCreditsAmount(Math.max(1, parseInt(e.target.value) || 1))}
+                        className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                      />
+                      <div className="flex items-center gap-1 shrink-0">
+                        {[1, 5, 10, 25, 50].map((preset) => (
+                          <button
+                            key={preset}
+                            type="button"
+                            onClick={() => setCreditsAmount(preset)}
+                            className={`px-2 py-1.5 rounded-lg text-xs font-bold transition border ${
+                              creditsAmount === preset
+                                ? 'bg-amber-500 text-white border-amber-500'
+                                : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                            }`}
+                          >
+                            +{preset}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Solde projeté */}
+                  {selectedUserForCredits && (
+                    <div className="p-3 bg-amber-50/70 rounded-xl border border-amber-200/80 flex items-center justify-between text-xs">
+                      <span className="font-semibold text-amber-900">Nouveau solde après attribution :</span>
+                      <span className="font-extrabold text-amber-800 text-sm">
+                        {(selectedUserForCredits.credits_restants ?? 0) + creditsAmount} crédits
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Motif / Commentaire */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Motif ou note administrative (optionnel)
+                    </label>
+                    <input
+                      type="text"
+                      value={creditsMotif}
+                      onChange={(e) => setCreditsMotif(e.target.value)}
+                      placeholder="Ex : Geste commercial, régularisation, promotion campus..."
+                      className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                    />
+                  </div>
+
+                  {/* Info notification */}
+                  <div className="p-3 bg-blue-50/70 rounded-xl border border-blue-200/80 text-[11px] text-blue-900 flex items-start gap-2">
+                    <Bell className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                    <span>
+                      L'utilisateur recevra automatiquement une notification officielle avec le nombre exact de crédits accordés et pourra immédiatement les utiliser pour publier ses annonces.
+                    </span>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="pt-2 flex items-center justify-end gap-2.5">
+                    <button
+                      type="button"
+                      disabled={isGivingCredits}
+                      onClick={() => {
+                        setIsCreditModalOpen(false)
+                        setSelectedUserForCredits(null)
+                      }}
+                      className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold transition"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isGivingCredits || !selectedUserForCredits}
+                      className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold transition shadow-sm inline-flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                    >
+                      {isGivingCredits ? (
+                        <>
+                          <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin inline-block" />
+                          <span>Attribution...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Coins className="w-4 h-4" />
+                          <span>Confirmer & attribuer ({creditsAmount})</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           )}
