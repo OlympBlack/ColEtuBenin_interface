@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { Trash2, Star, UploadCloud, Video } from 'lucide-react'
+import { compressImages } from '../utils/imageCompressor'
 import {
   deleteAnnouncement,
   fetchDashboard,
@@ -1385,17 +1387,222 @@ export function ProfileTab({
 }
 
 // ─── Formulaire annonce (module scope : pas de re-création au focus) ──
+interface MediaItemState {
+  key: string
+  token: string
+  type: 'existing' | 'new'
+  url: string
+  file?: File
+}
+
 function AnnouncementFormFields({
   form,
   setForm,
+  existingAnnouncement,
+  onToast,
 }: {
   form: AnnouncementDraft
   setForm: React.Dispatch<React.SetStateAction<AnnouncementDraft>>
+  existingAnnouncement?: Annonce | null
+  onToast?: (toast: ToastDraft) => void
 }) {
   const set = (patch: Partial<AnnouncementDraft>) => setForm((f) => ({ ...f, ...patch }))
   const inputClass =
     'w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-[13px] text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
   const labelClass = 'mb-1.5 block text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400'
+
+  const [photoItems, setPhotoItems] = useState<MediaItemState[]>(() => {
+    if (!existingAnnouncement?.medias) return []
+    return existingAnnouncement.medias
+      .filter((m) => !m.url_fichier?.toLowerCase().endsWith('.mp4') && m.id !== 0)
+      .map((m) => ({
+        key: `existing-${m.id}`,
+        token: `existing:${m.id}`,
+        type: 'existing' as const,
+        url: m.url_fichier,
+      }))
+  })
+
+  const [videoItem, setVideoItem] = useState<MediaItemState | null>(() => {
+    if (!existingAnnouncement?.medias) return null
+    const v = existingAnnouncement.medias.find(
+      (m) => m.url_fichier?.toLowerCase().endsWith('.mp4') && m.id !== 0
+    )
+    if (!v) return null
+    return {
+      key: `existing-${v.id}`,
+      token: `existing:${v.id}`,
+      type: 'existing' as const,
+      url: v.url_fichier,
+    }
+  })
+
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+
+  // Re-initialiser si l'annonce à éditer change
+  useEffect(() => {
+    if (!existingAnnouncement?.medias) {
+      setPhotoItems([])
+      setVideoItem(null)
+      return
+    }
+    const photos = existingAnnouncement.medias
+      .filter((m) => !m.url_fichier?.toLowerCase().endsWith('.mp4') && m.id !== 0)
+      .map((m) => ({
+        key: `existing-${m.id}`,
+        token: `existing:${m.id}`,
+        type: 'existing' as const,
+        url: m.url_fichier,
+      }))
+    const v = existingAnnouncement.medias.find(
+      (m) => m.url_fichier?.toLowerCase().endsWith('.mp4') && m.id !== 0
+    )
+    setPhotoItems(photos)
+    setVideoItem(
+      v
+        ? {
+            key: `existing-${v.id}`,
+            token: `existing:${v.id}`,
+            type: 'existing' as const,
+            url: v.url_fichier,
+          }
+        : null
+    )
+  }, [existingAnnouncement?.id])
+
+  // Synchroniser les photos et vidéos avec editingForm.medias et editingForm.media_order
+  useEffect(() => {
+    const newFiles: File[] = []
+    const orderTokens: string[] = []
+
+    photoItems.forEach((p) => {
+      if (p.type === 'existing') {
+        orderTokens.push(p.token)
+      } else if (p.type === 'new' && p.file) {
+        const idx = newFiles.length
+        newFiles.push(p.file)
+        orderTokens.push(`new:${idx}`)
+      }
+    })
+
+    if (videoItem && form.type_annonce !== 'RECHERCHE_BINOME') {
+      if (videoItem.type === 'existing') {
+        orderTokens.push(videoItem.token)
+      } else if (videoItem.type === 'new' && videoItem.file) {
+        const idx = newFiles.length
+        newFiles.push(videoItem.file)
+        orderTokens.push(`new:${idx}`)
+      }
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      medias: newFiles,
+      media_order: orderTokens,
+    }))
+  }, [photoItems, videoItem, form.type_annonce, setForm])
+
+  // Nettoyage des blob URLs lors du démontage
+  useEffect(() => {
+    return () => {
+      photoItems.forEach((item) => {
+        if (item.type === 'new' && item.url.startsWith('blob:')) {
+          URL.revokeObjectURL(item.url)
+        }
+      })
+      if (videoItem?.type === 'new' && videoItem.url.startsWith('blob:')) {
+        URL.revokeObjectURL(videoItem.url)
+      }
+    }
+  }, [])
+
+  const reorderPhotos = (fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex) return
+    setPhotoItems((prev) => {
+      if (fromIndex < 0 || fromIndex >= prev.length || toIndex < 0 || toIndex >= prev.length) return prev
+      const next = [...prev]
+      const [moved] = next.splice(fromIndex, 1)
+      next.splice(toIndex, 0, moved)
+      return next
+    })
+  }
+
+  const setPrimaryPhoto = (indexToPrimary: number) => {
+    if (indexToPrimary === 0) return
+    setPhotoItems((prev) => {
+      if (indexToPrimary < 0 || indexToPrimary >= prev.length) return prev
+      const next = [...prev]
+      const [moved] = next.splice(indexToPrimary, 1)
+      next.unshift(moved)
+      return next
+    })
+    onToast?.({ tone: 'info', title: 'Photo principale', message: 'Cette photo a été définie comme photo principale.' })
+  }
+
+  const removePhoto = (index: number) => {
+    setPhotoItems((prev) => {
+      const item = prev[index]
+      if (item && item.type === 'new' && item.url.startsWith('blob:')) {
+        URL.revokeObjectURL(item.url)
+      }
+      return prev.filter((_, idx) => idx !== index)
+    })
+  }
+
+  const handleAddPhotos = async (files: FileList | File[]) => {
+    const fileArr = Array.from(files)
+    if (!fileArr.length) return
+    const maxAllowed = 7 - photoItems.length
+    if (maxAllowed <= 0) {
+      onToast?.({ tone: 'error', title: 'Limite atteinte', message: 'Maximum 7 photos par annonce.' })
+      return
+    }
+    const toProcess = fileArr.slice(0, maxAllowed)
+    try {
+      const compressed = await compressImages(toProcess)
+      const newItems: MediaItemState[] = compressed.map((file) => ({
+        key: `new-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+        token: '',
+        type: 'new' as const,
+        url: URL.createObjectURL(file),
+        file,
+      }))
+      setPhotoItems((prev) => [...prev, ...newItems])
+    } catch {
+      onToast?.({ tone: 'error', title: 'Erreur', message: 'Impossible de traiter certaines photos.' })
+    }
+  }
+
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.name.toLowerCase().endsWith('.mp4') && file.type !== 'video/mp4') {
+      onToast?.({ tone: 'error', title: 'Format vidéo invalide', message: 'Seul le format MP4 est accepté pour la vidéo.' })
+      return
+    }
+    if (file.size > 50 * 1024 * 1024) {
+      onToast?.({ tone: 'error', title: 'Fichier trop volumineux', message: 'La vidéo ne doit pas dépasser 50 Mo.' })
+      return
+    }
+    if (videoItem?.type === 'new' && videoItem.url.startsWith('blob:')) {
+      URL.revokeObjectURL(videoItem.url)
+    }
+    setVideoItem({
+      key: `video-new-${Date.now()}`,
+      token: '',
+      type: 'new' as const,
+      url: URL.createObjectURL(file),
+      file,
+    })
+  }
+
+  const removeVideo = () => {
+    if (videoItem?.type === 'new' && videoItem.url.startsWith('blob:')) {
+      URL.revokeObjectURL(videoItem.url)
+    }
+    setVideoItem(null)
+  }
 
   return (
     <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
@@ -1521,16 +1728,181 @@ function AnnouncementFormFields({
           required
         />
       </div>
-      <div className="sm:col-span-2">
-        <label className={labelClass}>Photos (JPG, PNG, WEBP)</label>
-        <input
-          className={`${inputClass} cursor-pointer !py-1.5`}
-          type="file"
-          accept="image/png,image/jpeg,image/webp"
-          multiple
-          onChange={(e) => set({ medias: Array.from(e.target.files ?? []) })}
-        />
+
+      {/* ── Gestion des photos ── */}
+      <div className="sm:col-span-2 space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <label className={labelClass}>
+              Photos de l'annonce ({photoItems.length}/7)
+            </label>
+            <p className="text-[11px] text-slate-500">
+              Glissez-déposez pour changer l'ordre. La 1ère photo est la photo principale.
+            </p>
+          </div>
+          {photoItems.length < 7 && (
+            <label className="cursor-pointer inline-flex items-center gap-1.5 rounded-lg border border-emerald-600 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 hover:bg-emerald-100 transition">
+              <UploadCloud size={13} />
+              <span>Ajouter des photos</span>
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                multiple
+                className="hidden"
+                onChange={(e) => {
+                  if (e.target.files) void handleAddPhotos(e.target.files)
+                  e.target.value = ''
+                }}
+              />
+            </label>
+          )}
+        </div>
+
+        {photoItems.length === 0 ? (
+          <label className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50/20 transition">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200/60 text-slate-500">
+              <UploadCloud size={20} />
+            </div>
+            <div>
+              <span className="text-[13px] font-bold text-slate-700">Cliquez pour ajouter des photos</span>
+              <p className="text-[11px] text-slate-400 mt-0.5">JPG, PNG, WEBP — jusqu'à 7 photos</p>
+            </div>
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files) void handleAddPhotos(e.target.files)
+                e.target.value = ''
+              }}
+            />
+          </label>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {photoItems.map((item, index) => {
+              const isDragged = draggedIndex === index
+              const isOver = dragOverIndex === index && draggedIndex !== index
+
+              return (
+                <div
+                  key={item.key}
+                  draggable
+                  onDragStart={(e) => {
+                    setDraggedIndex(index)
+                    e.dataTransfer.effectAllowed = 'move'
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault()
+                    e.dataTransfer.dropEffect = 'move'
+                    if (dragOverIndex !== index) setDragOverIndex(index)
+                  }}
+                  onDragLeave={() => {
+                    if (dragOverIndex === index) setDragOverIndex(null)
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault()
+                    if (draggedIndex !== null && draggedIndex !== index) {
+                      reorderPhotos(draggedIndex, index)
+                    }
+                    setDraggedIndex(null)
+                    setDragOverIndex(null)
+                  }}
+                  className={`group relative aspect-[4/3] rounded-xl overflow-hidden border-2 bg-slate-100 transition-all select-none cursor-grab active:cursor-grabbing ${
+                    isOver
+                      ? 'border-emerald-500 scale-[1.02] shadow-lg ring-2 ring-emerald-500/30'
+                      : isDragged
+                      ? 'opacity-40 border-slate-400'
+                      : 'border-slate-200 hover:border-slate-300 shadow-sm'
+                  }`}
+                >
+                  <img
+                    src={item.url}
+                    alt=""
+                    className="h-full w-full object-cover pointer-events-none"
+                  />
+
+                  {/* Numéro d'ordre */}
+                  <span className="absolute top-1.5 left-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-slate-900/70 text-[10px] font-bold text-white backdrop-blur">
+                    {index + 1}
+                  </span>
+
+                  {/* Bouton supprimer */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      removePhoto(index)
+                    }}
+                    className="absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-slate-900/70 text-white backdrop-blur hover:bg-rose-600 transition"
+                    title="Supprimer la photo"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+
+                  {/* Badge ou bouton principale */}
+                  {index === 0 ? (
+                    <span className="absolute bottom-1.5 left-1.5 flex items-center gap-1 rounded-md bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                      <Star size={10} fill="currentColor" />
+                      Principale
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setPrimaryPhoto(index)
+                      }}
+                      className="absolute bottom-1.5 left-1.5 flex items-center gap-1 rounded-md bg-slate-900/75 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur hover:bg-emerald-600 transition"
+                      title="Définir comme photo principale"
+                    >
+                      <Star size={10} />
+                      Principale
+                    </button>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
+
+      {/* ── Vidéo de la chambre (Démarcheur et Étudiant avec chambre uniquement) ── */}
+      {form.type_annonce !== 'RECHERCHE_BINOME' && (
+        <div className="sm:col-span-2 pt-2 border-t border-slate-100">
+          <label className={labelClass}>Vidéo de visite (MP4, optionnel)</label>
+          {videoItem ? (
+            <div className="relative mt-1.5 overflow-hidden rounded-xl border border-slate-200 bg-slate-950">
+              <video
+                src={videoItem.url}
+                controls
+                className="max-h-48 w-full object-contain"
+              />
+              <button
+                type="button"
+                onClick={removeVideo}
+                className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-slate-900/80 text-white backdrop-blur hover:bg-rose-600 transition"
+                title="Supprimer la vidéo"
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
+          ) : (
+            <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-center transition hover:border-emerald-500 hover:bg-emerald-50/20">
+              <Video size={18} className="text-slate-400" />
+              <span className="text-[12px] font-semibold text-slate-700">
+                Ajouter une vidéo de la chambre (MP4, max 50 Mo)
+              </span>
+              <input
+                type="file"
+                accept="video/mp4"
+                className="hidden"
+                onChange={handleVideoSelect}
+              />
+            </label>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -1944,6 +2316,8 @@ export function DashboardWorkspace({
       titre: annonce.titre,
       description: annonce.description,
       quartier: annonce.quartier,
+      universite_id: annonce.universite?.id ?? (annonce as unknown as { universite_id?: number }).universite_id,
+      universite: annonce.universite?.code,
       loyer: String(annonce.loyer),
       caution: String(annonce.caution ?? ''),
       source_eau: (annonce.source_eau as AnnouncementDraft['source_eau']) ?? 'SONEB',
@@ -2009,6 +2383,8 @@ export function DashboardWorkspace({
                   return typeof value === 'function' ? value(prev) : value
                 })
               }
+              existingAnnouncement={editingAnnouncement}
+              onToast={onToast}
             />
             <div className="mt-6 flex justify-end gap-3">
               <button

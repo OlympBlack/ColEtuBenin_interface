@@ -265,6 +265,16 @@ function buildAnnouncementFormData(payload: AnnouncementDraft) {
     formData.append('medias[]', media)
   })
 
+  if (payload.media_order) {
+    if (payload.media_order.length === 0) {
+      formData.append('media_order_empty', '1')
+    } else {
+      payload.media_order.forEach((token) => {
+        formData.append('media_order[]', token)
+      })
+    }
+  }
+
   return formData
 }
 
