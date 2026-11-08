@@ -100,6 +100,7 @@ export function AnnonceDetailPage({
   const [isSavingFavorite, setIsSavingFavorite] = useState(false)
   const [isFavorited, setIsFavorited] = useState<boolean>(Boolean(announcement?.est_favori))
   const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false)
+  const [isVideoActive, setIsVideoActive] = useState(false)
 
   useEffect(() => {
     if (announcement) {
@@ -390,32 +391,138 @@ export function AnnonceDetailPage({
 
           {/* Left — gallery */}
           <div style={S.galleryCol}>
-            {/* Main image */}
+            {/* Main image / Video player */}
             <div style={S.mainImgWrap}>
-              <img src={activeMedia.url_fichier} alt={currentAnnouncement.titre} style={S.mainImg} />
-              {/* floating pills */}
-              <div style={S.imgPills}>
-                <StatusPill variant="blue">{formatAnnouncementType(announcement.type_annonce)}</StatusPill>
-                <StatusPill variant="green">{formatStatus(announcement.statut_disponibilite)}</StatusPill>
-              </div>
-              {/* image counter */}
-              {medias.length > 1 && (
-                <div style={S.imgCounter}>{activeIndex + 1}/{medias.length}</div>
+              {isVideoActive && videoMedia ? (
+                <div style={{ position: 'relative', width: '100%', height: '100%', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <video
+                    controls
+                    autoPlay
+                    playsInline
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  >
+                    <source src={videoMedia.url_fichier} type="video/mp4" />
+                    Votre navigateur ne prend pas en charge la lecture vidéo.
+                  </video>
+                  <button
+                    type="button"
+                    onClick={() => setIsVideoActive(false)}
+                    style={{
+                      position: 'absolute',
+                      top: 12,
+                      right: 12,
+                      background: 'rgba(15, 23, 42, 0.8)',
+                      color: '#fff',
+                      border: '1px solid rgba(255,255,255,0.2)',
+                      borderRadius: 20,
+                      padding: '5px 12px',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 5,
+                      cursor: 'pointer',
+                      backdropFilter: 'blur(4px)',
+                      zIndex: 10,
+                    }}
+                  >
+                    <UiIcon name="x" /> Revenir aux photos
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <img src={activeMedia.url_fichier} alt={currentAnnouncement.titre} style={S.mainImg} />
+                  {/* floating pills */}
+                  <div style={S.imgPills}>
+                    <StatusPill variant="blue">{formatAnnouncementType(announcement.type_annonce)}</StatusPill>
+                    <StatusPill variant="green">{formatStatus(announcement.statut_disponibilite)}</StatusPill>
+                  </div>
+
+                  {/* Bouton de visite vidéo sur la photo */}
+                  {videoMedia && (
+                    <button
+                      type="button"
+                      onClick={() => setIsVideoActive(true)}
+                      style={{
+                        position: 'absolute',
+                        bottom: 12,
+                        left: 12,
+                        background: 'rgba(15, 23, 42, 0.85)',
+                        color: '#FFFFFF',
+                        border: '1px solid rgba(255, 255, 255, 0.25)',
+                        borderRadius: 30,
+                        padding: '6px 14px',
+                        fontSize: 12.5,
+                        fontWeight: 600,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 7,
+                        cursor: 'pointer',
+                        backdropFilter: 'blur(8px)',
+                        boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
+                        transition: 'all 0.15s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.03)'
+                        e.currentTarget.style.background = '#1D4ED8'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)'
+                        e.currentTarget.style.background = 'rgba(15, 23, 42, 0.85)'
+                      }}
+                    >
+                      <UiIcon name="play" />
+                      <span>Visite vidéo</span>
+                    </button>
+                  )}
+
+                  {/* image counter */}
+                  {medias.length > 1 && (
+                    <div style={S.imgCounter}>{activeIndex + 1}/{medias.length}</div>
+                  )}
+                </>
               )}
             </div>
 
             {/* Thumbnails */}
-            {medias.length > 1 && (
+            {(medias.length > 1 || videoMedia) && (
               <div className="colcampus-thumb-row">
+                {/* Vignette vidéo */}
+                {videoMedia && (
+                  <button
+                    type="button"
+                    className="colcampus-thumb-btn"
+                    onClick={() => setIsVideoActive(true)}
+                    style={{
+                      ...S.thumb,
+                      ...(isVideoActive ? S.thumbActive : {}),
+                      background: 'linear-gradient(135deg, #1E293B, #0F172A)',
+                      color: '#fff',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 2,
+                    }}
+                    title="Voir la vidéo de la chambre"
+                  >
+                    <UiIcon name="play" />
+                    <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '0.04em' }}>Vidéo</span>
+                  </button>
+                )}
+
                 {medias.map((media, index) => (
                   <button
                     key={media.id || index}
                     type="button"
                     className="colcampus-thumb-btn"
-                    onClick={() => setActiveIndex(index)}
+                    onClick={() => {
+                      setIsVideoActive(false)
+                      setActiveIndex(index)
+                    }}
                     style={{
                       ...S.thumb,
-                      ...(index === activeIndex ? S.thumbActive : {}),
+                      ...(!isVideoActive && index === activeIndex ? S.thumbActive : {}),
                     }}
                   >
                     <img src={media.url_fichier} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -424,27 +531,6 @@ export function AnnonceDetailPage({
               </div>
             )}
 
-            {/* Vidéo de la chambre */}
-            {videoMedia && (
-              <div style={{ marginTop: 24, borderTop: "1px solid #F1F5F9", paddingTop: 16 }}>
-                <h3 style={{ margin: "0 0 12px", fontSize: 14, color: "#64748B" }}>Vidéo de la chambre</h3>
-                <p style={{ margin: "0 0 12px", fontSize: 13, color: "#475569" }}>
-                  Regardez cette vidéo de la chambre avant de contacter l'annonceur
-                </p>
-                <video
-                  controls
-                  style={{ width: "100%", maxWidth: 800, borderRadius: 8 }}
-                >
-                  <source
-                    src={videoMedia.url_fichier}
-                    type="video/mp4"
-                  />
-                  Votre navigateur ne prend pas en charge la lecture vidéo.
-                </video>
-              </div>
-            )}
-
-            {/* Tabs: Details / Map */}
             {/* Tabs: Details / Map */}
             <div style={S.tabBar}>
               <button
