@@ -8,9 +8,11 @@ import {
   Check,
   CheckCircle2,
   Eye,
+  GripVertical,
   Lock,
   Megaphone,
   ShieldCheck,
+  Star,
   Trash2,
   UploadCloud,
   Users,
@@ -304,6 +306,28 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
 
   function removeFile(indexToRemove: number) {
     setA({ medias: (announcementForm.medias ?? []).filter((_, index) => index !== indexToRemove) })
+  }
+
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+
+  function reorderFiles(fromIndex: number, toIndex: number) {
+    if (fromIndex === toIndex) return
+    const currentMedias = [...(announcementForm.medias ?? [])]
+    if (fromIndex < 0 || fromIndex >= currentMedias.length || toIndex < 0 || toIndex >= currentMedias.length) return
+    const [movedItem] = currentMedias.splice(fromIndex, 1)
+    currentMedias.splice(toIndex, 0, movedItem)
+    setA({ medias: currentMedias })
+  }
+
+  function setPrimaryFile(indexToPrimary: number) {
+    if (indexToPrimary === 0) return
+    const currentMedias = [...(announcementForm.medias ?? [])]
+    if (indexToPrimary < 0 || indexToPrimary >= currentMedias.length) return
+    const [movedItem] = currentMedias.splice(indexToPrimary, 1)
+    currentMedias.unshift(movedItem)
+    setA({ medias: currentMedias })
+    onToast({ tone: 'info', title: 'Photo principale', message: 'Cette photo a été définie comme photo principale.' })
   }
 
   /* ─── Validation par étape ─────────────────────────── */
@@ -875,43 +899,185 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
               </label>
 
               {mediaPreviews.length > 0 && (
-                <div className="row g-3 mt-1">
-                  {mediaPreviews.map((preview, index) => (
-                    <div key={preview.url} className="col-6 col-md-4 col-lg-3">
-                      <div className="position-relative" style={{ borderRadius: 14, overflow: 'hidden', border: '1px solid var(--border)' }}>
-                        <img
-                          src={preview.url}
-                          alt={`Aperçu ${index + 1}`}
-                          style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }}
-                        />
-                        <button
-                          type="button"
-                          className="position-absolute d-inline-grid"
-                          onClick={() => removeFile(index)}
-                          aria-label={`Supprimer la photo ${index + 1}`}
-                          style={{
-                            top: 6,
-                            right: 6,
-                            width: 26,
-                            height: 26,
-                            borderRadius: '50%',
-                            border: 'none',
-                            background: 'rgba(15,23,42,0.7)',
-                            color: '#fff',
-                            placeItems: 'center',
+                <>
+                  <div className="d-flex align-items-center justify-content-between mt-3 mb-1 px-1">
+                    <span style={{ fontSize: '0.8rem', color: 'var(--muted)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <GripVertical size={14} />
+                      Glissez-déposez les photos pour modifier leur ordre.
+                    </span>
+                    <span style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>
+                      {mediaPreviews.length} / 5 photos
+                    </span>
+                  </div>
+
+                  <div className="row g-3 mt-0">
+                    {mediaPreviews.map((preview, index) => {
+                      const isDragging = draggedIndex === index
+                      const isDragOver = dragOverIndex === index
+
+                      return (
+                        <div
+                          key={preview.url}
+                          className="col-6 col-md-4 col-lg-3"
+                          draggable
+                          onDragStart={(e) => {
+                            e.dataTransfer.effectAllowed = 'move'
+                            setDraggedIndex(index)
+                          }}
+                          onDragOver={(e) => {
+                            e.preventDefault()
+                            e.dataTransfer.dropEffect = 'move'
+                            if (dragOverIndex !== index) {
+                              setDragOverIndex(index)
+                            }
+                          }}
+                          onDragLeave={() => {
+                            if (dragOverIndex === index) {
+                              setDragOverIndex(null)
+                            }
+                          }}
+                          onDrop={(e) => {
+                            e.preventDefault()
+                            if (draggedIndex !== null && draggedIndex !== index) {
+                              reorderFiles(draggedIndex, index)
+                            }
+                            setDraggedIndex(null)
+                            setDragOverIndex(null)
+                          }}
+                          onDragEnd={() => {
+                            setDraggedIndex(null)
+                            setDragOverIndex(null)
                           }}
                         >
-                          <Trash2 size={13} />
-                        </button>
-                        {index === 0 && (
-                          <span className="app-badge app-badge--success position-absolute" style={{ bottom: 6, left: 6 }}>
-                            Photo principale
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                          <div
+                            className="position-relative"
+                            style={{
+                              borderRadius: 14,
+                              overflow: 'hidden',
+                              border: isDragOver ? '2px solid #2563EB' : '1px solid var(--border)',
+                              boxShadow: isDragOver ? '0 0 14px rgba(37,99,235,0.35)' : undefined,
+                              opacity: isDragging ? 0.35 : 1,
+                              transform: isDragging ? 'scale(0.96)' : undefined,
+                              transition: 'all 0.18s ease',
+                              cursor: isDragging ? 'grabbing' : 'grab',
+                            }}
+                          >
+                            <img
+                              src={preview.url}
+                              alt={`Aperçu ${index + 1}`}
+                              style={{ width: '100%', height: 125, objectFit: 'cover', display: 'block', pointerEvents: 'none' }}
+                            />
+
+                            {/* Poignée de déplacement */}
+                            <span
+                              style={{
+                                position: 'absolute',
+                                top: 6,
+                                left: 6,
+                                width: 26,
+                                height: 26,
+                                borderRadius: '50%',
+                                background: 'rgba(15,23,42,0.65)',
+                                color: '#fff',
+                                display: 'grid',
+                                placeItems: 'center',
+                                pointerEvents: 'none',
+                              }}
+                              title="Glisser pour déplacer"
+                            >
+                              <GripVertical size={13} />
+                            </span>
+
+                            {/* Bouton de suppression */}
+                            <button
+                              type="button"
+                              className="position-absolute d-inline-grid"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                removeFile(index)
+                              }}
+                              aria-label={`Supprimer la photo ${index + 1}`}
+                              style={{
+                                top: 6,
+                                right: 6,
+                                width: 26,
+                                height: 26,
+                                borderRadius: '50%',
+                                border: 'none',
+                                background: 'rgba(15,23,42,0.7)',
+                                color: '#fff',
+                                placeItems: 'center',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              <Trash2 size={13} />
+                            </button>
+
+                            {/* Badge photo principale ou bouton pour la définir */}
+                            {index === 0 ? (
+                              <span
+                                className="position-absolute"
+                                style={{
+                                  bottom: 6,
+                                  left: 6,
+                                  background: '#15803D',
+                                  color: '#fff',
+                                  borderRadius: 8,
+                                  padding: '3px 8px',
+                                  fontSize: '0.72rem',
+                                  fontWeight: 700,
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 4,
+                                  boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+                                }}
+                              >
+                                <Star size={11} fill="currentColor" />
+                                Photo principale
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setPrimaryFile(index)
+                                }}
+                                title="Définir comme photo principale"
+                                style={{
+                                  position: 'absolute',
+                                  bottom: 6,
+                                  left: 6,
+                                  background: 'rgba(15,23,42,0.75)',
+                                  color: '#fff',
+                                  border: '1px solid rgba(255,255,255,0.25)',
+                                  borderRadius: 8,
+                                  padding: '3px 8px',
+                                  fontSize: '0.72rem',
+                                  fontWeight: 600,
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 4,
+                                  cursor: 'pointer',
+                                  backdropFilter: 'blur(4px)',
+                                  transition: 'background 0.15s ease',
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.background = '#15803D'
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.background = 'rgba(15,23,42,0.75)'
+                                }}
+                              >
+                                <Star size={11} />
+                                Mettre en principale
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </>
               )}
             </div>
 
