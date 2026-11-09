@@ -527,13 +527,13 @@ export function MarketplacePage() {
 
             {/* État de chargement */}
             {isLoading && (
-              <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-2.5 sm:gap-4 md:gap-5">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="bg-white rounded-2xl border border-slate-200/70 p-2.5 sm:p-3.5 space-y-2.5 animate-pulse">
-                    <div className="h-28 sm:h-36 md:h-40 bg-slate-100 rounded-xl w-full" />
-                    <div className="h-3.5 bg-slate-100 rounded w-3/4" />
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-3.5">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="bg-white rounded-xl border border-slate-200/70 p-2.5 sm:p-3 space-y-2 animate-pulse">
+                    <div className="h-28 sm:h-32 md:h-36 bg-slate-100 rounded-lg w-full" />
                     <div className="h-3 bg-slate-100 rounded w-1/2" />
-                    <div className="h-5 bg-slate-100 rounded w-1/3 pt-2" />
+                    <div className="h-3.5 bg-slate-100 rounded w-3/4" />
+                    <div className="h-5 bg-slate-100 rounded w-1/3 pt-1" />
                   </div>
                 ))}
               </div>
@@ -553,9 +553,9 @@ export function MarketplacePage() {
               </div>
             )}
 
-            {/* Grille des Articles de Boutique (Grille 2 Colonnes Mobile / 3 Colonnes Desktop) */}
+            {/* Grille des Articles de Boutique (Hauteur Réduite & Compacte : 4 colonnes desktop, 2 colonnes mobile) */}
             {!isLoading && filteredProducts.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-2.5 sm:gap-4 md:gap-5">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-3.5">
                 {filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
@@ -675,10 +675,10 @@ function ProductCard({ product }: { product: PubliciteBoutique }) {
   return (
     <a
       href={`#/boutiques/${product.id}`}
-      className="group flex flex-col bg-white rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200/80 shadow-[0_2px_8px_rgba(15,23,42,0.03)] hover:shadow-[0_12px_28px_-8px_rgba(15,23,42,0.09)] hover:-translate-y-0.5 transition-all duration-200"
+      className="group flex flex-col bg-white rounded-xl overflow-hidden border border-slate-200/80 shadow-[0_2px_8px_rgba(15,23,42,0.03)] hover:shadow-[0_12px_24px_-8px_rgba(15,23,42,0.1)] hover:-translate-y-0.5 transition-all duration-200"
     >
-      {/* Image Container Compacte (Adaptée 2-colonnes Mobile) */}
-      <div className="relative h-28 sm:h-36 md:h-40 bg-slate-100 overflow-hidden w-full shrink-0">
+      {/* Image Container Compacte (Hauteur modérée & ratio réduit) */}
+      <div className="relative h-28 sm:h-32 md:h-36 bg-slate-100 overflow-hidden w-full shrink-0">
         <img
           src={product.url_image_banniere}
           alt={product.titre_promo}
@@ -687,7 +687,7 @@ function ProductCard({ product }: { product: PubliciteBoutique }) {
         />
 
         {/* Badges sur l'image */}
-        <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 flex flex-wrap gap-1 items-center max-w-[90%]">
+        <div className="absolute top-1.5 left-1.5 flex flex-wrap gap-1 items-center max-w-[90%]">
           <span className="bg-white/95 backdrop-blur-md px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-extrabold text-slate-800 uppercase tracking-wider shadow-xs truncate">
             {categoryName}
           </span>
@@ -700,50 +700,43 @@ function ProductCard({ product }: { product: PubliciteBoutique }) {
         </div>
 
         {product.quartier_cible && (
-          <div className="absolute bottom-1.5 left-1.5 sm:bottom-2 sm:left-2 bg-slate-900/85 backdrop-blur-md text-white px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-bold flex items-center gap-0.5 shadow-xs max-w-[85%] truncate">
+          <div className="absolute bottom-1.5 left-1.5 bg-slate-900/85 backdrop-blur-md text-white px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-bold flex items-center gap-0.5 shadow-xs max-w-[85%] truncate">
             <span>📍 {product.quartier_cible}</span>
           </div>
         )}
       </div>
 
-      {/* Meta Data Compacte */}
-      <div className="flex flex-col flex-1 p-2.5 sm:p-3.5">
-        {/* Shop badge */}
+      {/* Meta Data Ultra-Compacte */}
+      <div className="flex flex-col flex-1 p-2.5 sm:p-3">
+        {/* Shop row */}
         <div className="flex items-center gap-1.5 mb-1">
           {product.boutique.logo_url ? (
             <img
               src={product.boutique.logo_url}
               alt=""
-              className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full object-cover border border-slate-200 shrink-0"
+              className="h-3.5 w-3.5 rounded-full object-cover border border-slate-200 shrink-0"
             />
           ) : (
-            <div className="flex items-center justify-center h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full bg-blue-50 text-blue-700 text-[8px] sm:text-[9px] font-black shrink-0">
+            <div className="flex items-center justify-center h-3.5 w-3.5 rounded-full bg-blue-50 text-blue-700 text-[8px] font-black shrink-0">
               {shopName.charAt(0).toUpperCase()}
             </div>
           )}
           <span className="text-[10px] sm:text-[11px] font-semibold text-slate-500 truncate">{shopName}</span>
         </div>
 
-        {/* Titre (2 lignes sur mobile, 1 ligne sur desktop) */}
-        <h3 className="text-xs sm:text-[13px] font-bold text-slate-900 leading-tight mb-1 group-hover:text-blue-600 transition-colors line-clamp-2">
+        {/* Titre (limité à 2 lignes nettes) */}
+        <h3 className="text-xs sm:text-[13px] font-bold text-slate-900 leading-tight mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
           {product.titre_promo}
         </h3>
-
-        {/* Description courte (masquée sur mobile pour garder une grille ultra nette) */}
-        {product.description && (
-          <p className="hidden sm:block text-[11px] text-slate-500 line-clamp-1 mb-2 font-normal leading-normal">
-            {product.description}
-          </p>
-        )}
 
         {/* Prix & Bouton (footer compact) */}
         <div className="mt-auto pt-2 flex items-center justify-between gap-1 border-t border-slate-100">
           <div className="flex flex-col min-w-0">
-            <span className="text-[8px] sm:text-[9px] text-slate-400 uppercase tracking-wider font-extrabold">Prix</span>
+            <span className="text-[8px] text-slate-400 uppercase tracking-wider font-extrabold">Prix</span>
             <span className="text-[11px] sm:text-xs md:text-sm font-black text-slate-900 tracking-tight truncate">{priceDisplay}</span>
           </div>
 
-          <div className="flex items-center justify-center h-6 sm:h-7 px-1.5 sm:px-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 text-[9px] sm:text-[10px] font-bold group-hover:bg-blue-600 group-hover:border-blue-600 group-hover:text-white transition-all shadow-xs shrink-0">
+          <div className="flex items-center justify-center h-6 sm:h-7 px-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 text-[9px] sm:text-[10px] font-bold group-hover:bg-blue-600 group-hover:border-blue-600 group-hover:text-white transition-all shadow-xs shrink-0">
             <span>Voir</span>
           </div>
         </div>
