@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Filter, SlidersHorizontal, CheckCircle2, RotateCcw, ShieldCheck, Tag, ChevronDown, ChevronUp } from 'lucide-react'
+import { SlidersHorizontal, CheckCircle2, RotateCcw, ShieldCheck, Tag } from 'lucide-react'
 import { UiIcon } from '../components/UiIcons'
 import { usePublicitesBoutiques } from '../hooks/usePublicitesBoutiques'
 import type { PubliciteBoutique } from '../types'
@@ -32,8 +32,8 @@ export function MarketplacePage() {
   const [verifiedOnly, setVerifiedOnly] = useState<boolean>(false)
   const [search, setSearch] = useState<string>('')
   const [sortBy, setSortBy] = useState<SortOption>('recent')
-  // Barre latérale de filtres sur mobile : pliable et pliée par défaut pour économiser l'espace
-  const [isMobileFiltersExpanded, setIsMobileFiltersExpanded] = useState<boolean>(false)
+  // Modale Bottom Sheet de filtres dédiée pour mobile
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState<boolean>(false)
 
   // Catégories dynamiques extraites des produits reçus
   const categoriesWithCounts = useMemo(() => {
@@ -379,68 +379,40 @@ export function MarketplacePage() {
           })}
         </div>
 
-        {/* Barre de contrôle et Filtres Pliables sur Mobile (Plié par défaut pour gagner de l'espace) */}
-        <div className="lg:hidden mb-3 bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden transition-all duration-200">
-          {/* En-tête compacte toujours visible avec bouton Plier/Déplier */}
-          <div className="flex items-center justify-between gap-2 p-2.5 sm:p-3">
-            <button
-              type="button"
-              onClick={() => setIsMobileFiltersExpanded((prev) => !prev)}
-              className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition active:scale-95 cursor-pointer shrink-0 ${
-                isMobileFiltersExpanded
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : activeFiltersCount > 0
-                  ? 'bg-blue-50 text-blue-700 border border-blue-200/80'
-                  : 'bg-slate-900 text-white shadow-xs'
-              }`}
-              aria-expanded={isMobileFiltersExpanded}
+        {/* Barre de contrôle Mobile Pro (Bouton Filtres + Tri) */}
+        <div className="lg:hidden flex items-center justify-between gap-2.5 mb-3 p-2.5 sm:p-3 bg-white rounded-2xl border border-slate-200/90 shadow-xs">
+          <button
+            type="button"
+            onClick={() => setIsMobileFiltersOpen(true)}
+            className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-extrabold transition active:scale-95 cursor-pointer shrink-0 ${
+              activeFiltersCount > 0
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'bg-slate-900 text-white shadow-xs'
+            }`}
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <span>Filtres</span>
+            {activeFiltersCount > 0 && (
+              <span className="w-5 h-5 rounded-full bg-white text-blue-700 text-[10px] font-black flex items-center justify-center">
+                {activeFiltersCount}
+              </span>
+            )}
+          </button>
+
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="text-[11px] font-bold text-slate-400 shrink-0 hidden xs:inline">Trier :</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortOption)}
+              className="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none truncate cursor-pointer"
             >
-              <Filter className="w-3.5 h-3.5" />
-              <span>Filtres {activeFiltersCount > 0 ? `(${activeFiltersCount})` : ''}</span>
-              <ChevronDown
-                className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                  isMobileFiltersExpanded ? 'rotate-180' : ''
-                }`}
-              />
-            </button>
-
-            <div className="flex items-center gap-1.5 min-w-0">
-              <span className="text-[11px] font-bold text-slate-400 shrink-0 hidden xs:inline">Trier :</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none truncate"
-              >
-                {SORT_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+              {SORT_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
           </div>
-
-          {/* Panneau latéral de filtres pliable (affiché uniquement quand déplié) */}
-          {isMobileFiltersExpanded && (
-            <div className="p-3.5 sm:p-4 border-t border-slate-100 bg-slate-50/50 animate-in fade-in slide-in-from-top-2 duration-200">
-              {renderFilterPanel()}
-
-              {/* Bouton de repli en bas du panneau mobile */}
-              <div className="mt-4 pt-3 border-t border-slate-200/70 flex items-center justify-between gap-2">
-                <span className="text-xs font-bold text-slate-500">
-                  {filteredProducts.length} article{filteredProducts.length > 1 ? 's' : ''} trouvé{filteredProducts.length > 1 ? 's' : ''}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setIsMobileFiltersExpanded(false)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-xs transition active:scale-95 cursor-pointer"
-                >
-                  <span>Replier</span>
-                  <ChevronUp className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Badges de filtres actifs (Visibles sur Mobile et Desktop) */}
@@ -661,6 +633,192 @@ export function MarketplacePage() {
           </div>
         </div>
       </div>
+
+      {/* ── MODALE / BOTTOM SHEET DE FILTRES PRO SUR MOBILE ── */}
+      {isMobileFiltersOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex flex-col justify-end">
+          {/* Backdrop sombre flouté */}
+          <div
+            className="fixed inset-0 bg-slate-950/65 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+            onClick={() => setIsMobileFiltersOpen(false)}
+          />
+
+          {/* Panneau Bottom Sheet Tactile Mobile */}
+          <div className="relative z-10 w-full max-h-[90vh] bg-white rounded-t-3xl sm:rounded-3xl sm:max-w-md sm:mx-auto shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
+            {/* Barre de poignée tactile mobile */}
+            <div className="w-full flex justify-center pt-2.5 pb-1 sm:hidden">
+              <div className="w-12 h-1.5 rounded-full bg-slate-300" />
+            </div>
+
+            {/* En-tête de la modale */}
+            <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <SlidersHorizontal className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-slate-900 text-sm">Filtres</h3>
+                  {activeFiltersCount > 0 ? (
+                    <span className="text-[11px] font-bold text-blue-600">
+                      {activeFiltersCount} filtre{activeFiltersCount > 1 ? 's' : ''} appliqué{activeFiltersCount > 1 ? 's' : ''}
+                    </span>
+                  ) : (
+                    <span className="text-[11px] text-slate-400">Affinez votre recherche</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {hasActiveFilters && (
+                  <button
+                    type="button"
+                    onClick={resetFilters}
+                    className="text-xs font-bold text-rose-600 hover:text-rose-700 px-2 py-1 rounded-lg hover:bg-rose-50 transition cursor-pointer"
+                  >
+                    Effacer tout
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setIsMobileFiltersOpen(false)}
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-bold transition cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Contenu tactile ergonomique scrollable */}
+            <div className="p-5 overflow-y-auto space-y-5 flex-1 overscroll-contain">
+              {/* 1. Catégories (Boutons tactiles en grille) */}
+              <div>
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-2.5 flex items-center gap-1.5">
+                  <Tag className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Catégorie</span>
+                </span>
+                <div className="grid grid-cols-2 gap-2">
+                  {categoriesWithCounts.map((cat) => {
+                    const isActive = activeCategory.toLowerCase() === cat.name.toLowerCase()
+                    return (
+                      <button
+                        key={cat.name}
+                        type="button"
+                        onClick={() => setActiveCategory(cat.name)}
+                        className={`p-2.5 rounded-xl text-xs font-bold text-left transition cursor-pointer border ${
+                          isActive
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                            : 'bg-slate-50 text-slate-700 border-slate-200/80 hover:bg-slate-100'
+                        }`}
+                      >
+                        <span className="block truncate">{cat.name}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* 2. Fourchette de prix (Cartes sélectionnables tactiles) */}
+              <div className="pt-4 border-t border-slate-100">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-2.5 block">
+                  Budget / Fourchette de prix
+                </span>
+                <div className="grid grid-cols-1 gap-2">
+                  {PRICE_RANGES.map((range) => {
+                    const isChecked = priceRange === range.value
+                    return (
+                      <button
+                        key={range.value}
+                        type="button"
+                        onClick={() => setPriceRange(range.value)}
+                        className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-semibold transition cursor-pointer border text-left ${
+                          isChecked
+                            ? 'bg-blue-50/90 text-blue-900 border-blue-300 font-bold shadow-xs'
+                            : 'bg-white text-slate-700 border-slate-200/90 hover:bg-slate-50'
+                        }`}
+                      >
+                        <span>{range.label}</span>
+                        {isChecked && <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* 3. Boutique partenaire */}
+              {boutiquesList.length > 0 && (
+                <div className="pt-4 border-t border-slate-100">
+                  <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-2 block">
+                    Boutique partenaire
+                  </label>
+                  <select
+                    value={selectedBoutique}
+                    onChange={(e) => setSelectedBoutique(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-xl px-3.5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  >
+                    <option value="all">Toutes les boutiques partenaires</option>
+                    {boutiquesList.map((shop) => (
+                      <option key={shop} value={shop}>
+                        {shop}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* 4. Campus / Zone géographique */}
+              {quartiersList.length > 0 && (
+                <div className="pt-4 border-t border-slate-100">
+                  <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-2 block">
+                    Campus / Secteur géographique
+                  </label>
+                  <select
+                    value={selectedQuartier}
+                    onChange={(e) => setSelectedQuartier(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-xl px-3.5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  >
+                    <option value="all">Tous les secteurs / campus</option>
+                    {quartiersList.map((q) => (
+                      <option key={q} value={q}>
+                        {q}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* 5. Partenaires certifiés uniquement (Card switch) */}
+              <div className="pt-4 border-t border-slate-100">
+                <label className="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 bg-slate-50/60 cursor-pointer">
+                  <div className="flex items-center gap-2.5">
+                    <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0" />
+                    <div>
+                      <span className="block text-xs font-bold text-slate-900">Partenaires certifiés uniquement</span>
+                      <span className="block text-[10px] text-slate-500">Boutiques vérifiées par ColoCampus</span>
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={verifiedOnly}
+                    onChange={(e) => setVerifiedOnly(e.target.checked)}
+                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300"
+                  />
+                </label>
+              </div>
+            </div>
+
+            {/* Pied fixe avec gros bouton CTA "Afficher les X articles" */}
+            <div className="p-4 border-t border-slate-100 bg-white shadow-lg shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsMobileFiltersOpen(false)}
+                className="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs sm:text-sm shadow-md active:scale-98 transition text-center cursor-pointer"
+              >
+                Afficher {filteredProducts.length} article{filteredProducts.length > 1 ? 's' : ''}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
