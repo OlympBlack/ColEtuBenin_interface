@@ -147,8 +147,8 @@ export function MarketplaceProductPage({
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-24" style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" }}>
-      {/* ── Navigation Header Sticky ── */}
-      <div className="bg-white border-b border-slate-200/70 sticky top-0 md:top-[64px] z-40 bg-white/90 backdrop-blur-md">
+      {/* ── Navigation Header ── */}
+      <div className="bg-white border-b border-slate-200/70">
         <div className="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
           <a
             href="#/boutiques"

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { Filter, SlidersHorizontal, RotateCcw, CheckCircle2, ShieldCheck, Tag } from 'lucide-react'
 import { UiIcon } from '../components/UiIcons'
 import { usePublicitesBoutiques } from '../hooks/usePublicitesBoutiques'
 import type { PubliciteBoutique } from '../types'
@@ -12,13 +13,26 @@ const SORT_OPTIONS = [
 
 type SortOption = (typeof SORT_OPTIONS)[number]['value']
 
+const PRICE_RANGES = [
+  { value: 'all', label: 'Tous les prix' },
+  { value: '0_25000', label: 'Moins de 25 000 FCFA' },
+  { value: '25000_50000', label: '25 000 — 50 000 FCFA' },
+  { value: '50000_100000', label: '50 000 — 100 000 FCFA' },
+  { value: '100000_plus', label: 'Plus de 100 000 FCFA' },
+] as const
+
+type PriceRangeOption = (typeof PRICE_RANGES)[number]['value']
+
 export function MarketplacePage() {
   const { publicites, isLoading, error, refetch } = usePublicitesBoutiques()
   const [activeCategory, setActiveCategory] = useState<string>('Tous les produits')
   const [selectedBoutique, setSelectedBoutique] = useState<string>('all')
   const [selectedQuartier, setSelectedQuartier] = useState<string>('all')
+  const [priceRange, setPriceRange] = useState<PriceRangeOption>('all')
+  const [verifiedOnly, setVerifiedOnly] = useState<boolean>(false)
   const [search, setSearch] = useState<string>('')
   const [sortBy, setSortBy] = useState<SortOption>('recent')
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState<boolean>(false)
 
   // Catégories dynamiques extraites des produits reçus
   const categoriesWithCounts = useMemo(() => {
@@ -74,6 +88,16 @@ export function MarketplacePage() {
           if (p.quartier_cible !== selectedQuartier) return false
         }
 
+        // Filtre prix
+        const numPrix = p.prix !== null && p.prix !== undefined ? Number(p.prix) : null
+        if (priceRange === '0_25000' && (numPrix === null || numPrix > 25000)) return false
+        if (priceRange === '25000_50000' && (numPrix === null || numPrix < 25000 || numPrix > 50000)) return false
+        if (priceRange === '50000_100000' && (numPrix === null || numPrix < 50000 || numPrix > 100000)) return false
+        if (priceRange === '100000_plus' && (numPrix === null || numPrix < 100000)) return false
+
+        // Filtre vérifié
+        if (verifiedOnly && !p.boutique.is_verified) return false
+
         // Recherche textuelle
         if (q) {
           const inTitle = (p.titre_promo || '').toLowerCase().includes(q)
@@ -101,12 +125,14 @@ export function MarketplacePage() {
         // recent par défaut
         return b.id - a.id
       })
-  }, [publicites, activeCategory, selectedBoutique, selectedQuartier, search, sortBy])
+  }, [publicites, activeCategory, selectedBoutique, selectedQuartier, priceRange, verifiedOnly, search, sortBy])
 
   function resetFilters() {
     setActiveCategory('Tous les produits')
     setSelectedBoutique('all')
     setSelectedQuartier('all')
+    setPriceRange('all')
+    setVerifiedOnly(false)
     setSearch('')
     setSortBy('recent')
   }
@@ -115,77 +141,49 @@ export function MarketplacePage() {
     activeCategory !== 'Tous les produits' ||
     selectedBoutique !== 'all' ||
     selectedQuartier !== 'all' ||
+    priceRange !== 'all' ||
+    verifiedOnly ||
     Boolean(search.trim())
 
-  return (
-    <div className="min-h-screen bg-[#F8FAFC] w-full" style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" }}>
-      {/* ── SaaS E-Commerce Hero Header ── */}
-      <div className="relative overflow-hidden bg-white border-b border-slate-200/80 pb-12 pt-8 sm:pt-14 sm:pb-14 shadow-xs">
-        {/* Cercles diffus design */}
-        <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 pointer-events-none">
-          <div className="h-[320px] w-[500px] rounded-full bg-blue-100/40 blur-[90px]" />
+  const activeFiltersCount = useMemo(() => {
+    let count = 0
+    if (activeCategory !== 'Tous les produits') count++
+    if (selectedBoutique !== 'all') count++
+    if (selectedQuartier !== 'all') count++
+    if (priceRange !== 'all') count++
+    if (verifiedOnly) count++
+    if (search.trim()) count++
+    return count
+  }, [activeCategory, selectedBoutique, selectedQuartier, priceRange, verifiedOnly, search])
+
+  // Contenu des filtres partagé entre sidebar desktop et drawer mobile
+  const renderFilterPanel = () => (
+    <div className="space-y-6">
+      {/* Header filtres */}
+      <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+        <div className="flex items-center gap-2">
+          <SlidersHorizontal className="w-4 h-4 text-blue-600" />
+          <span className="font-extrabold text-slate-900 text-sm">Filtres</span>
         </div>
-        <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 pointer-events-none">
-          <div className="h-[240px] w-[340px] rounded-full bg-emerald-100/35 blur-[70px]" />
-        </div>
-
-        <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-          <div className="mx-auto max-w-3xl text-center">
-            <span className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-blue-700 mb-5 ring-1 ring-blue-500/15">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
-              </span>
-              E-Shop Étudiant & Campus
-            </span>
-
-            <h1 className="text-3xl sm:text-5xl lg:text-[3.4rem] font-extrabold tracking-tight text-slate-900 mb-4 leading-[1.12]">
-              Les meilleures offres de nos{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600">
-                boutiques partenaires
-              </span>.
-            </h1>
-
-            <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-8 max-w-2xl mx-auto font-normal">
-              Ordinateurs, meubles de chambre, wifi, fournitures et équipements tech certifiés à prix préférentiels pour étudiants et colocations.
-            </p>
-
-            {/* Smart Search Bar */}
-            <div className="relative mx-auto max-w-2xl group shadow-[0_8px_30px_rgba(15,23,42,0.06)] rounded-2xl bg-white border border-slate-200/90 transition-all duration-300 focus-within:ring-4 focus-within:ring-blue-500/15 focus-within:border-blue-500">
-              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
-                <UiIcon name="search" />
-              </div>
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Rechercher un produit, ordinateur, lit, imprimante, marque..."
-                className="w-full h-15 pl-12 pr-28 bg-transparent rounded-2xl text-[0.98rem] font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none"
-              />
-              {search && (
-                <button
-                  type="button"
-                  onClick={() => setSearch('')}
-                  className="absolute inset-y-0 right-24 my-auto h-7 w-7 rounded-full bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center text-xs transition"
-                  title="Effacer"
-                >
-                  ✕
-                </button>
-              )}
-              <div className="absolute inset-y-1.5 right-1.5 flex items-center">
-                <span className="bg-slate-900 text-white font-bold rounded-xl px-4 py-2.5 text-xs shadow-xs hidden sm:inline-block">
-                  {filteredProducts.length} {filteredProducts.length > 1 ? 'articles' : 'article'}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+        {hasActiveFilters && (
+          <button
+            type="button"
+            onClick={resetFilters}
+            className="inline-flex items-center gap-1 text-xs font-bold text-rose-600 hover:text-rose-700 transition cursor-pointer"
+          >
+            <RotateCcw className="w-3 h-3" />
+            <span>Réinitialiser</span>
+          </button>
+        )}
       </div>
 
-      {/* ── Main Content Area ── */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl pb-24 pt-6">
-        {/* Categories Pills Bar */}
-        <div className="flex items-center gap-2.5 overflow-x-auto pb-4 mb-3 colcampus-scroll auto-cols-max snap-x" style={{ scrollbarWidth: 'none' }}>
+      {/* Catégories */}
+      <div>
+        <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2.5 flex items-center gap-1.5">
+          <Tag className="w-3 h-3 text-slate-400" />
+          <span>Catégories</span>
+        </h4>
+        <div className="space-y-1">
           {categoriesWithCounts.map((cat) => {
             const isActive = activeCategory.toLowerCase() === cat.name.toLowerCase()
             return (
@@ -193,16 +191,16 @@ export function MarketplacePage() {
                 key={cat.name}
                 type="button"
                 onClick={() => setActiveCategory(cat.name)}
-                className={`snap-start shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 active:scale-95 border ${
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition text-left cursor-pointer ${
                   isActive
-                    ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                    : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200/60 shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                 }`}
               >
-                <span>{cat.name}</span>
+                <span className="truncate">{cat.name}</span>
                 <span
-                  className={`text-[11px] px-2 py-0.5 rounded-full font-extrabold ${
-                    isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
+                  className={`text-[10px] px-1.5 py-0.5 rounded-full font-extrabold ${
+                    isActive ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'
                   }`}
                 >
                   {cat.count}
@@ -211,138 +209,360 @@ export function MarketplacePage() {
             )
           })}
         </div>
+      </div>
 
-        {/* ── Secondary Filter Bar (Boutique, Quartier, Tri, Reset) ── */}
-        <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-white rounded-2xl border border-slate-200/80 shadow-xs mb-8">
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Filtre Boutique */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider hidden sm:inline">Boutique :</span>
-              <select
-                value={selectedBoutique}
-                onChange={(e) => setSelectedBoutique(e.target.value)}
-                className="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+      {/* Fourchette de prix */}
+      <div className="pt-3 border-t border-slate-100">
+        <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2.5">
+          Fourchette de prix
+        </h4>
+        <div className="space-y-1.5">
+          {PRICE_RANGES.map((range) => {
+            const isChecked = priceRange === range.value
+            return (
+              <label
+                key={range.value}
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition ${
+                  isChecked
+                    ? 'bg-blue-50/70 text-blue-900 font-bold border border-blue-200/50'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                }`}
               >
-                <option value="all">Toutes les boutiques ({boutiquesList.length})</option>
-                {boutiquesList.map((shop) => (
-                  <option key={shop} value={shop}>
-                    {shop}
-                  </option>
-                ))}
-              </select>
-            </div>
+                <input
+                  type="radio"
+                  name="price_range"
+                  value={range.value}
+                  checked={isChecked}
+                  onChange={() => setPriceRange(range.value)}
+                  className="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500"
+                />
+                <span>{range.label}</span>
+              </label>
+            )
+          })}
+        </div>
+      </div>
 
-            {/* Filtre Localisation */}
-            {quartiersList.length > 0 && (
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider hidden sm:inline">Zone :</span>
-                <select
-                  value={selectedQuartier}
-                  onChange={(e) => setSelectedQuartier(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+      {/* Boutique partenaire */}
+      {boutiquesList.length > 0 && (
+        <div className="pt-3 border-t border-slate-100">
+          <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+            Boutique partenaire
+          </label>
+          <select
+            value={selectedBoutique}
+            onChange={(e) => setSelectedBoutique(e.target.value)}
+            className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+          >
+            <option value="all">Toutes les boutiques ({boutiquesList.length})</option>
+            {boutiquesList.map((shop) => (
+              <option key={shop} value={shop}>
+                {shop}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Zone / Quartier */}
+      {quartiersList.length > 0 && (
+        <div className="pt-3 border-t border-slate-100">
+          <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+            Campus / Zone géographique
+          </label>
+          <select
+            value={selectedQuartier}
+            onChange={(e) => setSelectedQuartier(e.target.value)}
+            className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+          >
+            <option value="all">Tous les secteurs ({quartiersList.length})</option>
+            {quartiersList.map((q) => (
+              <option key={q} value={q}>
+                {q}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Partenaires certifiés uniquement */}
+      <div className="pt-3 border-t border-slate-100">
+        <label className="flex items-center gap-2.5 cursor-pointer px-1 py-1">
+          <input
+            type="checkbox"
+            checked={verifiedOnly}
+            onChange={(e) => setVerifiedOnly(e.target.checked)}
+            className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300"
+          />
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
+            <ShieldCheck className="w-4 h-4 text-blue-600" />
+            <span>Partenaires certifiés</span>
+          </div>
+        </label>
+      </div>
+    </div>
+  )
+
+  return (
+    <div className="min-h-screen bg-[#F8FAFC] w-full" style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" }}>
+      {/* ── Hero Header avec Image de Fond Captivante ── */}
+      <div className="relative overflow-hidden bg-slate-950 border-b border-slate-800 pb-12 pt-10 sm:pt-16 sm:pb-16 text-white shadow-md">
+        {/* Background Image avec superpositions de contrastes */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1555421689-491a97ff2040?auto=format&fit=crop&w=1920&q=80"
+            alt="Boutique & équipements campus"
+            className="w-full h-full object-cover object-center opacity-30 scale-105 filter blur-[0.5px]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-900/60" />
+          <div className="absolute inset-0 bg-radial-[at_top_right] from-blue-600/25 via-transparent to-transparent" />
+        </div>
+
+        <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+          <div className="mx-auto max-w-3xl text-center">
+            <h1 className="text-3xl sm:text-4xl lg:text-[3.2rem] font-extrabold tracking-tight text-white mb-4 leading-[1.14]">
+              Les meilleures offres de nos{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400">
+                boutiques partenaires
+              </span>.
+            </h1>
+
+            <p className="text-slate-300 text-sm sm:text-base lg:text-lg leading-relaxed mb-8 max-w-2xl mx-auto font-normal">
+              Ordinateurs, meubles de chambre, wifi, fournitures et équipements tech certifiés à prix préférentiels pour étudiants et colocations.
+            </p>
+
+            {/* Smart Search Bar */}
+            <div className="relative mx-auto max-w-2xl group shadow-[0_12px_36px_rgba(0,0,0,0.35)] rounded-2xl bg-white/95 backdrop-blur-md border border-white/20 transition-all duration-300 focus-within:ring-4 focus-within:ring-blue-500/20 focus-within:border-blue-500 focus-within:bg-white">
+              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
+                <UiIcon name="search" />
+              </div>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Rechercher un produit, ordinateur, lit, imprimante, marque..."
+                className="w-full h-14 sm:h-15 pl-12 pr-28 bg-transparent rounded-2xl text-[0.95rem] font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none"
+              />
+              {search && (
+                <button
+                  type="button"
+                  onClick={() => setSearch('')}
+                  className="absolute inset-y-0 right-24 my-auto h-7 w-7 rounded-full bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center text-xs transition cursor-pointer"
+                  title="Effacer"
                 >
-                  <option value="all">Tous les secteurs</option>
-                  {quartiersList.map((q) => (
-                    <option key={q} value={q}>
-                      {q}
+                  ✕
+                </button>
+              )}
+              <div className="absolute inset-y-1.5 right-1.5 flex items-center">
+                <span className="bg-slate-900 text-white font-bold rounded-xl px-3.5 py-2.5 text-xs shadow-xs hidden sm:inline-block">
+                  {filteredProducts.length} {filteredProducts.length > 1 ? 'articles' : 'article'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Main Content Area avec Sidebar Gauche ── */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl pb-24 pt-8">
+        {/* Barre de contrôle Mobile */}
+        <div className="lg:hidden flex items-center justify-between gap-3 mb-6 p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-xs">
+          <button
+            type="button"
+            onClick={() => setIsMobileFiltersOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold shadow-xs active:scale-95 transition cursor-pointer"
+          >
+            <Filter className="w-3.5 h-3.5" />
+            <span>Filtres ({activeFiltersCount})</span>
+          </button>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-500 font-semibold">{filteredProducts.length} articles</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortOption)}
+              className="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none"
+            >
+              {SORT_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Layout Desktop : Sidebar Filtres à Gauche + Grille Produits à Droite */}
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+          {/* ── Sidebar Filtres à Gauche (Desktop) ── */}
+          <aside className="hidden lg:block w-72 shrink-0 sticky top-24">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs">
+              {renderFilterPanel()}
+            </div>
+          </aside>
+
+          {/* ── Contenu Principal (Droite) ── */}
+          <main className="flex-1 min-w-0 w-full">
+            {/* Top Bar de tri et badges de filtres actifs */}
+            <div className="hidden lg:flex items-center justify-between gap-4 p-4 bg-white rounded-2xl border border-slate-200/90 shadow-xs mb-6">
+              <div className="flex flex-wrap items-center gap-2 min-w-0">
+                <span className="text-xs font-extrabold text-slate-900">
+                  {filteredProducts.length} {filteredProducts.length > 1 ? 'articles disponibles' : 'article disponible'}
+                </span>
+
+                {/* Badges de filtres actifs supprimables */}
+                {activeCategory !== 'Tous les produits' && (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60">
+                    <span>{activeCategory}</span>
+                    <button
+                      type="button"
+                      onClick={() => setActiveCategory('Tous les produits')}
+                      className="hover:text-blue-900 font-bold"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
+                {selectedBoutique !== 'all' && (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60">
+                    <span>Boutique : {selectedBoutique}</span>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedBoutique('all')}
+                      className="hover:text-blue-900 font-bold"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
+                {selectedQuartier !== 'all' && (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60">
+                    <span>Zone : {selectedQuartier}</span>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedQuartier('all')}
+                      className="hover:text-blue-900 font-bold"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
+                {priceRange !== 'all' && (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60">
+                    <span>Prix : {PRICE_RANGES.find((p) => p.value === priceRange)?.label}</span>
+                    <button
+                      type="button"
+                      onClick={() => setPriceRange('all')}
+                      className="hover:text-blue-900 font-bold"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
+                {verifiedOnly && (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                    <span>Certifiés ✓</span>
+                    <button
+                      type="button"
+                      onClick={() => setVerifiedOnly(false)}
+                      className="hover:text-emerald-900 font-bold"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
+              </div>
+
+              {/* Tri à droite */}
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Trier par :</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as SortOption)}
+                  className="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                >
+                  {SORT_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
                     </option>
                   ))}
                 </select>
               </div>
-            )}
-          </div>
-
-          <div className="flex items-center gap-3 ml-auto">
-            {/* Tri */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider hidden sm:inline">Trier par :</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-              >
-                {SORT_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
             </div>
 
-            {hasActiveFilters && (
-              <button
-                type="button"
-                onClick={resetFilters}
-                className="text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100/80 px-2.5 py-2 rounded-lg transition"
-              >
-                Réinitialiser
-              </button>
+            {/* État de chargement */}
+            {isLoading && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="bg-white rounded-2xl border border-slate-200/70 p-3.5 space-y-3 animate-pulse">
+                    <div className="h-40 bg-slate-100 rounded-xl w-full" />
+                    <div className="h-3.5 bg-slate-100 rounded w-3/4" />
+                    <div className="h-3 bg-slate-100 rounded w-1/2" />
+                    <div className="h-5 bg-slate-100 rounded w-1/3 pt-2" />
+                  </div>
+                ))}
+              </div>
             )}
-          </div>
+
+            {/* Erreur de chargement */}
+            {error && !isLoading && (
+              <div className="p-8 bg-rose-50 border border-rose-200 rounded-2xl text-center max-w-xl mx-auto my-8">
+                <p className="text-sm font-semibold text-rose-800 mb-3">{error}</p>
+                <button
+                  type="button"
+                  onClick={refetch}
+                  className="px-4 py-2 bg-rose-600 text-white rounded-lg text-xs font-bold hover:bg-rose-700 transition"
+                >
+                  Réessayer
+                </button>
+              </div>
+            )}
+
+            {/* Grille des Articles de Boutique (Hauteur Réduite & Compacte) */}
+            {!isLoading && filteredProducts.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+                {filteredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
+
+            {/* Empty State */}
+            {!isLoading && filteredProducts.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-16 px-4 text-center bg-white rounded-2xl border border-slate-200/80 shadow-xs">
+                <div className="h-16 w-16 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 mb-4">
+                  <UiIcon name="search" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 mb-1">Aucun article trouvé</h3>
+                <p className="text-xs text-slate-500 max-w-sm mx-auto mb-5">
+                  Aucun produit ne correspond à vos filtres actuels. Essayez de réinitialiser vos critères de recherche.
+                </p>
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="text-white bg-slate-900 hover:bg-slate-800 rounded-xl px-5 py-2.5 font-bold text-xs transition-all active:scale-95 shadow-xs cursor-pointer"
+                >
+                  Afficher tous les articles
+                </button>
+              </div>
+            )}
+          </main>
         </div>
 
-        {/* ── État de chargement ── */}
-        {isLoading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-3xl border border-slate-200/70 p-4 space-y-4 animate-pulse">
-                <div className="aspect-[4/3] bg-slate-100 rounded-2xl w-full" />
-                <div className="h-4 bg-slate-100 rounded-md w-3/4" />
-                <div className="h-3 bg-slate-100 rounded-md w-1/2" />
-                <div className="h-6 bg-slate-100 rounded-md w-1/3 pt-2" />
-              </div>
-            ))}
+        {/* ── Callout Espace Partenaires avec Background Image ── */}
+        <div className="mt-16 rounded-3xl relative overflow-hidden p-8 sm:p-12 text-white shadow-xl border border-slate-800">
+          <div className="absolute inset-0 z-0">
+            <img
+              src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&w=1600&q=80"
+              alt="Espace Partenaires Commerçants"
+              className="w-full h-full object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/90 to-indigo-950/80" />
+            <div className="absolute inset-0 bg-slate-950/30 backdrop-blur-[1px]" />
           </div>
-        )}
 
-        {/* ── Erreur de chargement ── */}
-        {error && !isLoading && (
-          <div className="p-8 bg-rose-50 border border-rose-200 rounded-2xl text-center max-w-xl mx-auto my-8">
-            <p className="text-sm font-semibold text-rose-800 mb-3">{error}</p>
-            <button
-              type="button"
-              onClick={refetch}
-              className="px-4 py-2 bg-rose-600 text-white rounded-lg text-xs font-bold hover:bg-rose-700 transition"
-            >
-              Réessayer
-            </button>
-          </div>
-        )}
-
-        {/* ── Products Grid ── */}
-        {!isLoading && filteredProducts.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
-
-        {/* ── Empty State ── */}
-        {!isLoading && filteredProducts.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-20 px-4 text-center bg-white rounded-3xl border border-slate-200/80 shadow-xs mt-4">
-            <div className="h-20 w-20 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 mb-5">
-              <UiIcon name="search" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-1.5">Aucun article trouvé</h3>
-            <p className="text-sm text-slate-500 max-w-md mx-auto mb-6">
-              Aucun produit ne correspond à vos filtres actuels. Essayez de réinitialiser vos critères de recherche.
-            </p>
-            <button
-              type="button"
-              onClick={resetFilters}
-              className="text-white bg-slate-900 hover:bg-slate-800 rounded-xl px-5 py-2.5 font-bold text-sm transition-all active:scale-95 shadow-xs"
-            >
-              Afficher tous les articles
-            </button>
-          </div>
-        )}
-
-        {/* ── Callout pour les comptes Boutiques partenaires ── */}
-        <div className="mt-16 rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-8 sm:p-10 text-white shadow-xl relative overflow-hidden">
-          <div className="absolute right-0 bottom-0 translate-x-12 translate-y-12 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="relative z-10 max-w-2xl">
-            <span className="inline-block px-3 py-1 bg-white/10 rounded-full text-[11px] font-bold uppercase tracking-wider text-blue-300 mb-3">
+            <span className="inline-block px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[11px] font-bold uppercase tracking-wider text-blue-300 mb-3 border border-white/10">
               Espace Partenaires
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-3">
@@ -361,7 +581,7 @@ export function MarketplacePage() {
               </a>
               <a
                 href="#/inscription-pro"
-                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 text-white font-semibold text-sm px-5 py-3 rounded-xl transition border border-white/10"
+                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 text-white font-semibold text-sm px-5 py-3 rounded-xl transition border border-white/15 backdrop-blur-md"
               >
                 Ouvrir un compte boutique
               </a>
@@ -369,6 +589,43 @@ export function MarketplacePage() {
           </div>
         </div>
       </div>
+
+      {/* ── Slide-over Drawer Filtres Mobile ── */}
+      {isMobileFiltersOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
+            onClick={() => setIsMobileFiltersOpen(false)}
+          />
+          <div className="fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-white shadow-2xl z-10 flex flex-col overflow-hidden animate-in slide-in-from-left duration-200">
+            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="w-4 h-4 text-blue-600" />
+                <h3 className="font-extrabold text-slate-900 text-sm">Filtres de la boutique</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMobileFiltersOpen(false)}
+                className="h-8 w-8 rounded-lg text-slate-400 hover:text-slate-700 flex items-center justify-center transition"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-4 overflow-y-auto flex-1 overscroll-contain">
+              {renderFilterPanel()}
+            </div>
+            <div className="p-4 border-t border-slate-200 bg-white">
+              <button
+                type="button"
+                onClick={() => setIsMobileFiltersOpen(false)}
+                className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-xs transition"
+              >
+                Voir les {filteredProducts.length} articles
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -384,74 +641,75 @@ function ProductCard({ product }: { product: PubliciteBoutique }) {
   return (
     <a
       href={`#/boutiques/${product.id}`}
-      className="group flex flex-col bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.02)] hover:shadow-[0_16px_36px_-12px_rgba(15,23,42,0.1)] hover:-translate-y-1 transition-all duration-300"
+      className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-[0_2px_12px_rgba(15,23,42,0.03)] hover:shadow-[0_12px_28px_-8px_rgba(15,23,42,0.09)] hover:-translate-y-0.5 transition-all duration-200"
     >
-      {/* Image Container */}
-      <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden w-full">
+      {/* Image Container Compacte (Hauteur réduite) */}
+      <div className="relative h-36 sm:h-40 bg-slate-100 overflow-hidden w-full shrink-0">
         <img
           src={product.url_image_banniere}
           alt={product.titre_promo}
           loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
         />
 
         {/* Badges sur l'image */}
-        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 items-center">
-          <span className="bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-lg text-[10px] font-extrabold text-slate-800 uppercase tracking-wider shadow-xs">
+        <div className="absolute top-2 left-2 flex flex-wrap gap-1 items-center">
+          <span className="bg-white/95 backdrop-blur-md px-2 py-0.5 rounded-md text-[9px] font-extrabold text-slate-800 uppercase tracking-wider shadow-xs">
             {categoryName}
           </span>
           {product.boutique.is_verified && (
-            <span className="bg-blue-600/90 text-white backdrop-blur-md px-2 py-0.5 rounded-lg text-[9px] font-bold flex items-center gap-1 shadow-xs">
-              ✓ Partenaire certifié
+            <span className="bg-blue-600/90 text-white backdrop-blur-md px-1.5 py-0.5 rounded-md text-[8px] font-bold flex items-center gap-0.5 shadow-xs">
+              <CheckCircle2 className="w-2.5 h-2.5" />
+              <span>Certifié</span>
             </span>
           )}
         </div>
 
         {product.quartier_cible && (
-          <div className="absolute bottom-3 left-3 bg-slate-900/80 backdrop-blur-md text-white px-2.5 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-xs">
+          <div className="absolute bottom-2 left-2 bg-slate-900/80 backdrop-blur-md text-white px-2 py-0.5 rounded-md text-[9px] font-bold flex items-center gap-1 shadow-xs">
             <span>📍 {product.quartier_cible}</span>
           </div>
         )}
       </div>
 
-      {/* Meta Data */}
-      <div className="flex flex-col flex-1 p-5">
+      {/* Meta Data Compacte */}
+      <div className="flex flex-col flex-1 p-3.5">
         {/* Shop badge */}
-        <div className="flex items-center gap-2 mb-2.5">
+        <div className="flex items-center gap-1.5 mb-1.5">
           {product.boutique.logo_url ? (
             <img
               src={product.boutique.logo_url}
               alt=""
-              className="h-6 w-6 rounded-full object-cover border border-slate-200 shrink-0"
+              className="h-4 w-4 rounded-full object-cover border border-slate-200 shrink-0"
             />
           ) : (
-            <div className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-50 text-blue-700 text-xs font-bold shrink-0">
+            <div className="flex items-center justify-center h-4 w-4 rounded-full bg-blue-50 text-blue-700 text-[9px] font-black shrink-0">
               {shopName.charAt(0).toUpperCase()}
             </div>
           )}
-          <span className="text-xs font-bold text-slate-600 truncate">{shopName}</span>
+          <span className="text-[11px] font-semibold text-slate-500 truncate">{shopName}</span>
         </div>
 
-        {/* Titre */}
-        <h3 className="text-base font-bold text-slate-900 leading-snug mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+        {/* Titre (1 ligne claire pour limiter la hauteur) */}
+        <h3 className="text-xs sm:text-[13px] font-bold text-slate-900 leading-snug mb-1 group-hover:text-blue-600 transition-colors line-clamp-1">
           {product.titre_promo}
         </h3>
 
-        {/* Description courte si présente */}
+        {/* Description courte (1 ligne) */}
         {product.description && (
-          <p className="text-xs text-slate-500 line-clamp-2 mb-4 leading-relaxed font-normal">
+          <p className="text-[11px] text-slate-500 line-clamp-1 mb-2.5 font-normal leading-normal">
             {product.description}
           </p>
         )}
 
-        {/* Prix & CTA */}
-        <div className="mt-auto pt-4 flex items-end justify-between border-t border-slate-100">
+        {/* Prix & Bouton (footer compact) */}
+        <div className="mt-auto pt-2.5 flex items-center justify-between border-t border-slate-100">
           <div className="flex flex-col">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider font-extrabold">Prix indicatif</span>
-            <span className="text-base sm:text-lg font-black text-slate-900 tracking-tight">{priceDisplay}</span>
+            <span className="text-[9px] text-slate-400 uppercase tracking-wider font-extrabold">Prix</span>
+            <span className="text-xs sm:text-sm font-black text-slate-900 tracking-tight">{priceDisplay}</span>
           </div>
 
-          <div className="flex items-center justify-center h-9 px-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold group-hover:bg-blue-600 group-hover:border-blue-600 group-hover:text-white transition-all shadow-xs">
+          <div className="flex items-center justify-center h-7 px-2.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 text-[10px] sm:text-[11px] font-bold group-hover:bg-blue-600 group-hover:border-blue-600 group-hover:text-white transition-all shadow-xs">
             <span>Voir l'offre</span>
           </div>
         </div>
