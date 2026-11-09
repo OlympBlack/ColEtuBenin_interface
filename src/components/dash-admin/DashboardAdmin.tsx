@@ -1057,7 +1057,7 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
           {/* ── Modal Attribution de Crédits par l'Admin ── */}
           {isCreditModalOpen && (
             <div
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-200"
+              className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200 overflow-y-auto"
               onClick={() => {
                 if (!isGivingCredits) {
                   setIsCreditModalOpen(false)
@@ -1066,20 +1066,20 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
               }}
             >
               <div
-                className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden text-left"
+                className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden text-left my-auto max-h-[calc(100dvh-2rem)] flex flex-col"
                 onClick={(e) => e.stopPropagation()}
                 role="dialog"
                 aria-modal="true"
               >
                 {/* Header */}
-                <div className="p-6 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-100 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
+                <div className="p-4 sm:p-5 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-100 flex items-center justify-between shrink-0">
+                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs shrink-0">
                       <Coins className="w-5 h-5" />
                     </div>
-                    <div>
-                      <h3 className="font-extrabold text-slate-900 text-base">Attribuer des crédits</h3>
-                      <p className="text-xs text-slate-600">Recharge manuelle de quota de publication</p>
+                    <div className="min-w-0">
+                      <h3 className="font-extrabold text-slate-900 text-sm sm:text-base truncate">Attribuer des crédits</h3>
+                      <p className="text-[11px] sm:text-xs text-slate-600 truncate">Recharge manuelle de quota de publication</p>
                     </div>
                   </div>
                   <button
@@ -1090,7 +1090,8 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
                         setSelectedUserForCredits(null)
                       }
                     }}
-                    className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 flex items-center justify-center transition"
+                    className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-black/5 flex items-center justify-center transition shrink-0 ml-2"
+                    aria-label="Fermer"
                   >
                     ✕
                   </button>
@@ -1102,7 +1103,7 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
                     e.preventDefault()
                     handleGiveCredits()
                   }}
-                  className="p-6 space-y-4"
+                  className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 overscroll-contain"
                 >
                   {/* Sélection utilisateur */}
                   <div>
@@ -1110,7 +1111,7 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
                       Utilisateur bénéficiaire
                     </label>
                     {selectedUserForCredits ? (
-                      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3">
+                      <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3">
                         <div className="min-w-0">
                           <p className="text-sm font-bold text-slate-900 truncate">
                             {selectedUserForCredits.name} {selectedUserForCredits.prenoms}
@@ -1151,7 +1152,7 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
                     <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                       Nombre de crédits à accorder *
                     </label>
-                    <div className="flex items-center gap-2">
+                    <div className="space-y-2">
                       <input
                         type="number"
                         min="1"
@@ -1160,16 +1161,18 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
                         value={creditsAmount}
                         onChange={(e) => setCreditsAmount(Math.max(1, parseInt(e.target.value) || 1))}
                         className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                        placeholder="Ex : 5"
                       />
-                      <div className="flex items-center gap-1 shrink-0">
-                        {[1, 5, 10, 25, 50].map((preset) => (
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-[11px] font-semibold text-slate-400 mr-1">Raccourcis :</span>
+                        {[1, 5, 10, 25, 50, 100].map((preset) => (
                           <button
                             key={preset}
                             type="button"
                             onClick={() => setCreditsAmount(preset)}
-                            className={`px-2 py-1.5 rounded-lg text-xs font-bold transition border ${
+                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition border cursor-pointer ${
                               creditsAmount === preset
-                                ? 'bg-amber-500 text-white border-amber-500'
+                                ? 'bg-amber-500 text-white border-amber-500 shadow-xs'
                                 : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
                             }`}
                           >
@@ -1204,16 +1207,8 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
                     />
                   </div>
 
-                  {/* Info notification */}
-                  <div className="p-3 bg-blue-50/70 rounded-xl border border-blue-200/80 text-[11px] text-blue-900 flex items-start gap-2">
-                    <Bell className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                    <span>
-                      L'utilisateur recevra automatiquement une notification officielle avec le nombre exact de crédits accordés et pourra immédiatement les utiliser pour publier ses annonces.
-                    </span>
-                  </div>
-
                   {/* Actions */}
-                  <div className="pt-2 flex items-center justify-end gap-2.5">
+                  <div className="pt-3 border-t border-slate-100 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 shrink-0">
                     <button
                       type="button"
                       disabled={isGivingCredits}
@@ -1221,14 +1216,14 @@ export const DashboardAdmin: React.FC<DashboardAdminProps> = ({
                         setIsCreditModalOpen(false)
                         setSelectedUserForCredits(null)
                       }}
-                      className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold transition"
+                      className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold transition text-center cursor-pointer"
                     >
                       Annuler
                     </button>
                     <button
                       type="submit"
                       disabled={isGivingCredits || !selectedUserForCredits}
-                      className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold transition shadow-sm inline-flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                      className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold transition shadow-sm inline-flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                     >
                       {isGivingCredits ? (
                         <>
