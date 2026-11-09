@@ -1,26 +1,5 @@
 import { PageHero } from '../components/PageHero'
 
-const EQUIPE = [
-  {
-    initiales: 'JG',
-    nom: 'Jules Chrestain Gbassi',
-    role: 'Fondateur et coordinateur',
-    bio: "Étudiant à l'UAC, il porte le projet ColoCampus et anime la communauté des étudiants et démarcheurs des quatre campus publics du Bénin.",
-  },
-  {
-    initiales: 'AS',
-    nom: 'Assogba Sylvie',
-    role: 'Responsable modération',
-    bio: "Elle vérifie les annonces déposées et veille à la qualité des chambres proposées autour des campus universitaires.",
-  },
-  {
-    initiales: 'RK',
-    nom: 'Rachidatou Koffi',
-    role: 'Chargee des partenariats',
-    bio: 'Elle développe les liens avec les bailleurs certifiés et les boutiques partenaires des environs des campus universitaires.',
-  },
-]
-
 const CHIFFRES = [
   { valeur: '500+', titre: 'Annonces publiées' },
   { valeur: '1200+', titre: 'Étudiants inscrits' },
@@ -146,43 +125,6 @@ export function AboutPage() {
           </div>
         </div>
       </div>
-
-      {/* ── L'équipe ── */}
-      <section className="team mb-0">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12 text-center mb-5">
-              <span className="titleh">Une équipe à votre écoute</span>
-              <h2 className="mt-2">
-                Les visages derrière <em style={{ color: '#a4c639', fontStyle: 'normal' }}>ColoCampus</em>
-              </h2>
-            </div>
-          </div>
-          <div className="row">
-            {EQUIPE.map((membre) => (
-              <div className="col-md-4 mb-4" key={membre.nom}>
-                <div className="team-item">
-                  <div
-                    className="flex items-center justify-center bg-[#a4c639] text-white"
-                    style={{ height: 220 }}
-                    aria-hidden="true"
-                  >
-                    <span className="text-5xl font-bold">{membre.initiales}</span>
-                  </div>
-                  <div className="down-content">
-                    <h4>{membre.nom}</h4>
-                    <span>{membre.role}</span>
-                    <p>{membre.bio}</p>
-                    <a href="#/contact" className="filled-button">
-                      Nous contacter
-                    </a>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── Notre vision ── */}
       <div className="container mt-5 mb-5 py-4">
