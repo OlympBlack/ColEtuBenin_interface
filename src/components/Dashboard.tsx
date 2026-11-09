@@ -2158,7 +2158,7 @@ function DashboardLayout({
   })()
 
   return (
-    <div className="dashboard-shell flex h-screen max-h-screen w-full overflow-hidden bg-[#f3f6ef]">
+    <div className="dashboard-shell flex h-screen max-h-screen w-full overflow-hidden bg-[#F8FAFC]">
       <Sidebar
         user={session.user}
         activeTab={activeTab}
@@ -2173,7 +2173,7 @@ function DashboardLayout({
         onMobileClose={onToggleSidebar}
       />
 
-      <div className="dashboard-main-area flex min-w-0 flex-1 flex-col h-full overflow-y-auto overscroll-contain">
+      <div className="dashboard-main-area flex min-w-0 flex-1 flex-col h-full overflow-y-auto overscroll-contain bg-[#F8FAFC]">
         <TopNavbar
           user={session.user}
           rolePath={rolePath}
@@ -2186,7 +2186,7 @@ function DashboardLayout({
           onLogout={onLogout}
           isLoggingOut={isLoggingOut}
         />
-        <main className="flex-1 p-4 sm:p-5 lg:p-6">{body}</main>
+        <main className="flex-1 p-4 sm:p-5 lg:p-6 bg-[#F8FAFC]">{body}</main>
       </div>
     </div>
   )
@@ -2223,12 +2223,32 @@ export function DashboardWorkspace({
     try {
       const res = await fetchDashboard(session.token)
       setDashboard(res.data)
+
+      // Synchroniser la session locale avec les statuts frais de vérification et profil
+      if (res.data?.user) {
+        const isVerified = Boolean(
+          res.data.user.is_verified ||
+          res.data.user.is_valide ||
+          res.data.user.statut_verification === 'valide' ||
+          res.data.profile_progress?.completed ||
+          (res.data.profile_progress?.percentage ?? 0) >= 100 ||
+          res.data.user.role === 'admin'
+        )
+        const updatedUser = {
+          ...session.user,
+          ...res.data.user,
+          is_verified: isVerified,
+          profile_completed: isVerified || Boolean(res.data.profile_progress?.completed),
+          profile_completion_percentage: res.data.profile_progress?.percentage,
+        }
+        onSessionChange({ ...session, user: updatedUser })
+      }
     } catch (err) {
       onToast({ tone: 'error', title: 'Actualisation impossible', message: errMessage(err) })
     } finally {
       void refreshNotifications(true)
     }
-  }, [session.token, setDashboard, onToast, refreshNotifications])
+  }, [session, setDashboard, onSessionChange, onToast, refreshNotifications])
 
   // Synchronisation avec l'URL (#/dashboard/<role>?tab=… ou routeTab)
   useEffect(() => {

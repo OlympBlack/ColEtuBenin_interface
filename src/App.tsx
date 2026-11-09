@@ -46,7 +46,7 @@ import {
   setVerificationNotice,
   storeSession,
 } from './services/session'
-import type { AuthSession } from './types'
+import type { AuthSession, AuthUser } from './types'
 import { getDashboardPath } from './utils/auth'
 import { useMessengerUnread } from './hooks/useMessengerUnread'
 import { unsubscribeFromWebPush } from './utils/webPush'
@@ -65,6 +65,19 @@ const DEFAULT_FILTERS: ExplorerFilters = {
   prixMax: '',
 }
 
+function isUserExemptFromProfilePrompt(user: AuthUser | null | undefined): boolean {
+  if (!user) return true
+  // Admin n'a aucun profil particulier à finaliser
+  if (user.role === 'admin') return true
+  // Compte déjà vérifié ou certifié
+  if (user.is_verified || user.is_valide) return true
+  if (user.statut_verification === 'valide' || (user.statut_verification as string) === 'verifie') return true
+  // Profil déjà complété à 100%
+  if (user.profile_completed) return true
+  if (user.profile_completion_percentage !== undefined && user.profile_completion_percentage >= 100) return true
+  return false
+}
+
 export default function App() {
   const route = useHashRoute()
   const [session, setSession] = useState<AuthSession | null>(() => getStoredSession())
@@ -73,7 +86,10 @@ export default function App() {
   const [toasts, setToasts] = useState<ToastItem[]>([])
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
-  const [hasDismissedProfilePrompt, setHasDismissedProfilePrompt] = useState(false)
+  const [hasDismissedProfilePrompt, setHasDismissedProfilePrompt] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    return window.sessionStorage.getItem('colcampus.profile-prompt-dismissed') === '1'
+  })
   const [isAuthTransitioning, setIsAuthTransitioning] = useState(false)
   const toastTimers = useRef<number[]>([])
 
@@ -144,14 +160,32 @@ export default function App() {
   }, [route, session, isAuthTransitioning])
 
   useEffect(() => {
-    if (route.name !== 'dashboard' || !session || session.user.profile_completed || hasDismissedProfilePrompt) {
+    if (route.name !== 'dashboard' || !session) {
+      setIsProfileModalOpen(false)
+      return
+    }
+
+    const isDismissed =
+      hasDismissedProfilePrompt ||
+      (typeof window !== 'undefined' && window.sessionStorage.getItem('colcampus.profile-prompt-dismissed') === '1')
+
+    const currentTab = route.tab || (route.query ? new URLSearchParams(route.query).get('tab') : null)
+    const isAlreadyOnProfileTab = currentTab === 'profil' || currentTab === 'verification'
+
+    if (
+      isUserExemptFromProfilePrompt(session.user) ||
+      isDismissed ||
+      isAlreadyOnProfileTab
+    ) {
       setIsProfileModalOpen(false)
       return
     }
 
     const timer = window.setTimeout(() => {
-      setIsProfileModalOpen(true)
-    }, 1000)
+      if (!isUserExemptFromProfilePrompt(session.user)) {
+        setIsProfileModalOpen(true)
+      }
+    }, 1500)
 
     return () => {
       window.clearTimeout(timer)
@@ -444,15 +478,21 @@ export default function App() {
       <ToastViewport toasts={toasts} onDismiss={dismissToast} />
 
       <ProfileCompletionModal
-        isOpen={isProfileModalOpen}
+        isOpen={isProfileModalOpen && !isUserExemptFromProfilePrompt(session?.user)}
         role={session?.user.role ?? 'etudiant'}
         onClose={() => {
           setIsProfileModalOpen(false)
           setHasDismissedProfilePrompt(true)
+          try {
+            window.sessionStorage.setItem('colcampus.profile-prompt-dismissed', '1')
+          } catch {}
         }}
         onGoToProfile={() => {
           setIsProfileModalOpen(false)
           setHasDismissedProfilePrompt(true)
+          try {
+            window.sessionStorage.setItem('colcampus.profile-prompt-dismissed', '1')
+          } catch {}
           window.location.hash = '#/dashboard/' + (session?.user.role ?? 'etudiant') + '?tab=profil'
         }}
       />
