@@ -298,29 +298,30 @@ export function MarketplacePage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] w-full" style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" }}>
-      {/* ── Hero Header avec Image de Fond Captivante ── */}
-      <div className="relative overflow-hidden bg-slate-950 border-b border-slate-800 pb-12 pt-10 sm:pt-16 sm:pb-16 text-white shadow-md">
-        {/* Background Image avec superpositions de contrastes */}
+      {/* ── Hero Header avec Image de Fond Captivante & Très Visible ── */}
+      <div className="relative overflow-hidden bg-slate-900 border-b border-slate-700/50 pb-12 pt-10 sm:pt-16 sm:pb-16 text-white shadow-md">
+        {/* Background Image lumineux et bien visible */}
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1555421689-491a97ff2040?auto=format&fit=crop&w=1920&q=80"
+            src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=1920&q=80"
             alt="Boutique & équipements campus"
-            className="w-full h-full object-cover object-center opacity-30 scale-105 filter blur-[0.5px]"
+            className="w-full h-full object-cover object-center opacity-80"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-900/60" />
-          <div className="absolute inset-0 bg-radial-[at_top_right] from-blue-600/25 via-transparent to-transparent" />
+          {/* Voile léger pour garantir la lisibilité du texte sans masquer l'image */}
+          <div className="absolute inset-0 bg-slate-950/45" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-slate-950/40" />
         </div>
 
         <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="text-3xl sm:text-4xl lg:text-[3.2rem] font-extrabold tracking-tight text-white mb-4 leading-[1.14]">
+            <h1 className="text-3xl sm:text-4xl lg:text-[3.2rem] font-extrabold tracking-tight text-white mb-4 leading-[1.14] drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
               Les meilleures offres de nos{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400">
                 boutiques partenaires
               </span>.
             </h1>
 
-            <p className="text-slate-300 text-sm sm:text-base lg:text-lg leading-relaxed mb-8 max-w-2xl mx-auto font-normal">
+            <p className="text-slate-200 text-sm sm:text-base lg:text-lg leading-relaxed mb-8 max-w-2xl mx-auto font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
               Ordinateurs, meubles de chambre, wifi, fournitures et équipements tech certifiés à prix préférentiels pour étudiants et colocations.
             </p>
 
@@ -532,26 +533,25 @@ export function MarketplacePage() {
           </main>
         </div>
 
-        {/* ── Callout Espace Partenaires avec Background Image ── */}
-        <div className="mt-16 rounded-3xl relative overflow-hidden p-8 sm:p-12 text-white shadow-xl border border-slate-800">
+        {/* ── Callout Espace Partenaires avec Background Image Très Visible ── */}
+        <div className="mt-16 rounded-3xl relative overflow-hidden p-8 sm:p-12 text-white shadow-xl border border-slate-700/60">
           <div className="absolute inset-0 z-0">
             <img
               src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&w=1600&q=80"
               alt="Espace Partenaires Commerçants"
-              className="w-full h-full object-cover object-center"
+              className="w-full h-full object-cover object-center opacity-85"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/90 to-indigo-950/80" />
-            <div className="absolute inset-0 bg-slate-950/30 backdrop-blur-[1px]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/45 to-transparent" />
           </div>
 
           <div className="relative z-10 max-w-2xl">
-            <span className="inline-block px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[11px] font-bold uppercase tracking-wider text-blue-300 mb-3 border border-white/10">
+            <span className="inline-block px-3 py-1 bg-white/15 backdrop-blur-md rounded-full text-[11px] font-bold uppercase tracking-wider text-blue-200 mb-3 border border-white/20">
               Espace Partenaires
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-3">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-3 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
               Vous êtes commerçant ou prestataire autour d'un campus ?
             </h2>
-            <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+            <p className="text-slate-100 text-sm sm:text-base leading-relaxed mb-6 font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
               Publiez vos offres, ordinateurs, meubles et services directement sur notre e-shop pour toucher des milliers d'étudiants en recherche d'équipements pour leur colocation.
             </p>
             <div className="flex flex-wrap items-center gap-3">
