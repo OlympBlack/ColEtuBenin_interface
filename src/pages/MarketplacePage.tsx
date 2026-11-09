@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Filter, SlidersHorizontal, RotateCcw, CheckCircle2, ShieldCheck, Tag } from 'lucide-react'
+import { Filter, SlidersHorizontal, CheckCircle2, RotateCcw, ShieldCheck, Tag, ChevronDown, ChevronUp } from 'lucide-react'
 import { UiIcon } from '../components/UiIcons'
 import { usePublicitesBoutiques } from '../hooks/usePublicitesBoutiques'
 import type { PubliciteBoutique } from '../types'
@@ -32,7 +32,8 @@ export function MarketplacePage() {
   const [verifiedOnly, setVerifiedOnly] = useState<boolean>(false)
   const [search, setSearch] = useState<string>('')
   const [sortBy, setSortBy] = useState<SortOption>('recent')
-  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState<boolean>(false)
+  // Barre latérale de filtres sur mobile : pliable et pliée par défaut pour économiser l'espace
+  const [isMobileFiltersExpanded, setIsMobileFiltersExpanded] = useState<boolean>(false)
 
   // Catégories dynamiques extraites des produits reçus
   const categoriesWithCounts = useMemo(() => {
@@ -378,31 +379,68 @@ export function MarketplacePage() {
           })}
         </div>
 
-        {/* Barre de contrôle Mobile (Filtres + Tri) */}
-        <div className="lg:hidden flex items-center justify-between gap-2.5 mb-3 p-2.5 sm:p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-xs">
-          <button
-            type="button"
-            onClick={() => setIsMobileFiltersOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold shadow-xs active:scale-95 transition cursor-pointer shrink-0"
-          >
-            <Filter className="w-3.5 h-3.5" />
-            <span>Filtres {activeFiltersCount > 0 ? `(${activeFiltersCount})` : ''}</span>
-          </button>
-
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="text-[11px] font-bold text-slate-400 shrink-0 hidden xs:inline">Trier :</span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none truncate"
+        {/* Barre de contrôle et Filtres Pliables sur Mobile (Plié par défaut pour gagner de l'espace) */}
+        <div className="lg:hidden mb-3 bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden transition-all duration-200">
+          {/* En-tête compacte toujours visible avec bouton Plier/Déplier */}
+          <div className="flex items-center justify-between gap-2 p-2.5 sm:p-3">
+            <button
+              type="button"
+              onClick={() => setIsMobileFiltersExpanded((prev) => !prev)}
+              className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition active:scale-95 cursor-pointer shrink-0 ${
+                isMobileFiltersExpanded
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : activeFiltersCount > 0
+                  ? 'bg-blue-50 text-blue-700 border border-blue-200/80'
+                  : 'bg-slate-900 text-white shadow-xs'
+              }`}
+              aria-expanded={isMobileFiltersExpanded}
             >
-              {SORT_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+              <Filter className="w-3.5 h-3.5" />
+              <span>Filtres {activeFiltersCount > 0 ? `(${activeFiltersCount})` : ''}</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  isMobileFiltersExpanded ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+
+            <div className="flex items-center gap-1.5 min-w-0">
+              <span className="text-[11px] font-bold text-slate-400 shrink-0 hidden xs:inline">Trier :</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                className="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none truncate"
+              >
+                {SORT_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
+
+          {/* Panneau latéral de filtres pliable (affiché uniquement quand déplié) */}
+          {isMobileFiltersExpanded && (
+            <div className="p-3.5 sm:p-4 border-t border-slate-100 bg-slate-50/50 animate-in fade-in slide-in-from-top-2 duration-200">
+              {renderFilterPanel()}
+
+              {/* Bouton de repli en bas du panneau mobile */}
+              <div className="mt-4 pt-3 border-t border-slate-200/70 flex items-center justify-between gap-2">
+                <span className="text-xs font-bold text-slate-500">
+                  {filteredProducts.length} article{filteredProducts.length > 1 ? 's' : ''} trouvé{filteredProducts.length > 1 ? 's' : ''}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsMobileFiltersExpanded(false)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-xs transition active:scale-95 cursor-pointer"
+                >
+                  <span>Replier</span>
+                  <ChevronUp className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Badges de filtres actifs (Visibles sur Mobile et Desktop) */}
@@ -623,43 +661,6 @@ export function MarketplacePage() {
           </div>
         </div>
       </div>
-
-      {/* ── Slide-over Drawer Filtres Mobile ── */}
-      {isMobileFiltersOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
-            onClick={() => setIsMobileFiltersOpen(false)}
-          />
-          <div className="fixed inset-y-0 left-0 w-[85vw] max-w-xs sm:max-w-sm bg-white shadow-2xl z-10 flex flex-col overflow-hidden animate-in slide-in-from-left duration-200">
-            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-              <div className="flex items-center gap-2">
-                <SlidersHorizontal className="w-4 h-4 text-blue-600" />
-                <h3 className="font-extrabold text-slate-900 text-sm">Filtres de la boutique</h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsMobileFiltersOpen(false)}
-                className="h-8 w-8 rounded-lg text-slate-400 hover:text-slate-700 flex items-center justify-center transition"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="p-4 overflow-y-auto flex-1 overscroll-contain">
-              {renderFilterPanel()}
-            </div>
-            <div className="p-4 border-t border-slate-200 bg-white">
-              <button
-                type="button"
-                onClick={() => setIsMobileFiltersOpen(false)}
-                className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-xs transition"
-              >
-                Voir les offres
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
