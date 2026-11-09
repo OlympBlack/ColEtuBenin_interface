@@ -247,7 +247,7 @@ function buildAnnouncementFormData(payload: AnnouncementDraft) {
   const formData = new FormData()
 
   appendValue(formData, 'titre', payload.titre)
-  appendValue(formData, 'description', payload.description)
+  formData.append('description', payload.description ?? '')
   appendValue(formData, 'quartier', payload.quartier)
   appendValue(formData, 'universite_id', payload.universite_id)
   appendValue(formData, 'universite', payload.universite)

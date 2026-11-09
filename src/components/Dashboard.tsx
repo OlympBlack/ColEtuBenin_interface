@@ -11,6 +11,7 @@ import {
 } from '../services/api'
 import { useDashboard } from '../hooks/useDashboard'
 import { useNotifications } from '../hooks/useNotifications'
+import { useQuartiers } from '../hooks/useUniversites'
 import { UiIcon, type UiIconName } from './UiIcons'
 import { TablePagination } from './TablePagination'
 import { DashboardAdmin } from './dash-admin/DashboardAdmin'
@@ -1411,6 +1412,24 @@ function AnnouncementFormFields({
     'w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-[13px] text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
   const labelClass = 'mb-1.5 block text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400'
 
+  const univCode = form.universite || existingAnnouncement?.universite?.code
+  const univId = form.universite_id || existingAnnouncement?.universite?.id
+  const { quartiers } = useQuartiers(univCode, univId)
+
+  const [isCustomQuartier, setIsCustomQuartier] = useState(() => {
+    if (!form.quartier) return false
+    return quartiers.length > 0 && !quartiers.some((q) => q.nom.toLowerCase() === form.quartier.toLowerCase())
+  })
+
+  useEffect(() => {
+    if (form.quartier && quartiers.length > 0) {
+      const match = quartiers.some((q) => q.nom.toLowerCase() === form.quartier.toLowerCase())
+      if (!match) {
+        setIsCustomQuartier(true)
+      }
+    }
+  }, [form.quartier, quartiers])
+
   const [photoItems, setPhotoItems] = useState<MediaItemState[]>(() => {
     if (!existingAnnouncement?.medias) return []
     return existingAnnouncement.medias
@@ -1617,14 +1636,58 @@ function AnnouncementFormFields({
         />
       </div>
       <div>
-        <label className={labelClass}>Quartier *</label>
-        <input
-          className={inputClass}
-          placeholder="Ex : Agla, Fidjrossè…"
-          value={form.quartier}
-          onChange={(e) => set({ quartier: e.target.value })}
-          required
-        />
+        <div className="mb-1.5 flex items-center justify-between">
+          <label className={labelClass} style={{ marginBottom: 0 }}>Quartier *</label>
+          {quartiers.length > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                if (isCustomQuartier) {
+                  setIsCustomQuartier(false)
+                  if (!quartiers.some((q) => q.nom.toLowerCase() === form.quartier.toLowerCase())) {
+                    set({ quartier: quartiers[0]?.nom ?? '' })
+                  }
+                } else {
+                  setIsCustomQuartier(true)
+                }
+              }}
+              className="text-[11px] text-blue-600 hover:text-blue-700 underline font-normal cursor-pointer"
+            >
+              {isCustomQuartier ? '← Choisir dans la liste' : 'Saisie libre'}
+            </button>
+          )}
+        </div>
+        {isCustomQuartier || quartiers.length === 0 ? (
+          <input
+            className={inputClass}
+            placeholder="Ex : Agla, Fidjrossè, Zogbadjè…"
+            value={form.quartier}
+            onChange={(e) => set({ quartier: e.target.value })}
+            required
+          />
+        ) : (
+          <select
+            className={inputClass}
+            value={form.quartier}
+            onChange={(e) => {
+              if (e.target.value === '__AUTRE__') {
+                setIsCustomQuartier(true)
+                set({ quartier: '' })
+              } else {
+                set({ quartier: e.target.value })
+              }
+            }}
+            required
+          >
+            <option value="" disabled>Choisir un quartier</option>
+            {quartiers.map((q) => (
+              <option key={q.id} value={q.nom}>
+                {q.nom}{q.arrondissement ? ` · ${q.arrondissement}` : ''}
+              </option>
+            ))}
+            <option value="__AUTRE__">✍️ Autre quartier (saisie libre)...</option>
+          </select>
+        )}
       </div>
       <div>
         <label className={labelClass}>Loyer (FCFA) *</label>
@@ -1719,13 +1782,12 @@ function AnnouncementFormFields({
         />
       </div>
       <div className="sm:col-span-2">
-        <label className={labelClass}>Description *</label>
+        <label className={labelClass}>Description (optionnelle)</label>
         <textarea
           className={`${inputClass} min-h-[90px] resize-y`}
-          placeholder="Décrivez la chambre : taille, équipements, environnement…"
-          value={form.description}
+          placeholder="Décrivez la chambre : taille, équipements, environnement… (facultatif)"
+          value={form.description || ''}
           onChange={(e) => set({ description: e.target.value })}
-          required
         />
       </div>
 

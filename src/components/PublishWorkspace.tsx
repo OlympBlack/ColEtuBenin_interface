@@ -109,6 +109,20 @@ function SecteurFields({
   universities: { id: number; nom: string }[]
   quartiers: { id: number; nom: string; arrondissement?: string | null }[]
 }) {
+  const [isCustomQuartier, setIsCustomQuartier] = useState(() => {
+    if (!form.quartier) return false
+    return quartiers.length > 0 && !quartiers.some((q) => q.nom.toLowerCase() === form.quartier.toLowerCase())
+  })
+
+  useEffect(() => {
+    if (form.quartier && quartiers.length > 0) {
+      const match = quartiers.some((q) => q.nom.toLowerCase() === form.quartier.toLowerCase())
+      if (!match) {
+        setIsCustomQuartier(true)
+      }
+    }
+  }, [form.quartier, quartiers])
+
   return (
     <>
       <label className="field">
@@ -127,24 +141,71 @@ function SecteurFields({
         </select>
       </label>
 
-      <label className="field">
-        <span>Quartier</span>
-        <select
-          value={form.quartier}
-          onChange={(event) => onChange({ quartier: event.target.value })}
-          disabled={!form.universite_id || quartiers.length === 0}
-        >
-          <option value="" disabled>
-            {quartiers.length === 0 ? "Sélectionnez d'abord une université" : 'Choisir un quartier'}
-          </option>
-          {quartiers.map((quartier) => (
-            <option key={quartier.id} value={quartier.nom}>
-              {quartier.nom}
-              {quartier.arrondissement ? ` · ${quartier.arrondissement}` : ''}
+      {isCustomQuartier || quartiers.length === 0 ? (
+        <label className="field">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+            <span>Quartier *</span>
+            {quartiers.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCustomQuartier(false)
+                  onChange({ quartier: quartiers[0]?.nom ?? '' })
+                }}
+                className="text-xs text-primary underline"
+                style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'var(--color-primary, #65a30d)' }}
+              >
+                ← Choisir dans la liste
+              </button>
+            )}
+          </div>
+          <input
+            type="text"
+            placeholder="Ex : Agla, Fidjrossè, Zogbadjè…"
+            value={form.quartier}
+            onChange={(event) => onChange({ quartier: event.target.value })}
+            required
+          />
+        </label>
+      ) : (
+        <label className="field">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+            <span>Quartier *</span>
+            <button
+              type="button"
+              onClick={() => setIsCustomQuartier(true)}
+              className="text-xs text-primary underline"
+              style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'var(--color-primary, #65a30d)' }}
+            >
+              Autre quartier ?
+            </button>
+          </div>
+          <select
+            value={form.quartier}
+            onChange={(event) => {
+              const val = event.target.value
+              if (val === '__AUTRE__') {
+                setIsCustomQuartier(true)
+                onChange({ quartier: '' })
+              } else {
+                onChange({ quartier: val })
+              }
+            }}
+            disabled={!form.universite_id || quartiers.length === 0}
+          >
+            <option value="" disabled>
+              {quartiers.length === 0 ? "Sélectionnez d'abord une université" : 'Choisir un quartier'}
             </option>
-          ))}
-        </select>
-      </label>
+            {quartiers.map((quartier) => (
+              <option key={quartier.id} value={quartier.nom}>
+                {quartier.nom}
+                {quartier.arrondissement ? ` · ${quartier.arrondissement}` : ''}
+              </option>
+            ))}
+            <option value="__AUTRE__">✍️ Autre quartier (saisie libre)...</option>
+          </select>
+        </label>
+      )}
     </>
   )
 }
@@ -362,11 +423,7 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
         onToast({ tone: 'error', title: 'Loyer requis', message: 'Indiquez le montant du loyer mensuel.' })
         return false
       }
-      if (!announcementForm.description.trim()) {
-        onToast({ tone: 'error', title: 'Description requise', message: 'Décrivez votre annonce (2000 caractères max).' })
-        return false
-      }
-      if (announcementForm.description.trim().length > 2000) {
+      if (announcementForm.description && announcementForm.description.trim().length > 2000) {
         onToast({ tone: 'error', title: 'Description trop longue', message: 'Limitez votre description à 2000 caractères.' })
         return false
       }
@@ -739,10 +796,10 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
                 </label>
 
                 <label className="field field--full">
-                  <span>Description</span>
+                  <span>Description (optionnelle)</span>
                   <textarea
                     value={announcementForm.description}
-                    placeholder="Présentez le logement, le quartier, les règles de la colocation…"
+                    placeholder="Présentez le logement, les équipements, les règles de la colocation… (facultatif)"
                     onChange={(event) => setA({ description: event.target.value })}
                   />
                 </label>
