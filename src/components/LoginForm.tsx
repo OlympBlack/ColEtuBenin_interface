@@ -93,6 +93,7 @@ export function LoginForm({
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
           style={{ backgroundImage: 'url(/assets/images/login_register.jpg), url(/assets/images/campus-portail.png)' }}
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/30 pointer-events-none" />
         <div className="relative z-10 flex items-center gap-3">
           <a
             href="#/"
@@ -110,15 +111,18 @@ export function LoginForm({
         </div>
 
         <div className="relative z-10 text-white my-auto max-w-md">
-          <h2 className="text-3xl xl:text-4xl font-extrabold mb-4 leading-tight">
+          <h2 className="text-3xl xl:text-4xl font-extrabold mb-4 leading-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)]">
             Bienvenue sur votre espace
           </h2>
-          <p className="text-green-100 text-sm xl:text-base leading-relaxed">
+          <p
+            className="text-white text-sm xl:text-base leading-relaxed font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]"
+            style={{ color: '#ffffff' }}
+          >
             Connectez-vous pour trouver votre colocation idéale ou gérer vos annonces immobilières en toute simplicité.
           </p>
         </div>
 
-        <div className="relative z-10 text-xs text-green-200/80">
+        <div className="relative z-10 text-xs text-white/80 font-medium drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)]">
           <span>© {new Date().getFullYear()} ColoCampus</span>
         </div>
       </div>
