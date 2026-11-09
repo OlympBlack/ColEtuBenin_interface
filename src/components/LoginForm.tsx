@@ -225,7 +225,7 @@ export function LoginForm({
                 </a>
                 <span className="text-slate-300">·</span>
                 <a className="text-emerald-700 font-bold hover:underline" href="#/inscription-pro">
-                  Démarcheur ou Boutique
+                  Partenaire
                 </a>
               </span>
             </div>

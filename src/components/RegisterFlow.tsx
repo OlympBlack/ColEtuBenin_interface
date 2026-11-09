@@ -263,26 +263,21 @@ export function RegisterFlow({
                   <p className="text-xs sm:text-sm text-slate-500 mt-1">Renseignez vos coordonnées pour commencer.</p>
                 </div>
 
-                {/* Bannière d'accès Espace Pro pour démarcheurs et boutiques */}
-                <div className="mb-5 p-3 sm:p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-lime-50/60 to-emerald-50 border border-emerald-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                {/* Bannière d'accès Espace Partenaire */}
+                <div className="mb-5 p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-emerald-50 via-lime-50/60 to-emerald-50 border border-emerald-200/80 flex items-center justify-between gap-3 shadow-xs">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
                       <UiIcon name="store" className="w-4 h-4" />
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">
-                        Vous êtes Démarcheur ou Boutique ?
-                      </p>
-                      <p className="text-[11px] sm:text-xs text-slate-600 mt-0.5">
-                        Proposez des logements ou faites la promotion de vos produits.
-                      </p>
-                    </div>
+                    <span className="text-xs sm:text-sm font-bold text-slate-800">
+                      Vous êtes un partenaire ?
+                    </span>
                   </div>
                   <a
                     href="#/inscription-pro"
-                    className="shrink-0 w-full sm:w-auto px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition-all shadow-xs text-center flex items-center justify-center gap-1.5"
+                    className="shrink-0 px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    <span>Espace Pro et Boutiques</span>
+                    <span>Espace partenaire</span>
                     <span>→</span>
                   </a>
                 </div>
@@ -727,7 +722,7 @@ export function RegisterFlow({
             </a>
             <span className="hidden sm:inline text-slate-300">·</span>
             <a href="#/inscription-pro" className="text-emerald-700 font-bold hover:underline">
-              Espace Pro et Boutiques
+              Espace partenaire
             </a>
           </div>
         </div>
