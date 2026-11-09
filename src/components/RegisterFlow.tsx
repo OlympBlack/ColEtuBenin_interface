@@ -264,9 +264,12 @@ export function RegisterFlow({
                 </div>
 
                 {/* Bannière d'accès Espace Partenaire */}
-                <div className="mb-5 p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-emerald-50 via-lime-50/60 to-emerald-50 border border-emerald-200/80 flex items-center justify-between gap-3 shadow-xs">
+                <div className="mb-5 p-3 sm:p-3.5 rounded-2xl bg-emerald-50/90 border border-emerald-200 flex items-center justify-between gap-3 shadow-xs">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <div
+                      className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-xs"
+                      style={{ backgroundColor: '#059669', color: '#ffffff' }}
+                    >
                       <UiIcon name="store" className="w-4 h-4" />
                     </div>
                     <span className="text-xs sm:text-sm font-bold text-slate-800">
@@ -275,10 +278,11 @@ export function RegisterFlow({
                   </div>
                   <a
                     href="#/inscription-pro"
-                    className="shrink-0 px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="shrink-0 px-4 py-2 rounded-xl text-xs font-extrabold transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-90 active:scale-95"
+                    style={{ backgroundColor: '#047857', color: '#ffffff' }}
                   >
-                    <span>Espace partenaire</span>
-                    <span>→</span>
+                    <span style={{ color: '#ffffff', fontWeight: 800 }}>Espace partenaire</span>
+                    <span style={{ color: '#ffffff', fontWeight: 800 }}>→</span>
                   </a>
                 </div>
 
@@ -717,11 +721,11 @@ export function RegisterFlow({
 
           <div className="text-center text-xs sm:text-sm text-slate-500 mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-center gap-2">
             <span>Déjà inscrit ?</span>
-            <a href="#/connexion" className="text-green-700 font-bold hover:underline">
+            <a href="#/connexion" className="font-bold hover:underline" style={{ color: '#15803d' }}>
               Se connecter
             </a>
             <span className="hidden sm:inline text-slate-300">·</span>
-            <a href="#/inscription-pro" className="text-emerald-700 font-bold hover:underline">
+            <a href="#/inscription-pro" className="font-bold hover:underline" style={{ color: '#047857' }}>
               Espace partenaire
             </a>
           </div>
