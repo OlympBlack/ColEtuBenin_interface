@@ -2697,3 +2697,14 @@ body:has(.dashboard-shell) {
     opacity: 1;
   }
 }
+
+/* Sidebar Filtres Boutique - Strictement masquée sur mobile et affichée sur desktop */
+.marketplace-sidebar {
+  display: none !important;
+}
+
+@media (min-width: 1024px) {
+  .marketplace-sidebar {
+    display: block !important;
+  }
+}
