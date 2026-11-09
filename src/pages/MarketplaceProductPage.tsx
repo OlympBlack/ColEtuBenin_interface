@@ -324,7 +324,7 @@ export function MarketplaceProductPage({
               </a>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 md:gap-5">
               {similarProducts.map((p) => {
                 const pPrice =
                   p.prix !== null && p.prix !== undefined
@@ -334,18 +334,18 @@ export function MarketplaceProductPage({
                   <a
                     key={p.id}
                     href={`#/boutiques/${p.id}`}
-                    className="group bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all p-3 flex flex-col"
+                    className="group bg-white rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200/80 shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all p-2.5 sm:p-3 flex flex-col"
                   >
-                    <div className="aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 mb-3">
+                    <div className="aspect-[4/3] rounded-lg sm:rounded-xl overflow-hidden bg-slate-100 mb-2 sm:mb-3">
                       <img src={p.url_image_banniere} alt={p.titre_promo} className="w-full h-full object-cover group-hover:scale-105 transition" />
                     </div>
-                    <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider">
+                    <span className="text-[9px] sm:text-[10px] font-bold text-blue-600 uppercase tracking-wider truncate">
                       {p.categorie || 'Équipement'}
                     </span>
-                    <h4 className="text-xs font-bold text-slate-900 line-clamp-1 mt-1 mb-2 group-hover:text-blue-600 transition">
+                    <h4 className="text-xs font-bold text-slate-900 line-clamp-1 mt-0.5 sm:mt-1 mb-1.5 sm:mb-2 group-hover:text-blue-600 transition">
                       {p.titre_promo}
                     </h4>
-                    <span className="text-xs font-black text-slate-900 mt-auto">{pPrice}</span>
+                    <span className="text-[11px] sm:text-xs font-black text-slate-900 mt-auto">{pPrice}</span>
                   </a>
                 )
               })}

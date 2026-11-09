@@ -299,7 +299,7 @@ export function MarketplacePage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] w-full" style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" }}>
       {/* ── Hero Header avec Image de Fond Captivante & Très Visible ── */}
-      <div className="relative overflow-hidden bg-slate-900 border-b border-slate-700/50 pb-12 pt-10 sm:pt-16 sm:pb-16 text-white shadow-md">
+      <div className="relative overflow-hidden bg-slate-900 border-b border-slate-700/50 pb-8 pt-6 sm:pt-16 sm:pb-16 text-white shadow-md">
         {/* Background Image lumineux et bien visible */}
         <div className="absolute inset-0 z-0">
           <img
@@ -314,7 +314,7 @@ export function MarketplacePage() {
 
         <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="text-3xl sm:text-4xl lg:text-[3.2rem] font-extrabold tracking-tight text-white mb-4 leading-[1.14] drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
+            <h1 className="text-2xl sm:text-4xl lg:text-[3.2rem] font-extrabold tracking-tight text-white mb-2.5 sm:mb-4 leading-tight sm:leading-[1.14] drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
               Les meilleures offres de nos{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400">
                 boutiques partenaires
@@ -322,7 +322,7 @@ export function MarketplacePage() {
             </h1>
 
             <p
-              className="text-white text-sm sm:text-base lg:text-lg leading-relaxed mb-8 max-w-2xl mx-auto font-semibold drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]"
+              className="text-white text-xs sm:text-base lg:text-lg leading-relaxed mb-5 sm:mb-8 max-w-2xl mx-auto font-semibold drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]"
               style={{ color: '#ffffff' }}
             >
               Ordinateurs, meubles de chambre, wifi, fournitures et équipements tech certifiés à prix préférentiels pour étudiants et colocations.
@@ -330,21 +330,21 @@ export function MarketplacePage() {
 
             {/* Smart Search Bar */}
             <div className="relative mx-auto max-w-2xl group shadow-[0_12px_36px_rgba(0,0,0,0.35)] rounded-2xl bg-white/95 backdrop-blur-md border border-white/20 transition-all duration-300 focus-within:ring-4 focus-within:ring-blue-500/20 focus-within:border-blue-500 focus-within:bg-white">
-              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
+              <div className="absolute inset-y-0 left-3.5 sm:left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
                 <UiIcon name="search" />
               </div>
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Rechercher un produit, ordinateur, lit, imprimante, marque..."
-                className="w-full h-14 sm:h-15 pl-12 pr-12 bg-transparent rounded-2xl text-[0.95rem] font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                placeholder="Rechercher un produit, lit, ordi, wifi..."
+                className="w-full h-12 sm:h-15 pl-10 sm:pl-12 pr-10 sm:pr-12 bg-transparent rounded-2xl text-xs sm:text-[0.95rem] font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none"
               />
               {search && (
                 <button
                   type="button"
                   onClick={() => setSearch('')}
-                  className="absolute inset-y-0 right-4 my-auto h-7 w-7 rounded-full bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center text-xs transition cursor-pointer"
+                  className="absolute inset-y-0 right-3.5 sm:right-4 my-auto h-6 w-6 sm:h-7 sm:w-7 rounded-full bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center text-xs transition cursor-pointer"
                   title="Effacer"
                 >
                   ✕
@@ -356,23 +356,45 @@ export function MarketplacePage() {
       </div>
 
       {/* ── Main Content Area avec Sidebar Gauche ── */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl pb-24 pt-8">
-        {/* Barre de contrôle Mobile */}
-        <div className="lg:hidden flex items-center justify-between gap-3 mb-6 p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-xs">
+      <div className="container mx-auto px-3 sm:px-6 lg:px-8 max-w-7xl pb-24 pt-4 sm:pt-8">
+        {/* Catégories rapides en carrousel horizontal (Mobile uniquement) */}
+        <div className="lg:hidden flex items-center gap-2 overflow-x-auto pb-2.5 mb-3 scrollbar-none auto-cols-max snap-x" style={{ scrollbarWidth: 'none' }}>
+          {categoriesWithCounts.map((cat) => {
+            const isActive = activeCategory.toLowerCase() === cat.name.toLowerCase()
+            return (
+              <button
+                key={cat.name}
+                type="button"
+                onClick={() => setActiveCategory(cat.name)}
+                className={`snap-start shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap border cursor-pointer ${
+                  isActive
+                    ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                    : 'bg-white text-slate-700 border-slate-200/90 hover:bg-slate-50'
+                }`}
+              >
+                {cat.name}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Barre de contrôle Mobile (Filtres + Tri) */}
+        <div className="lg:hidden flex items-center justify-between gap-2.5 mb-3 p-2.5 sm:p-3.5 bg-white rounded-2xl border border-slate-200/90 shadow-xs">
           <button
             type="button"
             onClick={() => setIsMobileFiltersOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold shadow-xs active:scale-95 transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold shadow-xs active:scale-95 transition cursor-pointer shrink-0"
           >
             <Filter className="w-3.5 h-3.5" />
-            <span>Filtres ({activeFiltersCount})</span>
+            <span>Filtres {activeFiltersCount > 0 ? `(${activeFiltersCount})` : ''}</span>
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-[11px] font-bold text-slate-400 shrink-0 hidden xs:inline">Trier :</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none"
+              className="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none truncate"
             >
               {SORT_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -383,8 +405,94 @@ export function MarketplacePage() {
           </div>
         </div>
 
+        {/* Badges de filtres actifs (Visibles sur Mobile et Desktop) */}
+        {hasActiveFilters && (
+          <div className="flex items-center gap-2 overflow-x-auto pb-2.5 mb-4 scrollbar-none" style={{ scrollbarWidth: 'none' }}>
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0">Filtres :</span>
+            {activeCategory !== 'Tous les produits' && (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60 shrink-0">
+                <span>{activeCategory}</span>
+                <button
+                  type="button"
+                  onClick={() => setActiveCategory('Tous les produits')}
+                  className="hover:text-blue-900 font-bold"
+                >
+                  ✕
+                </button>
+              </span>
+            )}
+            {selectedBoutique !== 'all' && (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60 shrink-0">
+                <span>Boutique : {selectedBoutique}</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedBoutique('all')}
+                  className="hover:text-blue-900 font-bold"
+                >
+                  ✕
+                </button>
+              </span>
+            )}
+            {selectedQuartier !== 'all' && (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60 shrink-0">
+                <span>Zone : {selectedQuartier}</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedQuartier('all')}
+                  className="hover:text-blue-900 font-bold"
+                >
+                  ✕
+                </button>
+              </span>
+            )}
+            {priceRange !== 'all' && (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60 shrink-0">
+                <span>{PRICE_RANGES.find((p) => p.value === priceRange)?.label}</span>
+                <button
+                  type="button"
+                  onClick={() => setPriceRange('all')}
+                  className="hover:text-blue-900 font-bold"
+                >
+                  ✕
+                </button>
+              </span>
+            )}
+            {verifiedOnly && (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/60 shrink-0">
+                <span>Certifiés ✓</span>
+                <button
+                  type="button"
+                  onClick={() => setVerifiedOnly(false)}
+                  className="hover:text-emerald-900 font-bold"
+                >
+                  ✕
+                </button>
+              </span>
+            )}
+            {search.trim() && (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
+                <span>« {search} »</span>
+                <button
+                  type="button"
+                  onClick={() => setSearch('')}
+                  className="hover:text-slate-900 font-bold"
+                >
+                  ✕
+                </button>
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="text-xs font-bold text-rose-600 hover:text-rose-700 underline shrink-0 cursor-pointer ml-1"
+            >
+              Tout effacer
+            </button>
+          </div>
+        )}
+
         {/* Layout Desktop : Sidebar Filtres à Gauche + Grille Produits à Droite */}
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
           {/* ── Sidebar Filtres à Gauche (Desktop) ── */}
           <aside className="hidden lg:block w-72 shrink-0 sticky top-24">
             <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs">
@@ -394,71 +502,11 @@ export function MarketplacePage() {
 
           {/* ── Contenu Principal (Droite) ── */}
           <main className="flex-1 min-w-0 w-full">
-            {/* Top Bar de tri et badges de filtres actifs */}
+            {/* Top Bar de tri Desktop */}
             <div className="hidden lg:flex items-center justify-between gap-4 p-4 bg-white rounded-2xl border border-slate-200/90 shadow-xs mb-6">
-              <div className="flex flex-wrap items-center gap-2 min-w-0">
-                {/* Badges de filtres actifs supprimables */}
-                {activeCategory !== 'Tous les produits' && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60">
-                    <span>{activeCategory}</span>
-                    <button
-                      type="button"
-                      onClick={() => setActiveCategory('Tous les produits')}
-                      className="hover:text-blue-900 font-bold"
-                    >
-                      ✕
-                    </button>
-                  </span>
-                )}
-                {selectedBoutique !== 'all' && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60">
-                    <span>Boutique : {selectedBoutique}</span>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedBoutique('all')}
-                      className="hover:text-blue-900 font-bold"
-                    >
-                      ✕
-                    </button>
-                  </span>
-                )}
-                {selectedQuartier !== 'all' && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60">
-                    <span>Zone : {selectedQuartier}</span>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedQuartier('all')}
-                      className="hover:text-blue-900 font-bold"
-                    >
-                      ✕
-                    </button>
-                  </span>
-                )}
-                {priceRange !== 'all' && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60">
-                    <span>Prix : {PRICE_RANGES.find((p) => p.value === priceRange)?.label}</span>
-                    <button
-                      type="button"
-                      onClick={() => setPriceRange('all')}
-                      className="hover:text-blue-900 font-bold"
-                    >
-                      ✕
-                    </button>
-                  </span>
-                )}
-                {verifiedOnly && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                    <span>Certifiés ✓</span>
-                    <button
-                      type="button"
-                      onClick={() => setVerifiedOnly(false)}
-                      className="hover:text-emerald-900 font-bold"
-                    >
-                      ✕
-                    </button>
-                  </span>
-                )}
-              </div>
+              <span className="text-xs font-bold text-slate-500">
+                {filteredProducts.length} résultat{filteredProducts.length > 1 ? 's' : ''}
+              </span>
 
               {/* Tri à droite */}
               <div className="flex items-center gap-2 shrink-0">
@@ -479,10 +527,10 @@ export function MarketplacePage() {
 
             {/* État de chargement */}
             {isLoading && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+              <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-2.5 sm:gap-4 md:gap-5">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="bg-white rounded-2xl border border-slate-200/70 p-3.5 space-y-3 animate-pulse">
-                    <div className="h-40 bg-slate-100 rounded-xl w-full" />
+                  <div key={i} className="bg-white rounded-2xl border border-slate-200/70 p-2.5 sm:p-3.5 space-y-2.5 animate-pulse">
+                    <div className="h-28 sm:h-36 md:h-40 bg-slate-100 rounded-xl w-full" />
                     <div className="h-3.5 bg-slate-100 rounded w-3/4" />
                     <div className="h-3 bg-slate-100 rounded w-1/2" />
                     <div className="h-5 bg-slate-100 rounded w-1/3 pt-2" />
@@ -505,9 +553,9 @@ export function MarketplacePage() {
               </div>
             )}
 
-            {/* Grille des Articles de Boutique (Hauteur Réduite & Compacte) */}
+            {/* Grille des Articles de Boutique (Grille 2 Colonnes Mobile / 3 Colonnes Desktop) */}
             {!isLoading && filteredProducts.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+              <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-2.5 sm:gap-4 md:gap-5">
                 {filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
@@ -537,37 +585,37 @@ export function MarketplacePage() {
         </div>
 
         {/* ── Callout Espace Partenaires avec Background Image Très Visible ── */}
-        <div className="mt-16 rounded-3xl relative overflow-hidden p-8 sm:p-12 text-white shadow-xl border border-slate-700/60">
+        <div className="mt-12 sm:mt-16 rounded-2xl sm:rounded-3xl relative overflow-hidden p-5 sm:p-10 lg:p-12 text-white shadow-xl border border-slate-700/60">
           <div className="absolute inset-0 z-0">
             <img
               src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&w=1600&q=80"
               alt="Espace Partenaires Commerçants"
               className="w-full h-full object-cover object-center opacity-85"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/45 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/50 to-transparent" />
           </div>
 
           <div className="relative z-10 max-w-2xl">
-            <span className="inline-block px-3 py-1 bg-white/15 backdrop-blur-md rounded-full text-[11px] font-bold uppercase tracking-wider text-blue-200 mb-3 border border-white/20">
+            <span className="inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 bg-white/15 backdrop-blur-md rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-blue-200 mb-2.5 sm:mb-3 border border-white/20">
               Espace Partenaires
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-3 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight mb-2 sm:mb-3 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] leading-snug">
               Vous êtes commerçant ou prestataire autour d'un campus ?
             </h2>
-            <p className="text-slate-100 text-sm sm:text-base leading-relaxed mb-6 font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+            <p className="text-slate-100 text-xs sm:text-sm md:text-base leading-relaxed mb-5 sm:mb-6 font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
               Publiez vos offres, ordinateurs, meubles et services directement sur notre e-shop pour toucher des milliers d'étudiants en recherche d'équipements pour leur colocation.
             </p>
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
               <a
                 href="#/publier"
-                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm px-5 py-3 rounded-xl transition shadow-md shadow-blue-500/25 active:scale-95"
+                className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl transition shadow-md shadow-blue-500/25 active:scale-95 text-center"
               >
                 <span>Déposer un article boutique</span>
                 <UiIcon name="chevron-right" />
               </a>
               <a
                 href="#/inscription-pro"
-                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 text-white font-semibold text-sm px-5 py-3 rounded-xl transition border border-white/15 backdrop-blur-md"
+                className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 text-white font-semibold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl transition border border-white/15 backdrop-blur-md text-center"
               >
                 Ouvrir un compte boutique
               </a>
@@ -583,7 +631,7 @@ export function MarketplacePage() {
             className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
             onClick={() => setIsMobileFiltersOpen(false)}
           />
-          <div className="fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-white shadow-2xl z-10 flex flex-col overflow-hidden animate-in slide-in-from-left duration-200">
+          <div className="fixed inset-y-0 left-0 w-[85vw] max-w-xs sm:max-w-sm bg-white shadow-2xl z-10 flex flex-col overflow-hidden animate-in slide-in-from-left duration-200">
             <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="w-4 h-4 text-blue-600" />
@@ -622,15 +670,15 @@ function ProductCard({ product }: { product: PubliciteBoutique }) {
   const priceDisplay =
     product.prix !== null && product.prix !== undefined
       ? `${Number(product.prix).toLocaleString('fr-FR')} FCFA`
-      : 'Sur devis / Promo'
+      : 'Sur devis'
 
   return (
     <a
       href={`#/boutiques/${product.id}`}
-      className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-[0_2px_12px_rgba(15,23,42,0.03)] hover:shadow-[0_12px_28px_-8px_rgba(15,23,42,0.09)] hover:-translate-y-0.5 transition-all duration-200"
+      className="group flex flex-col bg-white rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200/80 shadow-[0_2px_8px_rgba(15,23,42,0.03)] hover:shadow-[0_12px_28px_-8px_rgba(15,23,42,0.09)] hover:-translate-y-0.5 transition-all duration-200"
     >
-      {/* Image Container Compacte (Hauteur réduite) */}
-      <div className="relative h-36 sm:h-40 bg-slate-100 overflow-hidden w-full shrink-0">
+      {/* Image Container Compacte (Adaptée 2-colonnes Mobile) */}
+      <div className="relative h-28 sm:h-36 md:h-40 bg-slate-100 overflow-hidden w-full shrink-0">
         <img
           src={product.url_image_banniere}
           alt={product.titre_promo}
@@ -639,64 +687,64 @@ function ProductCard({ product }: { product: PubliciteBoutique }) {
         />
 
         {/* Badges sur l'image */}
-        <div className="absolute top-2 left-2 flex flex-wrap gap-1 items-center">
-          <span className="bg-white/95 backdrop-blur-md px-2 py-0.5 rounded-md text-[9px] font-extrabold text-slate-800 uppercase tracking-wider shadow-xs">
+        <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 flex flex-wrap gap-1 items-center max-w-[90%]">
+          <span className="bg-white/95 backdrop-blur-md px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-extrabold text-slate-800 uppercase tracking-wider shadow-xs truncate">
             {categoryName}
           </span>
           {product.boutique.is_verified && (
-            <span className="bg-blue-600/90 text-white backdrop-blur-md px-1.5 py-0.5 rounded-md text-[8px] font-bold flex items-center gap-0.5 shadow-xs">
-              <CheckCircle2 className="w-2.5 h-2.5" />
-              <span>Certifié</span>
+            <span className="bg-blue-600/90 text-white backdrop-blur-md px-1 py-0.5 rounded text-[7px] sm:text-[8px] font-bold flex items-center gap-0.5 shadow-xs">
+              <CheckCircle2 className="w-2 h-2 sm:w-2.5 sm:h-2.5" />
+              <span className="hidden xs:inline">Certifié</span>
             </span>
           )}
         </div>
 
         {product.quartier_cible && (
-          <div className="absolute bottom-2 left-2 bg-slate-900/80 backdrop-blur-md text-white px-2 py-0.5 rounded-md text-[9px] font-bold flex items-center gap-1 shadow-xs">
+          <div className="absolute bottom-1.5 left-1.5 sm:bottom-2 sm:left-2 bg-slate-900/85 backdrop-blur-md text-white px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-bold flex items-center gap-0.5 shadow-xs max-w-[85%] truncate">
             <span>📍 {product.quartier_cible}</span>
           </div>
         )}
       </div>
 
       {/* Meta Data Compacte */}
-      <div className="flex flex-col flex-1 p-3.5">
+      <div className="flex flex-col flex-1 p-2.5 sm:p-3.5">
         {/* Shop badge */}
-        <div className="flex items-center gap-1.5 mb-1.5">
+        <div className="flex items-center gap-1.5 mb-1">
           {product.boutique.logo_url ? (
             <img
               src={product.boutique.logo_url}
               alt=""
-              className="h-4 w-4 rounded-full object-cover border border-slate-200 shrink-0"
+              className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full object-cover border border-slate-200 shrink-0"
             />
           ) : (
-            <div className="flex items-center justify-center h-4 w-4 rounded-full bg-blue-50 text-blue-700 text-[9px] font-black shrink-0">
+            <div className="flex items-center justify-center h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full bg-blue-50 text-blue-700 text-[8px] sm:text-[9px] font-black shrink-0">
               {shopName.charAt(0).toUpperCase()}
             </div>
           )}
-          <span className="text-[11px] font-semibold text-slate-500 truncate">{shopName}</span>
+          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-500 truncate">{shopName}</span>
         </div>
 
-        {/* Titre (1 ligne claire pour limiter la hauteur) */}
-        <h3 className="text-xs sm:text-[13px] font-bold text-slate-900 leading-snug mb-1 group-hover:text-blue-600 transition-colors line-clamp-1">
+        {/* Titre (2 lignes sur mobile, 1 ligne sur desktop) */}
+        <h3 className="text-xs sm:text-[13px] font-bold text-slate-900 leading-tight mb-1 group-hover:text-blue-600 transition-colors line-clamp-2">
           {product.titre_promo}
         </h3>
 
-        {/* Description courte (1 ligne) */}
+        {/* Description courte (masquée sur mobile pour garder une grille ultra nette) */}
         {product.description && (
-          <p className="text-[11px] text-slate-500 line-clamp-1 mb-2.5 font-normal leading-normal">
+          <p className="hidden sm:block text-[11px] text-slate-500 line-clamp-1 mb-2 font-normal leading-normal">
             {product.description}
           </p>
         )}
 
         {/* Prix & Bouton (footer compact) */}
-        <div className="mt-auto pt-2.5 flex items-center justify-between border-t border-slate-100">
-          <div className="flex flex-col">
-            <span className="text-[9px] text-slate-400 uppercase tracking-wider font-extrabold">Prix</span>
-            <span className="text-xs sm:text-sm font-black text-slate-900 tracking-tight">{priceDisplay}</span>
+        <div className="mt-auto pt-2 flex items-center justify-between gap-1 border-t border-slate-100">
+          <div className="flex flex-col min-w-0">
+            <span className="text-[8px] sm:text-[9px] text-slate-400 uppercase tracking-wider font-extrabold">Prix</span>
+            <span className="text-[11px] sm:text-xs md:text-sm font-black text-slate-900 tracking-tight truncate">{priceDisplay}</span>
           </div>
 
-          <div className="flex items-center justify-center h-7 px-2.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 text-[10px] sm:text-[11px] font-bold group-hover:bg-blue-600 group-hover:border-blue-600 group-hover:text-white transition-all shadow-xs">
-            <span>Voir l'offre</span>
+          <div className="flex items-center justify-center h-6 sm:h-7 px-1.5 sm:px-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 text-[9px] sm:text-[10px] font-bold group-hover:bg-blue-600 group-hover:border-blue-600 group-hover:text-white transition-all shadow-xs shrink-0">
+            <span>Voir</span>
           </div>
         </div>
       </div>
