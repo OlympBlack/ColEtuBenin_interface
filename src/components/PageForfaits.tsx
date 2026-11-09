@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowLeft, Check, ShieldCheck, Star, Zap } from 'lucide-react'
 import type { AuthSession, ForfaitPublication } from '../types'
 import type { ToastDraft } from './ToastViewport'
@@ -128,7 +128,17 @@ export function PageForfaits({ session, onToast, isEmbedded, onSuccess, onRefres
 
     fetchForfaits(session.token)
       .then((response) => {
-        if (!cancelled) setForfaits(response.data)
+        if (!cancelled) {
+          const raw = response.data ?? []
+          const seen = new Set<string>()
+          const unique = raw.filter((f) => {
+            const key = (f.titre || '').trim().toLowerCase()
+            if (seen.has(key)) return false
+            seen.add(key)
+            return true
+          })
+          setForfaits(unique)
+        }
       })
       .catch(() => {
         if (!cancelled) {
@@ -143,6 +153,16 @@ export function PageForfaits({ session, onToast, isEmbedded, onSuccess, onRefres
       cancelled = true
     }
   }, [session.token])
+
+  const uniqueForfaits = useMemo(() => {
+    const seen = new Set<string>()
+    return forfaits.filter((f) => {
+      const key = (f.titre || '').trim().toLowerCase()
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+  }, [forfaits])
 
   async function handleAchat(forfait: ForfaitPublication) {
     setBuyingId(forfait.id)
@@ -235,14 +255,14 @@ export function PageForfaits({ session, onToast, isEmbedded, onSuccess, onRefres
         </div>
       )}
 
-      {forfaits.length === 0 ? (
+      {uniqueForfaits.length === 0 ? (
         <div className="app-state">
           <p className="app-state__title">Aucun pack disponible</p>
           <p>Les packs de publication seront bientôt de retour. Revenez plus tard.</p>
         </div>
       ) : (
         <div className="row justify-content-center">
-          {forfaits.map((forfait) => {
+          {uniqueForfaits.map((forfait) => {
             const Icon = forfait.nombre_publications < 10 ? Zap : ShieldCheck
             return (
               <div key={forfait.id} className="col-md-4 col-sm-6 mb-4 d-flex">

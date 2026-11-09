@@ -1,4 +1,4 @@
-import { useEffect, useState, useId, type ChangeEvent } from 'react'
+import { useEffect, useState, useId, useMemo, type ChangeEvent } from 'react'
 import {
   AlertCircle,
   ArrowLeft,
@@ -268,6 +268,17 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
   const [forfaits, setForfaits] = useState<ForfaitPublication[]>([])
   const [creditsLoaded, setCreditsLoaded] = useState(false)
 
+  // Déduplication stricte des packs pour garantir l'affichage unique de chaque forfait
+  const uniqueForfaits = useMemo(() => {
+    const seen = new Set<string>()
+    return forfaits.filter((f) => {
+      const key = (f.titre || '').trim().toLowerCase()
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+  }, [forfaits])
+
   const isBoutique = session.user.role === 'boutique'
   const isDemarcheur = session.user.role === 'demarcheur'
   const isAdmin = session.user.role === 'admin'
@@ -347,7 +358,15 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
         setTransactions(portefeuilleResult.value.transactions ?? [])
       }
       if (forfaitsResult.status === 'fulfilled') {
-        setForfaits(forfaitsResult.value.data)
+        const raw = forfaitsResult.value.data ?? []
+        const seen = new Set<string>()
+        const unique = raw.filter((f) => {
+          const key = (f.titre || '').trim().toLowerCase()
+          if (seen.has(key)) return false
+          seen.add(key)
+          return true
+        })
+        setForfaits(unique)
       }
       setCreditsLoaded(true)
     })
@@ -1485,9 +1504,9 @@ export function PublishWorkspace({ session, onToast, onClose }: PublishWorkspace
                 )}
 
                 <div id="forfaits-inline" className="mt-3">
-                  {forfaits.length > 0 ? (
+                  {uniqueForfaits.length > 0 ? (
                     <div className="row">
-                      {forfaits.map((forfait) => (
+                      {uniqueForfaits.map((forfait) => (
                         <div key={forfait.id} className="col-md-4 col-sm-6 mb-3">
                           <div
                             className="app-panel h-100 d-flex flex-column"
