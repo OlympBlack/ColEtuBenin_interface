@@ -198,13 +198,6 @@ export function MarketplacePage() {
                 }`}
               >
                 <span className="truncate">{cat.name}</span>
-                <span
-                  className={`text-[10px] px-1.5 py-0.5 rounded-full font-extrabold ${
-                    isActive ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'
-                  }`}
-                >
-                  {cat.count}
-                </span>
               </button>
             )
           })}
@@ -254,7 +247,7 @@ export function MarketplacePage() {
             onChange={(e) => setSelectedBoutique(e.target.value)}
             className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
           >
-            <option value="all">Toutes les boutiques ({boutiquesList.length})</option>
+            <option value="all">Toutes les boutiques</option>
             {boutiquesList.map((shop) => (
               <option key={shop} value={shop}>
                 {shop}
@@ -275,7 +268,7 @@ export function MarketplacePage() {
             onChange={(e) => setSelectedQuartier(e.target.value)}
             className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
           >
-            <option value="all">Tous les secteurs ({quartiersList.length})</option>
+            <option value="all">Tous les secteurs</option>
             {quartiersList.map((q) => (
               <option key={q} value={q}>
                 {q}
@@ -341,23 +334,18 @@ export function MarketplacePage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Rechercher un produit, ordinateur, lit, imprimante, marque..."
-                className="w-full h-14 sm:h-15 pl-12 pr-28 bg-transparent rounded-2xl text-[0.95rem] font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                className="w-full h-14 sm:h-15 pl-12 pr-12 bg-transparent rounded-2xl text-[0.95rem] font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none"
               />
               {search && (
                 <button
                   type="button"
                   onClick={() => setSearch('')}
-                  className="absolute inset-y-0 right-24 my-auto h-7 w-7 rounded-full bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center text-xs transition cursor-pointer"
+                  className="absolute inset-y-0 right-4 my-auto h-7 w-7 rounded-full bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center text-xs transition cursor-pointer"
                   title="Effacer"
                 >
                   ✕
                 </button>
               )}
-              <div className="absolute inset-y-1.5 right-1.5 flex items-center">
-                <span className="bg-slate-900 text-white font-bold rounded-xl px-3.5 py-2.5 text-xs shadow-xs hidden sm:inline-block">
-                  {filteredProducts.length} {filteredProducts.length > 1 ? 'articles' : 'article'}
-                </span>
-              </div>
             </div>
           </div>
         </div>
@@ -377,7 +365,6 @@ export function MarketplacePage() {
           </button>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500 font-semibold">{filteredProducts.length} articles</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
@@ -406,10 +393,6 @@ export function MarketplacePage() {
             {/* Top Bar de tri et badges de filtres actifs */}
             <div className="hidden lg:flex items-center justify-between gap-4 p-4 bg-white rounded-2xl border border-slate-200/90 shadow-xs mb-6">
               <div className="flex flex-wrap items-center gap-2 min-w-0">
-                <span className="text-xs font-extrabold text-slate-900">
-                  {filteredProducts.length} {filteredProducts.length > 1 ? 'articles disponibles' : 'article disponible'}
-                </span>
-
                 {/* Badges de filtres actifs supprimables */}
                 {activeCategory !== 'Tous les produits' && (
                   <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60">
@@ -620,7 +603,7 @@ export function MarketplacePage() {
                 onClick={() => setIsMobileFiltersOpen(false)}
                 className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-xs transition"
               >
-                Voir les {filteredProducts.length} articles
+                Voir les offres
               </button>
             </div>
           </div>
