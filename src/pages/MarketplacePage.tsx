@@ -321,7 +321,10 @@ export function MarketplacePage() {
               </span>.
             </h1>
 
-            <p className="text-slate-200 text-sm sm:text-base lg:text-lg leading-relaxed mb-8 max-w-2xl mx-auto font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+            <p
+              className="text-white text-sm sm:text-base lg:text-lg leading-relaxed mb-8 max-w-2xl mx-auto font-semibold drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]"
+              style={{ color: '#ffffff' }}
+            >
               Ordinateurs, meubles de chambre, wifi, fournitures et équipements tech certifiés à prix préférentiels pour étudiants et colocations.
             </p>
 
