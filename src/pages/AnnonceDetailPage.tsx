@@ -500,25 +500,6 @@ export function AnnonceDetailPage({
                   <div style={S.imgPills}>
                     <StatusPill variant="blue">{formatAnnouncementType(announcement.type_annonce)}</StatusPill>
                     <StatusPill variant="green">{formatStatus(announcement.statut_disponibilite)}</StatusPill>
-                    {typeof announcement.vues_count === 'number' && (
-                      <span
-                        style={{
-                          background: 'rgba(15, 23, 42, 0.75)',
-                          color: '#FFFFFF',
-                          padding: '4px 10px',
-                          borderRadius: 999,
-                          fontSize: 11,
-                          fontWeight: 700,
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4,
-                          backdropFilter: 'blur(4px)',
-                        }}
-                      >
-                        <UiIcon name="eye" className="w-3.5 h-3.5 text-white/80" />
-                        <span>{announcement.vues_count} vue{announcement.vues_count > 1 ? 's' : ''}</span>
-                      </span>
-                    )}
                   </div>
 
                   {/* Bouton de visite vidéo sur la photo */}
@@ -637,17 +618,9 @@ export function AnnonceDetailPage({
                 {/* Title block */}
                 <div style={{ marginBottom: 20 }}>
                   <h1 className="syne colcampus-title" style={S.title}>{currentAnnouncement.titre}</h1>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginTop: 6 }}>
-                    <p style={S.subtitle}>
-                      <UiIcon name="map-pin" /> {currentAnnouncement.quartier}
-                    </p>
-                    {typeof currentAnnouncement.vues_count === 'number' && (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 13, fontWeight: 600, color: '#64748B' }}>
-                        <UiIcon name="eye" className="w-4 h-4 text-slate-400" />
-                        <span>{currentAnnouncement.vues_count} vue{currentAnnouncement.vues_count > 1 ? 's' : ''}</span>
-                      </span>
-                    )}
-                  </div>
+                  <p style={S.subtitle}>
+                    <UiIcon name="map-pin" /> {currentAnnouncement.quartier}
+                  </p>
                 </div>
 
                 {/* Description */}
