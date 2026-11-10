@@ -2638,8 +2638,71 @@ body:has(.dashboard-shell) {
   background: #94a3b8;
 }
 
-/* Profile Workspace mobile enhancements */
-@media (max-width: 768px) {
+/* Profile Workspace full responsiveness & collision protection */
+.profile-section-header {
+  position: static !important;
+  height: auto !important;
+  width: 100% !important;
+  background-color: transparent !important;
+  z-index: 1 !important;
+  transition: none !important;
+}
+
+.profile-layout header,
+.profile-form-card header {
+  position: static !important;
+  height: auto !important;
+  width: 100% !important;
+  z-index: 1 !important;
+  background-color: transparent !important;
+}
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.profile-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+.profile-tabs-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.profile-tabs-nav .button {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.profile-form-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  min-width: 0;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
   .profile-layout {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
@@ -2647,6 +2710,7 @@ body:has(.dashboard-shell) {
   }
 
   .profile-aside {
+    width: 100% !important;
     padding: 16px !important;
     border-radius: 16px !important;
   }
@@ -2654,10 +2718,11 @@ body:has(.dashboard-shell) {
   .profile-tabs-nav {
     display: flex !important;
     flex-direction: row !important;
+    flex-wrap: nowrap !important;
     overflow-x: auto !important;
     width: 100% !important;
     gap: 8px !important;
-    padding-bottom: 4px !important;
+    padding-bottom: 6px !important;
     scrollbar-width: none !important;
     -webkit-overflow-scrolling: touch !important;
   }
@@ -2670,8 +2735,23 @@ body:has(.dashboard-shell) {
     white-space: nowrap !important;
     flex: 0 0 auto !important;
     width: auto !important;
-    padding: 8px 14px !important;
+    padding: 8px 16px !important;
     font-size: 0.85rem !important;
+    border-radius: 999px !important;
+  }
+
+  .profile-form-card {
+    padding: 16px !important;
+    border-radius: 16px !important;
+  }
+
+  .chip-grid {
+    gap: 8px !important;
+  }
+
+  .chip-grid .button {
+    font-size: 0.82rem !important;
+    padding: 8px 14px !important;
   }
 }
 

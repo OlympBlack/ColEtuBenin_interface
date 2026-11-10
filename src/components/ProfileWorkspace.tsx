@@ -117,17 +117,17 @@ export function ProfileWorkspace({ session, onSessionChange, onToast }: ProfileW
           </div>
         )}
 
-        <nav className="profile-tabs-nav d-flex flex-column gap-2 w-100 mt-2" aria-label="Sections du profil">
+        <nav className="profile-tabs-nav gap-2 w-100 mt-2" aria-label="Sections du profil">
           {TABS.map(({ id, label, Icon }) => (
             <button
               key={id}
               type="button"
-              className={'button button--block ' + (activeTab === id ? 'button--primary' : 'button--neutral')}
+              className={'button ' + (activeTab === id ? 'button--primary' : 'button--neutral')}
               onClick={() => setActiveTab(id)}
               aria-current={activeTab === id ? 'page' : undefined}
             >
               <Icon size={16} />
-              {label}
+              <span>{label}</span>
             </button>
           ))}
         </nav>
@@ -216,12 +216,12 @@ function SelectField({
 
 function SectionHeader({ title, desc }: { title: string; desc: string }) {
   return (
-    <header className="mb-4 pb-3" style={{ borderBottom: '1px solid #f0f0f0' }}>
+    <div className="profile-section-header mb-4 pb-3" style={{ borderBottom: '1px solid #f0f0f0' }}>
       <h2 className="h5 fw-bold mb-1">{title}</h2>
       <p className="mb-0" style={{ color: 'var(--muted)', fontSize: '0.88rem' }}>
         {desc}
       </p>
-    </header>
+    </div>
   )
 }
 
@@ -643,7 +643,7 @@ function DocumentsTab({
         <form onSubmit={handleSubmit}>
           {rows.map((row, index) => (
             <div key={index} className="row align-items-end g-2 mb-3">
-              <div className="col-md-4">
+              <div className="col-12 col-md-4">
                 <label className="field">
                   <span>Type de pièce</span>
                   <select
@@ -658,7 +658,7 @@ function DocumentsTab({
                   </select>
                 </label>
               </div>
-              <div className="col-md-4">
+              <div className="col-12 col-md-4">
                 <label className="field">
                   <span>Numéro de pièce</span>
                   <input
@@ -669,7 +669,7 @@ function DocumentsTab({
                   />
                 </label>
               </div>
-              <div className="col-md-4">
+              <div className="col-12 col-md-4">
                 <label className="field">
                   <span>Fichier</span>
                   <input

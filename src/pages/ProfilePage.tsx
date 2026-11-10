@@ -15,7 +15,7 @@ export function ProfilePage({ session, onSessionChange, onToast }: ProfilePagePr
   }, [])
 
   return (
-    <section className="container py-5">
+    <section className="container py-3 py-sm-5 px-3 px-sm-4">
       <ProfileWorkspace session={session} onSessionChange={onSessionChange} onToast={onToast} />
     </section>
   )
